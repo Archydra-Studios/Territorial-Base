@@ -11,3 +11,6 @@ Gone are the days of knowing your safe when you claim land or protect a chest. I
 - [ ] Traps
 - [ ] Footprints, fingerprints & a magnifying glass
 - [ ] Land claims
+
+### License
+This mod is licensed under `Creative Commons Zero v1.0 Universal`. Basically do whatever you want
