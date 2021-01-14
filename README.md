@@ -7,6 +7,7 @@ Gone are the days of knowing your safe when you claim land or protect a chest. I
 
 ### Progress
 - [ ] Locks, safes and a lockpicking mechanic
+- [ ] Piglin player bounties
 - [ ] Traps
 - [ ] Footprints, fingerprints & a magnifying glass
 - [ ] Land claims
