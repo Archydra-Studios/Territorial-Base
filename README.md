@@ -1,9 +1,12 @@
-# Fabric Example Mod
+# Territorial (Base)
 
-## Setup
+### What is Territorial?
+Territorial takes a more lenient approach to protecting your stuff...
+  
+Gone are the days of knowing your safe when you claim land or protect a chest. Infact gone are the days of feeling safe at all, territorial adds traps, player bounties, lockpicks and bombs to really spice up your gameplay and allow others to invade and take your stuff, imagine factions but more brutal.
 
-For setup instructions please see the [fabric wiki page](https://fabricmc.net/wiki/tutorial:setup) that relates to the IDE that you are using.
-
-## License
-
-This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+### Progress
+- [ ] Locks, safes and a lockpicking mechanic
+- [ ] Traps
+- [ ] Footprints, fingerprints & a magnifying glass
+- [ ] Land claims
