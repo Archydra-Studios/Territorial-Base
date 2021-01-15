@@ -1,29 +1,29 @@
 {
   "schemaVersion": 1,
-  "id": "modid",
+  "id": "territorial",
   "version": "${version}",
 
-  "name": "Example Mod",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "Territorial (base)",
+  "description": "TTerritorial is a minecraft Fabric Mod that takes a more lenient approach to protecting your stuff...\n\nGone are the days of knowing your safe when you claim land or protect a chest. Infact gone are the days of feeling safe at all, territorial adds traps, player bounties, lockpicks and bombs to really spice up your gameplay and allow others to invade and take your stuff, imagine factions but more brutal.",
   "authors": [
-    "Me!"
+    "profjb58"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://profjb58.github.io",
+    "sources": "https://github.com/profjb58/Territorial-Base"
   },
 
   "license": "CC0-1.0",
-  "icon": "assets/modid/icon.png",
+  "icon": "assets/territorial/icon.png",
 
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.fabricmc.example.ExampleMod"
+      "io.github.profjb58.territorial.Territorial"
     ]
   },
   "mixins": [
-    "modid.mixins.json"
+    "territorial.mixins.json"
   ],
 
   "depends": {
