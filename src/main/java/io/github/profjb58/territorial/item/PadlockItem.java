@@ -49,9 +49,9 @@ public class PadlockItem extends Item {
                     player.sendMessage(new TranslatableText("message.territorial.lock_failed"), true);
                 }
                 
-                try {
+                /*try {*/
                     be.fromTag(be.getCachedState(), tag);
-                } catch (Exception ignored) {}
+                /*} catch (Exception ignored) {}*/
 
                 return ActionResult.SUCCESS;
             }
