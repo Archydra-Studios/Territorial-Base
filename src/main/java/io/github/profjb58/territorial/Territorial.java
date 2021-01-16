@@ -6,12 +6,15 @@ import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Territorial implements ModInitializer {
 
 	public static final String MOD_ID = "territorial";
 	public static final String BASE_GROUP_ID = "territorial_base";
-
+	public static final Logger logger = LogManager.getLogger();
+	
 	public static final ItemGroup BASE_GROUP = FabricItemGroupBuilder.build(
 			new Identifier(MOD_ID, BASE_GROUP_ID),
 			() -> new ItemStack(TerritorialRegistry.LOCKPICK));

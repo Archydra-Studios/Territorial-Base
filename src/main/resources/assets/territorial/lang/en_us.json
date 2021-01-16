@@ -9,5 +9,9 @@
   "item.territorial.lockpick": "Lockpick",
   "item.territorial.lockpick_netherite": "Netherite Lockpick",
   "item.territorial.lockpick_creative": "Creative Lockpick",
-  "itemGroup.territorial.territorial_base": "Territorial (base)"
+  "itemGroup.territorial.territorial_base": "Territorial (base)",
+
+  "message.territorial.lock_successful": "§aLock protection added!",
+  "message.territorial.lock_failed": "§cI'm afraid I can't let you do that...",
+  "message.territorial.lock_claimed": "§cAlready locked by %s"
 }

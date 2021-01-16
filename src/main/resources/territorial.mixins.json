@@ -4,9 +4,11 @@
   "package": "io.github.profjb58.territorial.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "BlockEntityMixin"
   ],
   "client": [
-    "ExampleMixin"
+  ],
+  "server": [
   ],
   "injectors": {
     "defaultRequire": 1
