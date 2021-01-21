@@ -11,11 +11,10 @@ public class TerritorialRegistry {
 
     // Locks
     public static final Item KEY = new Item(new FabricItemSettings().group(Territorial.BASE_GROUP).maxCount(16));
-    public static final Item PADLOCK = new PadlockItem();
-    public static final Item PADLOCK_STEEL = new Item(new FabricItemSettings().group(Territorial.BASE_GROUP).maxCount(16));
-    public static final Item PADLOCK_DIAMOND = new Item(new FabricItemSettings().group(Territorial.BASE_GROUP).maxCount(16));
-    public static final Item PADLOCK_NETHERITE = new Item(new FabricItemSettings().group(Territorial.BASE_GROUP).maxCount(16));
-    public static final Item PADLOCK_CREATIVE = new Item(new FabricItemSettings().group(Territorial.BASE_GROUP).maxCount(16));
+    public static final Item PADLOCK = new PadlockItem(1);
+    public static final Item PADLOCK_DIAMOND = new PadlockItem(3);
+    public static final Item PADLOCK_NETHERITE = new PadlockItem(4);
+    public static final Item PADLOCK_CREATIVE = new PadlockItem(-1);
     public static final Item LOCKPICK = new Item(new FabricItemSettings().group(Territorial.BASE_GROUP).maxCount(1));
     public static final Item LOCKPICK_NETHERITE = new Item(new FabricItemSettings().group(Territorial.BASE_GROUP).maxCount(1));
     public static final Item LOCKPICK_CREATIVE = new Item(new FabricItemSettings().group(Territorial.BASE_GROUP).maxCount(1));
@@ -27,7 +26,6 @@ public class TerritorialRegistry {
         // Locks
         Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "key"), KEY);
         Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "padlock"), PADLOCK);
-        Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "padlock_steel"), PADLOCK_STEEL);
         Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "padlock_diamond"), PADLOCK_DIAMOND);
         Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "padlock_netherite"), PADLOCK_NETHERITE);
         Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "padlock_creative"), PADLOCK_CREATIVE);

@@ -13,5 +13,9 @@
 
   "message.territorial.lock_successful": "§aLock protection added!",
   "message.territorial.lock_failed": "§cI'm afraid I can't let you do that...",
-  "message.territorial.lock_claimed": "§cAlready locked by %s"
+  "message.territorial.lock_claimed": "§cAlready locked by %s",
+  "message.territorial.lock_unnamed": "§cThis lock needs a name",
+  "message.territorial.key_unnamed": "§cThis key needs a name",
+
+  "message.territorial.list_locks_header": "§a[Territorial]&r Locks assigned to %s..."
 }

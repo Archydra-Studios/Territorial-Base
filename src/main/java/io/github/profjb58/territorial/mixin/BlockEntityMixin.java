@@ -2,10 +2,7 @@ package io.github.profjb58.territorial.mixin;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -17,17 +14,23 @@ import java.util.UUID;
 @Mixin(BlockEntity.class)
 public class BlockEntityMixin {
 
-    private UUID lockUuid, ownerUuid;
+    private String lockId;
+    private UUID ownerUuid;
+    private int lockType;
 
     // Deserialize the BlockEntity
     @Inject(at = @At("TAIL"), method = "fromTag")
     public void fromTag(BlockState state, CompoundTag tag, CallbackInfo info) {
-
-        if(tag.contains("lock_uuid")) {
-            this.lockUuid = tag.getUuid("lock_uuid");
+        if(tag.contains("lock_id")) {
+            this.lockId = tag.getString("lock_id");
         }
+
         if(tag.contains("lock_owner_uuid")) {
             this.ownerUuid = tag.getUuid("lock_owner_uuid");
+        }
+
+        if(tag.contains("lock_type")) {
+            this.lockType = tag.getInt("lock_type");
         }
     }
 
@@ -35,17 +38,20 @@ public class BlockEntityMixin {
     @Inject(at = @At("HEAD"), method = "toTag")
     public void toTag(CompoundTag tag, CallbackInfoReturnable<CompoundTag> cir) {
 
-        if(lockUuid != null && ownerUuid != null) {
-            tag.putUuid("lock_uuid", lockUuid);
+        if(lockId != null && ownerUuid != null && lockType != 0) {
+            tag.putString("lock_id", lockId);
             tag.putUuid("lock_owner_uuid", ownerUuid);
+            tag.putInt("lock_type", lockType);
         }
     }
 
-    public UUID getLock() {
-        return lockUuid;
+    public String getName() {
+        return lockId;
     }
 
     public UUID getOwner() {
         return ownerUuid;
     }
+
+    public int getLockType() { return lockType; }
 }

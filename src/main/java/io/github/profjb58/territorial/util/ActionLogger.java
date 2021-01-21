@@ -14,43 +14,76 @@ import java.time.format.DateTimeFormatter;
 @Environment(EnvType.SERVER)
 public class ActionLogger {
 
-    private enum LogType {
-        LOCKS,
-        CLAIMS
+    public enum LogType {
+        INFO,
+        WARNING,
+        ERROR,
+        BLANK
     }
 
-    private final File logFile;
-    private FileWriter logWriter;
-    static final String LOGS_DIRECTORY = FabricLoader.getInstance().getGameDir() + "/logs";
+    public enum LogModule {
+        LOCKS,
+        CLAIMS,
+        BLANK
+    }
+
+    static final String LOGS_DIRECTORY = FabricLoader.getInstance().getGameDir() + "/logs/";
 
     public ActionLogger() {
-        this.logFile = new File(LOGS_DIRECTORY + "territorial.log");
+        File logFile = new File(LOGS_DIRECTORY + "territorial.log");
 
         try {
             // Add in additional loggers if required here...
             if(logFile.createNewFile()) {
                 Territorial.logger.info("Logger files created");
             }
-
-            this.logWriter = new FileWriter(LOGS_DIRECTORY + "territorial.log", true);
         } catch(IOException e) {
             e.printStackTrace();
         }
     }
 
     public void write(LogType type, String message) {
+        this.write(type, LogModule.BLANK, message);
+    }
+
+    public void write(LogType type, LogModule module, String message) {
         LocalDateTime dateTime = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("[HH:MM][dd/MM/yyyy]");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("[HH:mm:ss] - [dd/MM/yyyy]");
         String formattedDateTime = dateTime.format(formatter);
 
-        if(logWriter != null) {
-            try {
-                String specifier = (type == LogType.LOCKS) ? " {LOCKS} - " : " {CLAIMS} - ";
-                logWriter.write(formattedDateTime + specifier + message);
-                logWriter.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+        try {
+            FileWriter logWriter = new FileWriter(LOGS_DIRECTORY + "territorial.log", true);
+            String typeSpecifier, moduleSpecifier;
+
+            switch (type) {
+                case INFO:
+                    typeSpecifier = " [INFO] ";
+                    break;
+                case WARNING:
+                    typeSpecifier = " [WARNING] ";
+                    break;
+                case ERROR:
+                    typeSpecifier = " [ERROR] ";
+                    break;
+                default:
+                    typeSpecifier = " ";
             }
+
+            switch(module) {
+                case CLAIMS:
+                    moduleSpecifier = "(claims) - ";
+                    break;
+                case LOCKS:
+                    moduleSpecifier = "(locks) - ";
+                    break;
+                default:
+                    moduleSpecifier = "- ";
+            }
+
+            logWriter.write(formattedDateTime + typeSpecifier + moduleSpecifier + message + "\n");
+            logWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
