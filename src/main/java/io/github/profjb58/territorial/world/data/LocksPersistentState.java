@@ -1,6 +1,5 @@
 package io.github.profjb58.territorial.world.data;
 
-import io.github.profjb58.territorial.mixin.BlockEntityMixin;
 import io.github.profjb58.territorial.util.TagUtils;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.block.entity.BlockEntity;
@@ -8,11 +7,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.PersistentState;
-import net.minecraft.world.World;
 
 import java.util.*;
 
@@ -25,6 +24,8 @@ public class LocksPersistentState extends PersistentState {
     }
 
     public void addLock(UUID uuid, BlockPos lockPos) {
+        removeLock(uuid, lockPos); // Remove existing lock if one is already there
+
         LinkedList<BlockPos> playerLocks;
         if(worldLocks.get(uuid) == null) {
             playerLocks = new LinkedList<>();
@@ -35,58 +36,62 @@ public class LocksPersistentState extends PersistentState {
         playerLocks.add(lockPos);
 
         worldLocks.put(uuid, playerLocks);
+        this.markDirty();
     }
 
     public void removeLock(UUID uuid, BlockPos lockPos) {
-
+        if(worldLocks.get(uuid) != null) {
+            worldLocks.get(uuid).remove(lockPos);
+        }
     }
 
     public void removeAllLocks(UUID uuid) {
         worldLocks.remove(uuid);
     }
 
-    public boolean listLocks(PlayerEntity playerToSearch, PlayerEntity playerExecutedCmd) {
-        UUID uuid = playerToSearch.getUuid();
-
-        if(worldLocks.containsKey(uuid))
+    public boolean listLocks(UUID uuidToSearch, PlayerEntity playerExecutedCmd) {
+        if(worldLocks.containsKey(uuidToSearch))
         {
-            LinkedList<BlockPos> playerLocks = worldLocks.get(uuid);
-            if(playerLocks != null) {
-                playerExecutedCmd.sendMessage(new TranslatableText("message.territorial.list_locks_header", playerToSearch), false);
-                for(BlockPos lockPos : playerLocks) {
+            LinkedList<BlockPos> playerLocks = worldLocks.get(uuidToSearch);
+            playerExecutedCmd.sendMessage(new TranslatableText("message.territorial.list_locks_header", playerExecutedCmd.getDisplayName().getString()), false);
+            int entityCount = 0; // Check if any valid entities are actually found from the list
 
-                    BlockEntity be = playerToSearch.getEntityWorld().getBlockEntity(lockPos);
-                    if(be != null) {
+            for(BlockPos lockPos : playerLocks) {
+                BlockEntity be = playerExecutedCmd.getEntityWorld().getBlockEntity(lockPos);
+                if(be != null) {
+                    CompoundTag lockTag = be.toTag(new CompoundTag());
+                    if(lockTag.contains("id") && lockTag.contains("lock_id")) { // Lock exists here
 
-                        CompoundTag lockTag = be.toTag(new CompoundTag());
-                        if(lockTag.contains("id") && lockTag.contains("lock_id")) { // Lock exists here
-
-                            String msg = lockTag.getString("lock_id") + ": [" + lockPos.toShortString() + "]";
-                            playerExecutedCmd.sendMessage(new LiteralText(msg), false);
-                            return true;
-                        }
+                        String msg = " # " + lockTag.getString("lock_id") + ": [" + lockPos.getX() + ", " + lockPos.getY() + ", " + lockPos.getZ() + "] §7- "
+                                + be.getCachedState().getBlock().getTranslationKey();
+                        playerExecutedCmd.sendMessage(new LiteralText(msg), false);
+                        entityCount += 1;
                     }
                 }
             }
+            return entityCount != 0;
         }
         return false;
+    }
+
+    public static LocksPersistentState get(ServerWorld world) {
+        return world.getPersistentStateManager().getOrCreate(LocksPersistentState::new, "territorial_world_locks");
     }
 
     @Override
     public void fromTag(CompoundTag compoundTag) {
         ListTag worldLocksTags = compoundTag.getList("world_locked_tiles", NbtType.COMPOUND);
 
-        for(Iterator<Tag> it = worldLocksTags.iterator(); it.hasNext();) {
-            CompoundTag playerLocksTag = (CompoundTag) it.next();
+        for (Tag worldLocksTag : worldLocksTags) {
+            CompoundTag playerLocksTag = (CompoundTag) worldLocksTag;
             UUID playerUuid = playerLocksTag.getUuid("uuid");
 
             LinkedList<BlockPos> lockedTilesPos = new LinkedList<>();
             ListTag lockedTilesPosTags = playerLocksTag.getList("locked_tiles", NbtType.COMPOUND);
-            for(Iterator<Tag> it2 = lockedTilesPosTags.iterator(); it2.hasNext();) {
-                CompoundTag lockedTilePos = (CompoundTag) it.next();
+            for (Tag lockedTilesPosTag : lockedTilesPosTags) {
+                CompoundTag lockedTilePos = (CompoundTag) lockedTilesPosTag;
                 lockedTilesPos.add(TagUtils.deserializeBlockPos(lockedTilePos.getIntArray("lock_pos")));
             }
-
             worldLocks.put(playerUuid, lockedTilesPos);
         }
     }

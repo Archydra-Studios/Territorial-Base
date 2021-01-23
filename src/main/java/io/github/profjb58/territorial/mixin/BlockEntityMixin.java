@@ -21,23 +21,14 @@ public class BlockEntityMixin {
     // Deserialize the BlockEntity
     @Inject(at = @At("TAIL"), method = "fromTag")
     public void fromTag(BlockState state, CompoundTag tag, CallbackInfo info) {
-        if(tag.contains("lock_id")) {
-            this.lockId = tag.getString("lock_id");
-        }
-
-        if(tag.contains("lock_owner_uuid")) {
-            this.ownerUuid = tag.getUuid("lock_owner_uuid");
-        }
-
-        if(tag.contains("lock_type")) {
-            this.lockType = tag.getInt("lock_type");
-        }
+        this.lockId = tag.contains("lock_id") ? tag.getString("lock_id") : null;
+        this.ownerUuid = tag.contains("lock_owner_uuid") ? tag.getUuid("lock_owner_uuid") : null;
+        this.lockType = tag.contains("lock_type") ? tag.getInt("lock_type") : 0;
     }
 
     // Serialize the BlockEntity
     @Inject(at = @At("HEAD"), method = "toTag")
     public void toTag(CompoundTag tag, CallbackInfoReturnable<CompoundTag> cir) {
-
         if(lockId != null && ownerUuid != null && lockType != 0) {
             tag.putString("lock_id", lockId);
             tag.putUuid("lock_owner_uuid", ownerUuid);
