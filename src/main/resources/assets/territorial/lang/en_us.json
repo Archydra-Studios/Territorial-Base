@@ -14,10 +14,17 @@
   "message.territorial.lock_successful": "§aLock protection added!",
   "message.territorial.lock_removed": "§eLock protection removed!",
   "message.territorial.no_lock": "§cThis block is not locked...",
+  "message.territorial.locked": "§cBlock is currently locked",
   "message.territorial.lock_failed": "§cBlock is already locked...",
   "message.territorial.lock_claimed": "§cAlready locked by %s",
   "message.territorial.lock_unnamed": "§cThis lock needs a name",
   "message.territorial.key_unnamed": "§cThis key needs a name",
 
-  "message.territorial.list_locks_header": "§a[Territorial]§r Locks assigned to %s:"
+  "message.territorial.list_locks_header": "§a[Territorial]§r Locks assigned to %s:",
+  "message.territorial.locks_match_failed": "[Territorial] Failed to find any locks for this player",
+  "message.territorial.locks_match_failed_player": "[Territorial] You haven't locked anything yet...",
+
+  "title.territorial.config": "Territorial Config",
+
+  "effect.territorial.lock_fatigue": "Lock Fatigue"
 }

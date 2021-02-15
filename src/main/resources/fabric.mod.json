@@ -21,6 +21,9 @@
   "entrypoints": {
     "main": [
       "io.github.profjb58.territorial.Territorial"
+    ],
+    "modmenu": [
+      "io.github.profjb58.territorial.config.TBMMIntegration"
     ]
   },
   "mixins": [

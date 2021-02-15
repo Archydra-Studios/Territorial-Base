@@ -1,39 +1,37 @@
 package io.github.profjb58.territorial.event;
 
-import com.mojang.brigadier.arguments.StringArgumentType;
 import io.github.profjb58.territorial.Territorial;
+import io.github.profjb58.territorial.command.LocksCommand;
 import io.github.profjb58.territorial.item.LockpickItem;
+import io.github.profjb58.territorial.item.LockpickItem.LockPickType;
 import io.github.profjb58.territorial.item.PadlockItem;
-import io.github.profjb58.territorial.util.UuidUtils;
-import io.github.profjb58.territorial.world.data.LocksPersistentState;
+import io.github.profjb58.territorial.item.PadlockItem.LockType;
+import io.github.profjb58.territorial.statusEffect.LockFatigueEffect;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.item.Item;
-import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-
-import static net.minecraft.server.command.CommandManager.*;
 
 public class TerritorialRegistry {
 
     // Locks
     public static final Item KEY = new Item(new FabricItemSettings().group(Territorial.BASE_GROUP).maxCount(16));
-    public static final Item PADLOCK = new PadlockItem(1);
-    public static final Item PADLOCK_DIAMOND = new PadlockItem(3);
-    public static final Item PADLOCK_NETHERITE = new PadlockItem(4);
-    public static final Item PADLOCK_CREATIVE = new PadlockItem(-1);
-    public static final Item LOCKPICK = new LockpickItem();
-    public static final Item LOCKPICK_CREATIVE = new Item(new FabricItemSettings().group(Territorial.BASE_GROUP).maxCount(1));
+    public static final Item PADLOCK = new PadlockItem(LockType.IRON);
+    public static final Item PADLOCK_DIAMOND = new PadlockItem(LockType.DIAMOND);
+    public static final Item PADLOCK_NETHERITE = new PadlockItem(LockType.NETHERITE);
+    public static final Item PADLOCK_CREATIVE = new PadlockItem(LockType.CREATIVE);
+    public static final Item LOCKPICK = new LockpickItem(LockPickType.NORMAL);
+    public static final Item LOCKPICK_CREATIVE = new LockpickItem(LockPickType.CREATIVE);
     public static final Item ENDER_AMULET = new Item(new FabricItemSettings().group(Territorial.BASE_GROUP));
+
+    public static final StatusEffect LOCK_FATIGUE = new LockFatigueEffect();
 
     public static void registerAll() {
         registerItems();
         registerCommands();
+        registerStatusEffects();
     }
 
     private static void registerItems() {
@@ -50,41 +48,11 @@ public class TerritorialRegistry {
 
     private static void registerCommands() {
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
-
-            dispatcher.register(literal("territorial")
-                    .then(literal("locks")
-                            .then(literal("list")
-                                    .then(argument("player name", StringArgumentType.greedyString())
-                                            .executes(ctx -> {
-                                                ServerCommandSource scs = ctx.getSource();
-                                                String playerName = StringArgumentType.getString(ctx, "player name");
-                                                LocksPersistentState lps = LocksPersistentState.get(scs.getWorld());
-
-                                                CompletableFuture<UUID> uuidFuture = CompletableFuture.supplyAsync(() -> UuidUtils.getUUIDFromPlayer(playerName));
-                                                try {
-                                                    UUID uuid = uuidFuture.get();
-                                                    if (uuid != null) {
-                                                        lps.listLocks(uuid, scs.getPlayer());
-                                                        Territorial.logger.info("Found UUID: " + uuid + " for player: " + scs.getPlayer().getName().getString());
-                                                    } else {
-                                                        return -1;
-                                                    }
-                                                } catch (InterruptedException | ExecutionException e) {
-                                                    // Add exception signature here
-                                                }
-
-                                                return 1;
-                                            })
-                                    )
-                                    .executes(ctx-> {
-                                        ServerCommandSource scs = ctx.getSource();
-                                        LocksPersistentState lps = LocksPersistentState.get(scs.getWorld());
-                                        lps.listLocks(scs.getPlayer().getUuid(), scs.getPlayer());
-                                        return 1;
-                                    })
-                            )
-                    )
-            );
+            LocksCommand.register(dispatcher);
         });
+    }
+
+    private static void registerStatusEffects() {
+        Registry.register(Registry.STATUS_EFFECT, new Identifier(Territorial.MOD_ID, "lock_fatigue"), LOCK_FATIGUE);
     }
 }

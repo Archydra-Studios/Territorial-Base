@@ -4,9 +4,12 @@
   "package": "io.github.profjb58.territorial.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "BlockEntityMixin"
+    "BlockBreakSpeedMixin",
+    "BlockEntityMixin",
+    "StatusEffectInstanceMixin"
   ],
   "client": [
+    "BlockBreakProgressMixin"
   ],
   "server": [
   ],

@@ -1,13 +1,10 @@
 package io.github.profjb58.territorial.blockEntity;
 
-import io.github.profjb58.territorial.item.PadlockItem;
-import io.github.profjb58.territorial.item.PadlockItem.LockType;
 import io.github.profjb58.territorial.world.data.LocksPersistentState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 import java.util.UUID;
 
@@ -19,18 +16,26 @@ import java.util.UUID;
  */
 public class LockableBlockEntity {
 
+    public enum LockedType {
+        CREATIVE,
+        IRON,
+        GOLD,
+        DIAMOND,
+        NETHERITE
+    }
+
     private String lockId;
     private UUID lockOwner;
-    private LockType lockType;
+    private LockedType lockType;
     private BlockPos blockPos;
     private ServerWorld world;
 
     public LockableBlockEntity(ServerWorld world, BlockPos blockPos) {
         CompoundTag tag = getNbt(world, blockPos);
-        if (tag != null) {
+        if(tag != null) {
             this.lockId = tag.getString("lock_id");
             this.lockOwner = tag.getUuid("lock_owner_uuid");
-            this.lockType = PadlockItem.getLockType(tag.getInt("lock_type"));
+            this.lockType = getLockType(tag.getInt("lock_type"));
             this.blockPos = blockPos;
             this.world = world;
         }
@@ -63,7 +68,7 @@ public class LockableBlockEntity {
             if(tag != null) {
                 tag.putString("lock_id", lockId);
                 tag.putUuid("lock_owner_uuid", lockOwner);
-                tag.putInt("lock_type", PadlockItem.getLockTypeInt(lockType));
+                tag.putInt("lock_type", getLockTypeInt(lockType));
                 updateNbtFromTag(tag);
 
                 LocksPersistentState lps = LocksPersistentState.get(world);
@@ -85,7 +90,7 @@ public class LockableBlockEntity {
         return false;
     }
 
-    private CompoundTag getNbt(World world, BlockPos blockPos) {
+    private CompoundTag getNbt(ServerWorld world, BlockPos blockPos) {
         BlockEntity be = world.getBlockEntity(blockPos);
         if(be != null) {
             CompoundTag tag = be.toTag(new CompoundTag());
@@ -96,6 +101,40 @@ public class LockableBlockEntity {
         return null;
     }
 
+    private LockedType getLockType(int lockType) {
+        switch(lockType) {
+            case -1:
+                return LockedType.CREATIVE;
+            case 1:
+                return LockedType.IRON;
+            case 2:
+                return LockedType.GOLD;
+            case 3:
+                return LockedType.DIAMOND;
+            case 4:
+                return LockedType.NETHERITE;
+            default:
+                return null;
+        }
+    }
+
+    private int getLockTypeInt(LockedType lockType) {
+        switch(lockType) {
+            case CREATIVE:
+                return -1;
+            case IRON:
+                return 1;
+            case GOLD:
+                return 2;
+            case DIAMOND:
+                return 3;
+            case NETHERITE:
+                return 4;
+            default:
+                return 0;
+        }
+    }
+
     public String getLockId() {
         return lockId;
     }
@@ -104,7 +143,7 @@ public class LockableBlockEntity {
         return lockOwner;
     }
 
-    public LockType getLockType() {
+    public LockedType getLockType() {
         return lockType;
     }
 

@@ -15,6 +15,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,17 +24,16 @@ import java.util.List;
 
 public class PadlockItem extends Item {
 
-    public enum LockType {
-        CREATIVE,
-        IRON,
-        GOLD,
-        DIAMOND,
-        NETHERITE
-    }
+    /* Lock type codes:
+    -1 = creative
+     1 = iron
+     2 = gold
+     3 = diamond
+     4 = netherite */
 
-    private final LockType type;
+    int type;
 
-    public PadlockItem(LockType type) {
+    public PadlockItem(int type) {
         super(new Item.Settings().group(Territorial.BASE_GROUP).maxCount(16));
         this.type = type;
     }
@@ -41,7 +41,7 @@ public class PadlockItem extends Item {
     @Override
     public ActionResult useOnBlock(ItemUsageContext ctx) {
         PlayerEntity player = ctx.getPlayer();
-        if(player != null) {
+        if(player != null && !ctx.getWorld().isClient) {
             if(player.isSneaking() && !ctx.getWorld().isClient()) {
 
                 ItemStack lock = player.getStackInHand(player.getActiveHand());
@@ -55,7 +55,7 @@ public class PadlockItem extends Item {
 
                             tag.putString("lock_id", lockName);
                             tag.putUuid("lock_owner_uuid", player.getUuid());
-                            tag.putInt("lock_type", getLockTypeInt(type));
+                            tag.putInt("lock_type", type);
 
                             if(!player.isCreative()) {
                                 player.getStackInHand(player.getActiveHand()).decrement(1);
@@ -91,39 +91,5 @@ public class PadlockItem extends Item {
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         super.appendTooltip(stack, world, tooltip, context);
-    }
-
-    public static int getLockTypeInt(LockType lockType) {
-        switch(lockType) {
-            case CREATIVE:
-                return -1;
-            case IRON:
-                return 1;
-            case GOLD:
-                return 2;
-            case DIAMOND:
-                return 3;
-            case NETHERITE:
-                return 4;
-            default:
-                return 0;
-        }
-    }
-
-    public static LockType getLockType(int lockType) {
-        switch(lockType) {
-            case -1:
-                return LockType.CREATIVE;
-            case 1:
-                return LockType.IRON;
-            case 2:
-                return LockType.GOLD;
-            case 3:
-                return LockType.DIAMOND;
-            case 4:
-                return LockType.NETHERITE;
-            default:
-                return null;
-        }
     }
 }

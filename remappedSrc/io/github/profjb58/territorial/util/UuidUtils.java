@@ -9,9 +9,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
 
-/**
- * UUID api utility, can grab offline UUID of a player from there player name
- */
 public class UuidUtils {
 
     private static final String MOJANG_UUID_API = "https://api.mojang.com/users/profiles/minecraft/";
@@ -42,7 +39,6 @@ public class UuidUtils {
             JsonObject uuidObject = (JsonObject) parser.parse(inline.toString());
             String id = uuidObject.get("id").getAsString();
 
-            // Format into a proper uuid (accepted) uuid format complete with '-' characters
             String idFormatted = id.substring(0, 8) + "-" + id.substring(8, 12) + "-"
                     + id.substring(12, 16) + "-" + id.substring(16, 20) + "-" + id.substring(20, 32);
 

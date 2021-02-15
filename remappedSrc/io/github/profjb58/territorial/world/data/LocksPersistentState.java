@@ -9,7 +9,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.PersistentState;
@@ -18,7 +17,6 @@ import java.util.*;
 
 public class LocksPersistentState extends PersistentState {
 
-    // List of all the locks within a world by UUID
     HashMap<UUID, LinkedList<BlockPos>> worldLocks = new HashMap<>();
 
     public LocksPersistentState() {
@@ -63,9 +61,9 @@ public class LocksPersistentState extends PersistentState {
                 if(be != null) {
                     CompoundTag lockTag = be.toTag(new CompoundTag());
                     if(lockTag.contains("id") && lockTag.contains("lock_id")) { // Lock exists here
-                        Text lockNameText = new TranslatableText(be.getCachedState().getBlock().getTranslationKey());
-                        String msg = "# " + lockTag.getString("lock_id") + " - §e[" + lockPos.getX() + ", " + lockPos.getY() + ", " + lockPos.getZ() + "] §r-§7 "
-                                + lockNameText.getString();
+
+                        String msg = " # " + lockTag.getString("lock_id") + ": [" + lockPos.getX() + ", " + lockPos.getY() + ", " + lockPos.getZ() + "] §7- "
+                                + be.getCachedState().getBlock().getTranslationKey();
                         playerExecutedCmd.sendMessage(new LiteralText(msg), false);
                         entityCount += 1;
                     }

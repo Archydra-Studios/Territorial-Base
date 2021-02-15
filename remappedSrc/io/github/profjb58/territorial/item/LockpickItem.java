@@ -1,8 +1,8 @@
 package io.github.profjb58.territorial.item;
 
 import io.github.profjb58.territorial.Territorial;
+import io.github.profjb58.territorial.blockEntity.LockableBlockEntity.LockedType;
 import io.github.profjb58.territorial.blockEntity.LockableBlockEntity;
-import io.github.profjb58.territorial.item.PadlockItem.LockType;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -13,18 +13,10 @@ import net.minecraft.util.ActionResult;
 
 public class LockpickItem extends Item {
 
-    public enum LockPickType {
-        NORMAL,
-        CREATIVE
-    }
-
-    private final LockPickType type;
-
-    public LockpickItem(LockPickType type) {
+    public LockpickItem() {
         super(new FabricItemSettings()
                 .group(Territorial.BASE_GROUP)
                 .maxCount(1));
-        this.type = type;
     }
 
     @Override
@@ -34,7 +26,7 @@ public class LockpickItem extends Item {
             if(player.isSneaking() && !ctx.getWorld().isClient()) {
                 LockableBlockEntity lbe = new LockableBlockEntity((ServerWorld) ctx.getWorld(), ctx.getBlockPos());
                 if(lbe.exists()) { // Lockable block found
-                    if(player.getUuid().equals(lbe.getLockOwner()) || type == LockPickType.CREATIVE) {
+                    if(player.getUuid().equals(lbe.getLockOwner()) || lbe.getLockType() == LockedType.CREATIVE) {
                         if(lbe.remove()) {
                             ctx.getPlayer().sendMessage(new TranslatableText("message.territorial.lock_removed"), true);
                             return ActionResult.SUCCESS;
@@ -42,7 +34,6 @@ public class LockpickItem extends Item {
                     }
                     else {
                         // Lock picking mechanics
-                        return ActionResult.SUCCESS;
                     }
                 }
                 ctx.getPlayer().sendMessage(new TranslatableText("message.territorial.no_lock"), true);
