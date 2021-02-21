@@ -1,7 +1,7 @@
 package io.github.profjb58.territorial.blockEntity;
 
-import io.github.profjb58.territorial.item.PadlockItem;
-import io.github.profjb58.territorial.item.PadlockItem.LockType;
+import io.github.profjb58.territorial.util.LockUtils;
+import io.github.profjb58.territorial.util.LockUtils.*;
 import io.github.profjb58.territorial.world.data.LocksPersistentState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.CompoundTag;
@@ -24,15 +24,21 @@ public class LockableBlockEntity {
     private LockType lockType;
     private BlockPos blockPos;
     private ServerWorld world;
+    private float blastResistance, fatigueMultiplier;
 
     public LockableBlockEntity(ServerWorld world, BlockPos blockPos) {
         CompoundTag tag = getNbt(world, blockPos);
         if (tag != null) {
             this.lockId = tag.getString("lock_id");
             this.lockOwner = tag.getUuid("lock_owner_uuid");
-            this.lockType = PadlockItem.getLockType(tag.getInt("lock_type"));
+            this.lockType = LockUtils.getLockType(tag.getInt("lock_type"));
             this.blockPos = blockPos;
             this.world = world;
+
+            if(lockType != null) {
+                this.blastResistance = LockUtils.getBlastResistance(lockType);
+                this.fatigueMultiplier = LockUtils.getLockFatigueMultiplier(LockUtils.getLockFatigueAmplifier(lockType));
+            }
         }
     }
 
@@ -63,7 +69,7 @@ public class LockableBlockEntity {
             if(tag != null) {
                 tag.putString("lock_id", lockId);
                 tag.putUuid("lock_owner_uuid", lockOwner);
-                tag.putInt("lock_type", PadlockItem.getLockTypeInt(lockType));
+                tag.putInt("lock_type", LockUtils.getLockTypeInt(lockType));
                 updateNbtFromTag(tag);
 
                 LocksPersistentState lps = LocksPersistentState.get(world);
@@ -104,11 +110,13 @@ public class LockableBlockEntity {
         return lockOwner;
     }
 
-    public LockType getLockType() {
-        return lockType;
-    }
+    public LockType getLockType() { return lockType; }
 
     public BlockPos getBlockPos() {
         return blockPos;
     }
+
+    public float getBlastResistance() { return blastResistance; }
+
+    public float getFatigueMultiplier() { return fatigueMultiplier; }
 }

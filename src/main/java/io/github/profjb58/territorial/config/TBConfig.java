@@ -1,23 +1,17 @@
 package io.github.profjb58.territorial.config;
 
 import io.github.profjb58.territorial.Territorial;
-import io.github.prospector.modmenu.api.ModMenuApi;
 import me.sargunvohra.mcmods.autoconfig1u.ConfigData;
+import me.sargunvohra.mcmods.autoconfig1u.annotation.Config;
 import me.sargunvohra.mcmods.autoconfig1u.annotation.ConfigEntry;
 
-@me.sargunvohra.mcmods.autoconfig1u.annotation.Config(name = Territorial.MOD_ID)
+@Config(name = Territorial.MOD_ID)
 public class TBConfig implements ConfigData {
-    boolean toggleA = true;
-    boolean toggleB = false;
 
-    @ConfigEntry.Gui.CollapsibleObject
-    InnerStuff stuff = new InnerStuff();
+    private final String __comment = "Determines how hard it is to break locked blocks, increasing this value makes" +
+            " locked blocks easier to break. Should always keep between 1 and 0.001 for the best results";
 
     @ConfigEntry.Gui.Excluded
-    InnerStuff invisibleStuff = new InnerStuff();
-
-    static class InnerStuff {
-        int a = 0;
-        int b = 1;
-    }
+    @ConfigEntry.Gui.RequiresRestart
+    public double breakMultiplier = 0.015;
 }

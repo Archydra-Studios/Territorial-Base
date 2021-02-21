@@ -1,6 +1,7 @@
 package io.github.profjb58.territorial.mixin;
 
 import io.github.profjb58.territorial.event.TerritorialRegistry;
+import io.github.profjb58.territorial.util.LockUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -26,24 +27,10 @@ public abstract class BlockBreakSpeedMixin extends LivingEntity {
         Float blockBreakSpeed = cir.getReturnValue();
 
         if (hasStatusEffect(TerritorialRegistry.LOCK_FATIGUE)) {
-            float multiplier;
-
             StatusEffectInstance lockFatigue = getStatusEffect(TerritorialRegistry.LOCK_FATIGUE);
+
             if(lockFatigue != null) {
-                switch(lockFatigue.getAmplifier()) {
-                    case 0:
-                        multiplier = 0.3F;
-                        break;
-                    case 1:
-                        multiplier = 0.09F;
-                        break;
-                    case 2:
-                        multiplier = 0.0027F;
-                        break;
-                    case 3:
-                    default:
-                        multiplier = 8.1E-4F;
-                }
+                float multiplier = LockUtils.getLockFatigueMultiplier(lockFatigue.getAmplifier());
                 blockBreakSpeed *= multiplier;
             }
         }

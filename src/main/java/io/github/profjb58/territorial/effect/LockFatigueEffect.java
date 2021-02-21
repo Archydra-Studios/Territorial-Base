@@ -1,14 +1,11 @@
-package io.github.profjb58.territorial.statusEffect;
+package io.github.profjb58.territorial.effect;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.AttributeContainer;
-import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffectType;
-import net.minecraft.util.math.BlockPos;
 
 public class LockFatigueEffect extends StatusEffect {
 

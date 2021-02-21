@@ -16,6 +16,8 @@ repositories {
 		name = "CottonMC"
 		url = "https://server.bbkr.space/artifactory/libs-release"
 	}
+
+	maven { url 'https://repo.repsy.io/mvn/gandiber/geckolib' }
 }
 
 dependencies {
@@ -58,6 +60,8 @@ dependencies {
 	modCompileOnly("me.shedaniel:RoughlyEnoughItems-api:${project.rei_version}") {
 		exclude group: "net.fabricmc.fabric-api", module: "fabric-api"
 	}
+
+	modImplementation 'software.bernie.geckolib:geckolib-fabric-1.16.5:3.0.20:dev'
 
 	modRuntime("me.shedaniel:RoughlyEnoughItems:${project.rei_version}") {
 		exclude group: "net.fabricmc.fabric-api", module: "fabric-api"

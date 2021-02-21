@@ -6,6 +6,8 @@
   "mixins": [
     "BlockBreakSpeedMixin",
     "BlockEntityMixin",
+    "ExplosionAccessor",
+    "ServerWorldMixin",
     "StatusEffectInstanceMixin"
   ],
   "client": [

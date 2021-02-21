@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.UUID;
 
 @Mixin(BlockEntity.class)
-public class BlockEntityMixin {
+public abstract class BlockEntityMixin {
 
     private String territorial_lockId;
     private UUID territorial_ownerUuid;

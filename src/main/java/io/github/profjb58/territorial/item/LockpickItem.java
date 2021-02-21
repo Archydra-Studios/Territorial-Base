@@ -2,7 +2,6 @@ package io.github.profjb58.territorial.item;
 
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.blockEntity.LockableBlockEntity;
-import io.github.profjb58.territorial.item.PadlockItem.LockType;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;

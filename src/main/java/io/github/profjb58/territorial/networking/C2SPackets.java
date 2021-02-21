@@ -6,9 +6,7 @@ import io.github.profjb58.territorial.blockEntity.LockableBlockEntity;
 import io.github.profjb58.territorial.event.TerritorialRegistry;
 import io.github.profjb58.territorial.util.LockUtils;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
@@ -26,18 +24,18 @@ public class C2SPackets {
             server.execute(() -> {
                 if(player.isCreative()) return;
 
-                BlockEntity be = player.getServerWorld().getBlockEntity(target);
-                if(be != null) {
-                    LockableBlockEntity lbe = new LockableBlockEntity(player.getServerWorld(), target);
-                    if(lbe.exists()) {
-                        if(!lbe.getLockOwner().equals(player.getUuid())) {
-                            StatusEffectInstance lockFatigueInstance = new StatusEffectInstance(TerritorialRegistry.LOCK_FATIGUE, Integer.MAX_VALUE, 1, false, false, false);
+                LockableBlockEntity lbe = new LockableBlockEntity(player.getServerWorld(), target);
+                if(lbe.exists()) {
+                    if(!lbe.getLockOwner().equals(player.getUuid())) {
+                        StatusEffectInstance lockFatigueInstance = new StatusEffectInstance(
+                                TerritorialRegistry.LOCK_FATIGUE, Integer.MAX_VALUE,
+                                LockUtils.getLockFatigueAmplifier(lbe.getLockType()),
+                                 false, false, false);
 
-                            // Notify the lock fatigue effect with the last position the effect was applied from
-                            ((StatusEffectInstanceAccess) lockFatigueInstance).setLastPosApplied(target);
-                            player.addStatusEffect(lockFatigueInstance);
-                            return;
-                        }
+                        // Notify the lock fatigue effect with the last position the effect was applied from
+                        ((StatusEffectInstanceAccess) lockFatigueInstance).setLastPosApplied(target);
+                        player.addStatusEffect(lockFatigueInstance);
+                        return;
                     }
                 }
                 // Remove the effect if no block entity is found

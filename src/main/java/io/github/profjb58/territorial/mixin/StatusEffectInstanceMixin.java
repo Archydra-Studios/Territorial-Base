@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(StatusEffectInstance.class)
-public class StatusEffectInstanceMixin implements StatusEffectInstanceAccess {
+public abstract class StatusEffectInstanceMixin implements StatusEffectInstanceAccess {
 
     private static BlockPos territorial_lastPosApplied;
 

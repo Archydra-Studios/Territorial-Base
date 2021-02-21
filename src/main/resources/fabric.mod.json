@@ -22,6 +22,9 @@
     "main": [
       "io.github.profjb58.territorial.Territorial"
     ],
+    "client": [
+      "io.github.profjb58.territorial.TerritorialClient"
+    ],
     "modmenu": [
       "io.github.profjb58.territorial.config.TBMMIntegration"
     ]
