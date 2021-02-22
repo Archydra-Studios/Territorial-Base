@@ -37,7 +37,7 @@ public class LockableBlockEntity {
 
             if(lockType != null) {
                 this.blastResistance = LockUtils.getBlastResistance(lockType);
-                this.fatigueMultiplier = LockUtils.getLockFatigueMultiplier(LockUtils.getLockFatigueAmplifier(lockType));
+                this.fatigueMultiplier = LockUtils.Calculations.getLockFatigueMultiplier(LockUtils.getLockFatigueAmplifier(lockType));
             }
         }
     }
@@ -119,4 +119,6 @@ public class LockableBlockEntity {
     public float getBlastResistance() { return blastResistance; }
 
     public float getFatigueMultiplier() { return fatigueMultiplier; }
+
+    public BlockEntity getBlockEntity() { return world.getBlockEntity(blockPos); }
 }

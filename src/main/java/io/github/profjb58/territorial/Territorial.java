@@ -21,7 +21,6 @@ public class Territorial implements ModInitializer {
 	public static final String MOD_ID = "territorial";
 	public static final String BASE_GROUP_ID = "territorial_base";
 	public static final Logger logger = LogManager.getLogger();
-	public static ActionLogger actionLogger;
 	
 	public static final ItemGroup BASE_GROUP = FabricItemGroupBuilder.build(
 			new Identifier(MOD_ID, BASE_GROUP_ID),
@@ -31,19 +30,13 @@ public class Territorial implements ModInitializer {
 	public void onInitialize() {
 		AutoConfig.register(TBConfig.class, GsonConfigSerializer::new);
 
-		if(SideUtils.isDedicatedServer()) {
-			actionLogger = new ActionLogger();
-			actionLogger.write(ActionLogger.LogType.INFO, "Server started... ");
-		};
-
 		// Event handlers
 		TerritorialRegistry.registerAll();
 		InteractionHandlers.init();
-		WorldHandlers.init();
+		ServerWorldHandlers.init();
 
 		// Packet handlers
 		C2SPackets.init();
-		S2CPackets.init();
 	}
 
 	public static TBConfig getConfig() {

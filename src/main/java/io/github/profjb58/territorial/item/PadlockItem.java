@@ -1,6 +1,7 @@
 package io.github.profjb58.territorial.item;
 
 import io.github.profjb58.territorial.Territorial;
+import io.github.profjb58.territorial.TerritorialServer;
 import io.github.profjb58.territorial.networking.S2CPackets;
 import io.github.profjb58.territorial.util.ActionLogger;
 import io.github.profjb58.territorial.util.LockUtils;
@@ -61,16 +62,12 @@ public class PadlockItem extends Item {
                             }
                             player.sendMessage(new TranslatableText("message.territorial.lock_successful"), true);
                             if(SideUtils.isDedicatedServer()) {
-                                Territorial.actionLogger.write(ActionLogger.LogType.INFO,
+                                TerritorialServer.actionLogger.write(ActionLogger.LogType.INFO,
                                         ActionLogger.LogModule.LOCKS,
                                         player.getName().getString() + " claimed block entity at: " + be.getPos());
                             }
                             LocksPersistentState lps = LocksPersistentState.get((ServerWorld) ctx.getWorld());
                             lps.addLock(player.getUuid(), ctx.getBlockPos());
-
-                            PacketByteBuf buf = PacketByteBufs.create();
-                            buf.writeBlockPos(be.getPos());
-                            ServerPlayNetworking.send((ServerPlayerEntity) player, S2CPackets.CLIENT_ATTACH_LOCK, buf);
                         }
                         else {
                             player.sendMessage(new TranslatableText("message.territorial.lock_failed"), true);

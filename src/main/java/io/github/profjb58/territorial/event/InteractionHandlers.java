@@ -1,6 +1,7 @@
 package io.github.profjb58.territorial.event;
 
 import io.github.profjb58.territorial.blockEntity.LockableBlockEntity;
+import io.github.profjb58.territorial.event.template.ServerWorldEvents;
 import io.github.profjb58.territorial.networking.C2SPackets;
 import io.github.profjb58.territorial.util.LockUtils;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -15,6 +16,8 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 
 public class InteractionHandlers {
+
+    static int ticksSinceBlockAttack = 0;
 
     public static void init() {
 
@@ -38,6 +41,9 @@ public class InteractionHandlers {
                 PacketByteBuf buf = PacketByteBufs.create();
                 buf.writeBlockPos(blockPos);
                 ClientPlayNetworking.send(C2SPackets.CLIENT_ATTACK_BLOCK, buf);
+            }
+            else {
+                ticksSinceBlockAttack = 0; // Update ticks since last attack on the server or integrated server
             }
             return ActionResult.PASS;
         });

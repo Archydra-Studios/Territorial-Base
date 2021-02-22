@@ -8,10 +8,12 @@ import me.sargunvohra.mcmods.autoconfig1u.annotation.ConfigEntry;
 @Config(name = Territorial.MOD_ID)
 public class TBConfig implements ConfigData {
 
+    public boolean showLockName;
+
     private final String __comment = "Determines how hard it is to break locked blocks, increasing this value makes" +
             " locked blocks easier to break. Should always keep between 1 and 0.001 for the best results";
 
     @ConfigEntry.Gui.Excluded
     @ConfigEntry.Gui.RequiresRestart
-    public double breakMultiplier = 0.015;
+    public double breakMultiplier = 0.02;
 }
