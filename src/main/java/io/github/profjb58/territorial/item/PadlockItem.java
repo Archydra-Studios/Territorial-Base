@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-
 public class PadlockItem extends Item {
 
     private final LockType type;

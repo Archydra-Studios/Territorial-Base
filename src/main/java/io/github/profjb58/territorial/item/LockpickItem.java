@@ -2,13 +2,18 @@ package io.github.profjb58.territorial.item;
 
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.blockEntity.LockableBlockEntity;
+import io.github.profjb58.territorial.util.LockUtils;
+import io.github.profjb58.territorial.world.LocksPersistentState;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.math.BlockPos;
 
 public class LockpickItem extends Item {
 
@@ -30,13 +35,24 @@ public class LockpickItem extends Item {
     public ActionResult useOnBlock(ItemUsageContext ctx) {
         PlayerEntity player = ctx.getPlayer();
         if(player != null) {
-            if(player.isSneaking() && !ctx.getWorld().isClient()) {
-                LockableBlockEntity lbe = new LockableBlockEntity((ServerWorld) ctx.getWorld(), ctx.getBlockPos());
+            if(player.isSneaking() && !ctx.getWorld().isClient) {
+                LockableBlockEntity lbe = new LockableBlockEntity(ctx.getWorld(), ctx.getBlockPos());
                 if(lbe.exists()) { // Lockable block found
                     if(player.getUuid().equals(lbe.getLockOwner()) || type == LockPickType.CREATIVE) {
                         if(lbe.remove()) {
-                            ctx.getPlayer().sendMessage(new TranslatableText("message.territorial.lock_removed"), true);
+                            player.sendMessage(new TranslatableText("message.territorial.lock_removed"), true);
+                            BlockPos pos = ctx.getBlockPos();
+                            ItemStack padlockStack = LockUtils.getItemStackFromLock(lbe.getLockType(), lbe.getLockId(), 1);
+                            ItemEntity padlockEntity = new ItemEntity(ctx.getWorld(), pos.getX(), pos.getY(), pos.getZ(), padlockStack);
+                            ctx.getWorld().spawnEntity(padlockEntity);
+
+                            LocksPersistentState lps = LocksPersistentState.get((ServerWorld) ctx.getWorld());
+                            lps.removeLock(player.getUuid(), pos);
                             return ActionResult.SUCCESS;
+                        }
+                        else {
+                            // Really shouldn't happen, but just encase
+                            Territorial.logger.error("Lockpick failed to remove NBT lock data :(. Please report this as an issue");
                         }
                     }
                     else {

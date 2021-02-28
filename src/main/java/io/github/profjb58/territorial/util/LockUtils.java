@@ -7,8 +7,10 @@ import io.github.profjb58.territorial.event.TerritorialRegistry;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.Random;
@@ -57,6 +59,31 @@ public class LockUtils {
             default:
                 return null;
         }
+    }
+
+    public static ItemStack getItemStackFromLock(LockType lockType, String enchantName, int amount) {
+        ItemStack padlock;
+        switch(lockType) {
+            case CREATIVE:
+                padlock = new ItemStack(TerritorialRegistry.PADLOCK_CREATIVE, amount);
+                break;
+            case IRON:
+                padlock = new ItemStack(TerritorialRegistry.PADLOCK, amount);
+                break;
+            case GOLD:
+                padlock = new ItemStack(TerritorialRegistry.PADLOCK_GOLD, amount);
+                break;
+            case DIAMOND:
+                padlock = new ItemStack(TerritorialRegistry.PADLOCK_DIAMOND, amount);
+                break;
+            case NETHERITE:
+                padlock = new ItemStack(TerritorialRegistry.PADLOCK_NETHERITE, amount);
+                break;
+            default:
+                padlock = null;
+        }
+        padlock.setCustomName(new LiteralText(enchantName));
+        return padlock;
     }
 
     public static float getBlastResistance(LockType lockType) {

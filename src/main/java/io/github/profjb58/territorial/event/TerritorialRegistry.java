@@ -25,6 +25,7 @@ public class TerritorialRegistry {
     // Items
     public static final Item KEY = new Item(new FabricItemSettings().group(Territorial.BASE_GROUP).maxCount(16));
     public static final Item PADLOCK = new PadlockItem(LockType.IRON);
+    public static final Item PADLOCK_GOLD = new PadlockItem(LockType.GOLD);
     public static final Item PADLOCK_DIAMOND = new PadlockItem(LockType.DIAMOND);
     public static final Item PADLOCK_NETHERITE = new PadlockItem(LockType.NETHERITE);
     public static final Item PADLOCK_CREATIVE = new PadlockItem(LockType.CREATIVE);
@@ -52,6 +53,7 @@ public class TerritorialRegistry {
         // Locks
         Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "key"), KEY);
         Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "padlock"), PADLOCK);
+        Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "padlock_gold"), PADLOCK_GOLD);
         Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "padlock_diamond"), PADLOCK_DIAMOND);
         Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "padlock_netherite"), PADLOCK_NETHERITE);
         Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "padlock_creative"), PADLOCK_CREATIVE);
