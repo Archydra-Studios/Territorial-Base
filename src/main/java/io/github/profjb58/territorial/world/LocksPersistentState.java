@@ -1,5 +1,6 @@
-package io.github.profjb58.territorial.world.data;
+package io.github.profjb58.territorial.world;
 
+import io.github.profjb58.territorial.blockEntity.LockableBlockEntity;
 import io.github.profjb58.territorial.util.TagUtils;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.block.entity.BlockEntity;
@@ -13,48 +14,53 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.PersistentState;
+import net.minecraft.world.chunk.Chunk;
 
 import java.util.*;
 
 public class LocksPersistentState extends PersistentState {
 
-    // List of all the locks within a world by UUID
-    HashMap<UUID, LinkedList<BlockPos>> worldLocks = new HashMap<>();
+    HashMap<UUID, LinkedList<BlockPos>> locksUUIDMap = new HashMap<>();
+    HashMap<Chunk, LinkedList<BlockPos>> locksChunkMap = new HashMap<>();
 
     public LocksPersistentState() {
         super("territorial_world_locks");
+    }
+
+    public void addLock(Chunk chunk, BlockPos lockPos) {
+
     }
 
     public void addLock(UUID uuid, BlockPos lockPos) {
         removeLock(uuid, lockPos); // Remove existing lock if one is already there
 
         LinkedList<BlockPos> playerLocks;
-        if(worldLocks.get(uuid) == null) {
+        if(locksUUIDMap.get(uuid) == null) {
             playerLocks = new LinkedList<>();
         }
         else {
-            playerLocks = worldLocks.get(uuid);
+            playerLocks = locksUUIDMap.get(uuid);
         }
         playerLocks.add(lockPos);
 
-        worldLocks.put(uuid, playerLocks);
+        locksUUIDMap.put(uuid, playerLocks);
         this.markDirty();
     }
 
     public void removeLock(UUID uuid, BlockPos lockPos) {
-        if(worldLocks.get(uuid) != null) {
-            worldLocks.get(uuid).remove(lockPos);
+        if(locksUUIDMap.get(uuid) != null) {
+            locksUUIDMap.get(uuid).remove(lockPos);
         }
     }
 
     public void removeAllLocks(UUID uuid) {
-        worldLocks.remove(uuid);
+        locksUUIDMap.remove(uuid);
     }
 
     public boolean listLocks(UUID uuidToSearch, PlayerEntity playerExecutedCmd) {
-        if(worldLocks.containsKey(uuidToSearch))
+        if(locksUUIDMap.containsKey(uuidToSearch))
         {
-            LinkedList<BlockPos> playerLocks = worldLocks.get(uuidToSearch);
+            LinkedList<BlockPos> playerLocks = locksUUIDMap.get(uuidToSearch);
             playerExecutedCmd.sendMessage(new TranslatableText("message.territorial.list_locks_header", playerExecutedCmd.getDisplayName().getString()), false);
             int entityCount = 0; // Check if any valid entities are actually found from the list
 
@@ -94,7 +100,7 @@ public class LocksPersistentState extends PersistentState {
                 CompoundTag lockedTilePos = (CompoundTag) lockedTilesPosTag;
                 lockedTilesPos.add(TagUtils.deserializeBlockPos(lockedTilePos.getIntArray("lock_pos")));
             }
-            worldLocks.put(playerUuid, lockedTilesPos);
+            locksUUIDMap.put(playerUuid, lockedTilesPos);
         }
     }
 
@@ -102,12 +108,12 @@ public class LocksPersistentState extends PersistentState {
     public CompoundTag toTag(CompoundTag compoundTag) {
         ListTag worldLocksTags = new ListTag();
 
-        for (UUID playerUuid : worldLocks.keySet()) { // Cycle through players in the current world
+        for (UUID playerUuid : locksUUIDMap.keySet()) { // Cycle through players in the current world
             CompoundTag playerLocksTag = new CompoundTag();
             playerLocksTag.putUuid("uuid", playerUuid);
 
             ListTag lockedTilesPosTags = new ListTag(); // Location of players locked tile-entities
-            LinkedList<BlockPos> lockedTilesPos = worldLocks.get(playerUuid);
+            LinkedList<BlockPos> lockedTilesPos = locksUUIDMap.get(playerUuid);
 
             for(BlockPos lockedTile : lockedTilesPos) {
                 CompoundTag lockedTileTag = new CompoundTag();

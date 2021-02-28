@@ -1,6 +1,7 @@
 package io.github.profjb58.territorial.mixin;
 
 import io.github.profjb58.territorial.event.template.ServerWorldEvents;
+import net.fabricmc.fabric.api.server.PlayerStream;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.world.ServerWorld;

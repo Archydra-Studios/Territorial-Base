@@ -3,7 +3,6 @@ package io.github.profjb58.territorial.networking;
 import io.github.profjb58.territorial.Territorial;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)

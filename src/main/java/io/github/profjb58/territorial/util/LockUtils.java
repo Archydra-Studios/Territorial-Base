@@ -1,12 +1,17 @@
 package io.github.profjb58.territorial.util;
 
 import io.github.profjb58.territorial.Territorial;
+import io.github.profjb58.territorial.access.StatusEffectInstanceAccess;
+import io.github.profjb58.territorial.blockEntity.LockableBlockEntity;
 import io.github.profjb58.territorial.event.TerritorialRegistry;
-import net.minecraft.inventory.Inventory;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.BlockPos;
 
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class LockUtils {
 
@@ -86,13 +91,34 @@ public class LockUtils {
         }
     }
 
-    public static void removeLockFatigueEffect(ServerPlayerEntity player) {
+    public static void removeEffect(PlayerEntity player) {
         if(player.hasStatusEffect(TerritorialRegistry.LOCK_FATIGUE)) {
             player.removeStatusEffect(TerritorialRegistry.LOCK_FATIGUE);
         }
     }
 
+    public static boolean addEffect(PlayerEntity player, BlockPos target) {
+        if(player.isCreative()) return false;
+
+        LockableBlockEntity lbe = new LockableBlockEntity(player.getEntityWorld(), target);
+        if(lbe.exists()) {
+            if(!lbe.getLockOwner().equals(player.getUuid())) {
+                StatusEffectInstance lockFatigueInstance = new StatusEffectInstance(
+                        TerritorialRegistry.LOCK_FATIGUE, Integer.MAX_VALUE,
+                        LockUtils.getLockFatigueAmplifier(lbe.getLockType()),
+                        false, false, false);
+
+                // Notify the lock fatigue effect with the last position the effect was applied from
+                ((StatusEffectInstanceAccess) lockFatigueInstance).setLastPosApplied(target);
+                player.addStatusEffect(lockFatigueInstance);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static class Calculations {
+
         public static float getLockFatigueMultiplier(float amplifier) {
         /*  Exponential decay function
             Image: https://imgur.com/a/a53Ta1O

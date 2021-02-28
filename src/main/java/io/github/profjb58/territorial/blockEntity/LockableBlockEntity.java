@@ -2,7 +2,7 @@ package io.github.profjb58.territorial.blockEntity;
 
 import io.github.profjb58.territorial.util.LockUtils;
 import io.github.profjb58.territorial.util.LockUtils.*;
-import io.github.profjb58.territorial.world.data.LocksPersistentState;
+import io.github.profjb58.territorial.world.LocksPersistentState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.world.ServerWorld;
@@ -23,10 +23,10 @@ public class LockableBlockEntity {
     private UUID lockOwner;
     private LockType lockType;
     private BlockPos blockPos;
-    private ServerWorld world;
+    private World world;
     private float blastResistance, fatigueMultiplier;
 
-    public LockableBlockEntity(ServerWorld world, BlockPos blockPos) {
+    public LockableBlockEntity(World world, BlockPos blockPos) {
         CompoundTag tag = getNbt(world, blockPos);
         if (tag != null) {
             this.lockId = tag.getString("lock_id");
@@ -43,11 +43,11 @@ public class LockableBlockEntity {
     }
 
     public boolean exists() {
-        return lockId != null && lockOwner != null && lockType != null && blockPos != null && world != null;
+        return lockOwner != null && lockType != null && blockPos != null && world != null;
     }
 
     public boolean remove() {
-        if(exists()) {
+        if(exists() && !world.isClient) {
             CompoundTag tag = getNbt(world, blockPos);
             if(tag != null) {
                 tag.remove("lock_id");
@@ -55,7 +55,7 @@ public class LockableBlockEntity {
                 tag.remove("lock_type");
                 updateNbtFromTag(tag);
 
-                LocksPersistentState lps = LocksPersistentState.get(world);
+                LocksPersistentState lps = LocksPersistentState.get((ServerWorld) world);
                 lps.removeLock(lockOwner, blockPos);
                 return true;
             }
@@ -64,7 +64,7 @@ public class LockableBlockEntity {
     }
 
     public boolean update() {
-        if(exists()) {
+        if(exists() && !world.isClient) {
             CompoundTag tag = getNbt(world, blockPos);
             if(tag != null) {
                 tag.putString("lock_id", lockId);
@@ -72,7 +72,7 @@ public class LockableBlockEntity {
                 tag.putInt("lock_type", LockUtils.getLockTypeInt(lockType));
                 updateNbtFromTag(tag);
 
-                LocksPersistentState lps = LocksPersistentState.get(world);
+                LocksPersistentState lps = LocksPersistentState.get((ServerWorld) world);
                 lps.addLock(lockOwner, blockPos);
                 return true;
             }
@@ -95,7 +95,7 @@ public class LockableBlockEntity {
         BlockEntity be = world.getBlockEntity(blockPos);
         if(be != null) {
             CompoundTag tag = be.toTag(new CompoundTag());
-            if(tag.contains("lock_id") && tag.contains("lock_type") && tag.contains("lock_owner_uuid")) { // Is lockable
+            if(tag.contains("lock_type") && tag.contains("lock_owner_uuid")) { // Is lockable
                 return tag;
             }
         }

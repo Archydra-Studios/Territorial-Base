@@ -1,6 +1,8 @@
 package io.github.profjb58.territorial.event;
 
 import io.github.profjb58.territorial.Territorial;
+import io.github.profjb58.territorial.block.SafeBlock;
+import io.github.profjb58.territorial.blockEntity.SafeBlockEntity;
 import io.github.profjb58.territorial.command.LocksCommand;
 import io.github.profjb58.territorial.item.LockpickItem;
 import io.github.profjb58.territorial.item.LockpickItem.LockPickType;
@@ -9,6 +11,10 @@ import io.github.profjb58.territorial.effect.LockFatigueEffect;
 import io.github.profjb58.territorial.util.LockUtils.*;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.minecraft.block.Block;
+import net.minecraft.block.Material;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
@@ -16,7 +22,7 @@ import net.minecraft.util.registry.Registry;
 
 public class TerritorialRegistry {
 
-    // Locks
+    // Items
     public static final Item KEY = new Item(new FabricItemSettings().group(Territorial.BASE_GROUP).maxCount(16));
     public static final Item PADLOCK = new PadlockItem(LockType.IRON);
     public static final Item PADLOCK_DIAMOND = new PadlockItem(LockType.DIAMOND);
@@ -26,10 +32,18 @@ public class TerritorialRegistry {
     public static final Item LOCKPICK_CREATIVE = new LockpickItem(LockPickType.CREATIVE);
     public static final Item ENDER_AMULET = new Item(new FabricItemSettings().group(Territorial.BASE_GROUP));
 
+    // Blocks
+    public static final Block SAFE_BLOCK = new Block(FabricBlockSettings.of(Material.METAL).strength(4.0f));
+
+    // Block Entities
+    public static final BlockEntityType<SafeBlockEntity> SAFE_BLOCK_ENTITY = BlockEntityType.Builder.create(SafeBlockEntity::new, SAFE_BLOCK).build(null);
+
     public static final StatusEffect LOCK_FATIGUE = new LockFatigueEffect();
 
     public static void registerAll() {
         registerItems();
+        registerBlocks();
+        registerBlockEntities();
         registerCommands();
         registerStatusEffects();
     }
@@ -44,6 +58,14 @@ public class TerritorialRegistry {
         Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "lockpick"), LOCKPICK);
         Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "lockpick_creative"), LOCKPICK_CREATIVE);
         Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "ender_amulet"), ENDER_AMULET);
+    }
+
+    private static void registerBlocks() {
+        Registry.register(Registry.BLOCK, new Identifier(Territorial.MOD_ID, "safe"), SAFE_BLOCK);
+    }
+
+    private static void registerBlockEntities() {
+        Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(Territorial.MOD_ID), SAFE_BLOCK_ENTITY);
     }
 
     private static void registerCommands() {

@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ClientPlayerInteractionManager.class)
-public abstract class BlockBreakProgressMixin {
+public abstract class ClientPlayerInteractionMixin {
 
     @Shadow
     private boolean breakingBlock;
@@ -27,7 +27,7 @@ public abstract class BlockBreakProgressMixin {
         if(!breakingBlock) {
             PacketByteBuf buf = PacketByteBufs.create();
             buf.writeBlockPos(blockPos);
-            ClientPlayNetworking.send(C2SPackets.CLIENT_ATTACK_BLOCK, buf);
+            ClientPlayNetworking.send(C2SPackets.BREAKING_BLOCK, buf);
         }
     }
 }

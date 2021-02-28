@@ -6,13 +6,12 @@
   "mixins": [
     "BlockBreakSpeedMixin",
     "BlockEntityMixin",
-    "BlockMixin",
     "ExplosionAccessor",
     "StatusEffectInstanceMixin",
     "ServerWorldMixin"
   ],
   "client": [
-    "BlockBreakProgressMixin"
+    "ClientPlayerInteractionMixin"
   ],
   "server": [
   ],

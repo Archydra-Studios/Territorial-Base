@@ -2,14 +2,11 @@ package io.github.profjb58.territorial.item;
 
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.TerritorialServer;
-import io.github.profjb58.territorial.networking.S2CPackets;
 import io.github.profjb58.territorial.util.ActionLogger;
 import io.github.profjb58.territorial.util.LockUtils;
 import io.github.profjb58.territorial.util.LockUtils.LockType;
 import io.github.profjb58.territorial.util.SideUtils;
-import io.github.profjb58.territorial.world.data.LocksPersistentState;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import io.github.profjb58.territorial.world.LocksPersistentState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
@@ -17,8 +14,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -43,16 +38,13 @@ public class PadlockItem extends Item {
         PlayerEntity player = ctx.getPlayer();
         if(player != null) {
             if(player.isSneaking() && !ctx.getWorld().isClient()) {
-
                 ItemStack lock = player.getStackInHand(player.getActiveHand());
                 String lockName = lock.getName().getString();
                 if(!lockName.equals("") && lock.hasCustomName()) {
-
                     BlockEntity be = ctx.getWorld().getBlockEntity(ctx.getBlockPos());
                     if(be != null) {
                         CompoundTag tag = be.toTag(new CompoundTag());
                         if(!tag.contains("lock_id")) { // No lock has been assigned to the block entity
-
                             tag.putString("lock_id", lockName);
                             tag.putUuid("lock_owner_uuid", player.getUuid());
                             tag.putInt("lock_type", LockUtils.getLockTypeInt(type));
@@ -72,11 +64,9 @@ public class PadlockItem extends Item {
                         else {
                             player.sendMessage(new TranslatableText("message.territorial.lock_failed"), true);
                         }
-
                         try {
                             be.fromTag(be.getCachedState(), tag);
                         } catch (Exception ignored) {}
-
                         return ActionResult.SUCCESS;
                     }
                 }
