@@ -62,17 +62,5 @@ public abstract class BlockEntityMixin implements BlockEntityClientSerializable{
         }
         return tag;
     }
-
-    @Environment(EnvType.CLIENT)
-
-    public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
-        if ((Boolean)state.get(LIT)) {
-            Direction direction = ((Direction)state.get(FACING)).getOpposite();
-            double d = 0.27D;
-            double e = (double)pos.getX() + 0.5D + (random.nextDouble() - 0.5D) * 0.2D + 0.27D * (double)direction.getOffsetX();
-            double f = (double)pos.getY() + 0.7D + (random.nextDouble() - 0.5D) * 0.2D + 0.22D;
-            double g = (double)pos.getZ() + 0.5D + (random.nextDouble() - 0.5D) * 0.2D + 0.27D * (double)direction.getOffsetZ();
-            world.addParticle(this.particle, e, f, g, 0.0D, 0.0D, 0.0D);
-        }
-    }
+    
 }
