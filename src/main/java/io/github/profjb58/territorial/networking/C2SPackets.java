@@ -16,7 +16,7 @@ public class C2SPackets {
     {
         ServerPlayNetworking.registerGlobalReceiver(BREAKING_BLOCK, (server, player, handler, buf, responseSender) -> {
             // Target block
-            BlockPos target = buf.readBlockPos();
+            final BlockPos target = buf.readBlockPos();
 
             server.execute(() -> {
                 if(!LockUtils.addEffect(player, target)) {

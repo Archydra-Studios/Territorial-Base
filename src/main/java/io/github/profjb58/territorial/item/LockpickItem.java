@@ -1,9 +1,10 @@
 package io.github.profjb58.territorial.item;
 
 import io.github.profjb58.territorial.Territorial;
+import io.github.profjb58.territorial.block.LockableBlock;
 import io.github.profjb58.territorial.blockEntity.LockableBlockEntity;
 import io.github.profjb58.territorial.util.LockUtils;
-import io.github.profjb58.territorial.world.LocksPersistentState;
+import io.github.profjb58.territorial.world.WorldLockStorage;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -38,16 +39,17 @@ public class LockpickItem extends Item {
             if(player.isSneaking() && !ctx.getWorld().isClient) {
                 LockableBlockEntity lbe = new LockableBlockEntity(ctx.getWorld(), ctx.getBlockPos());
                 if(lbe.exists()) { // Lockable block found
-                    if(player.getUuid().equals(lbe.getLockOwner()) || type == LockPickType.CREATIVE) {
+                    LockableBlock lb = lbe.getBlock();
+                    if(player.getUuid().equals(lb.getLockOwner()) || type == LockPickType.CREATIVE) {
                         if(lbe.remove()) {
                             player.sendMessage(new TranslatableText("message.territorial.lock_removed"), true);
                             BlockPos pos = ctx.getBlockPos();
-                            ItemStack padlockStack = LockUtils.getItemStackFromLock(lbe.getLockType(), lbe.getLockId(), 1);
+                            ItemStack padlockStack = LockUtils.getItemStackFromLock(lb.getLockType(), lb.getLockId(), 1);
                             ItemEntity padlockEntity = new ItemEntity(ctx.getWorld(), pos.getX(), pos.getY(), pos.getZ(), padlockStack);
                             ctx.getWorld().spawnEntity(padlockEntity);
 
-                            LocksPersistentState lps = LocksPersistentState.get((ServerWorld) ctx.getWorld());
-                            lps.removeLock(player.getUuid(), pos);
+                            WorldLockStorage lps = WorldLockStorage.get((ServerWorld) ctx.getWorld());
+                            lps.removeLock(lb);
                             return ActionResult.SUCCESS;
                         }
                         else {

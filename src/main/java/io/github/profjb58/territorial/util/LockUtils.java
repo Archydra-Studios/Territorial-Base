@@ -2,16 +2,18 @@ package io.github.profjb58.territorial.util;
 
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.access.StatusEffectInstanceAccess;
+import io.github.profjb58.territorial.block.LockableBlock;
 import io.github.profjb58.territorial.blockEntity.LockableBlockEntity;
 import io.github.profjb58.territorial.event.TerritorialRegistry;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import java.util.Random;
 
@@ -25,6 +27,12 @@ public class LockUtils {
         GOLD,
         DIAMOND,
         NETHERITE
+    }
+
+    public enum LockSound {
+        DENIED_ENTRY,
+        LOCK_ADDED,
+        LOCK_DESTROYED
     }
 
     public static int getLockTypeInt(LockType lockType) {
@@ -129,10 +137,11 @@ public class LockUtils {
 
         LockableBlockEntity lbe = new LockableBlockEntity(player.getEntityWorld(), target);
         if(lbe.exists()) {
-            if(!lbe.getLockOwner().equals(player.getUuid())) {
+            LockableBlock lb = lbe.getBlock();
+            if(!lb.getLockOwner().equals(player.getUuid())) {
                 StatusEffectInstance lockFatigueInstance = new StatusEffectInstance(
                         TerritorialRegistry.LOCK_FATIGUE, Integer.MAX_VALUE,
-                        LockUtils.getLockFatigueAmplifier(lbe.getLockType()),
+                        LockUtils.getLockFatigueAmplifier(lb.getLockType()),
                         false, false, false);
 
                 // Notify the lock fatigue effect with the last position the effect was applied from
@@ -142,6 +151,30 @@ public class LockUtils {
             }
         }
         return false;
+    }
+
+    public static void playSound(LockSound sound, BlockPos pos, World world)
+    {
+        SoundEvent soundEvent;
+        float volume = 0.5f;
+        float pitch = 0.5f;
+
+        if(!world.isClient) {
+            if(sound == LockSound.DENIED_ENTRY) {
+                volume = 0.4f;
+                soundEvent = SoundEvents.BLOCK_IRON_TRAPDOOR_CLOSE;
+            }
+            else if(sound == LockSound.LOCK_ADDED){
+                pitch = 0.65f;
+                soundEvent = SoundEvents.BLOCK_WOODEN_TRAPDOOR_CLOSE;
+            }
+            else {
+                soundEvent = SoundEvents.BLOCK_CHAIN_BREAK;
+                pitch = 0.05f;
+                volume = 0.05f;
+            }
+            world.playSound(null, pos, soundEvent, SoundCategory.BLOCKS, volume, pitch);
+        }
     }
 
     public static class Calculations {

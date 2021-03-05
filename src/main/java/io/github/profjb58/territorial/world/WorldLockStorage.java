@@ -1,6 +1,6 @@
 package io.github.profjb58.territorial.world;
 
-import io.github.profjb58.territorial.blockEntity.LockableBlockEntity;
+import io.github.profjb58.territorial.block.LockableBlock;
 import io.github.profjb58.territorial.util.TagUtils;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.block.entity.BlockEntity;
@@ -14,42 +14,46 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.PersistentState;
-import net.minecraft.world.chunk.Chunk;
 
 import java.util.*;
 
-public class LocksPersistentState extends PersistentState {
+public class WorldLockStorage extends PersistentState {
 
     HashMap<UUID, LinkedList<BlockPos>> locksUUIDMap = new HashMap<>();
-    HashMap<Chunk, LinkedList<BlockPos>> locksChunkMap = new HashMap<>();
 
-    public LocksPersistentState() {
+    public WorldLockStorage() {
         super("territorial_world_locks");
     }
 
-    public void addLock(Chunk chunk, BlockPos lockPos) {
+    public void addLock(LockableBlock lb) {
+        removeLock(lb); // Remove existing lock if one is already there
 
-    }
-
-    public void addLock(UUID uuid, BlockPos lockPos) {
-        removeLock(uuid, lockPos); // Remove existing lock if one is already there
+        UUID lockOwner = lb.getLockOwner();
+        BlockPos pos = lb.getBlockPos();
 
         LinkedList<BlockPos> playerLocks;
-        if(locksUUIDMap.get(uuid) == null) {
+        if(locksUUIDMap.get(lockOwner) == null) {
             playerLocks = new LinkedList<>();
         }
         else {
-            playerLocks = locksUUIDMap.get(uuid);
+            playerLocks = locksUUIDMap.get(lockOwner);
         }
-        playerLocks.add(lockPos);
+        playerLocks.add(pos);
 
-        locksUUIDMap.put(uuid, playerLocks);
+        locksUUIDMap.put(lockOwner, playerLocks);
         this.markDirty();
     }
 
-    public void removeLock(UUID uuid, BlockPos lockPos) {
-        if(locksUUIDMap.get(uuid) != null) {
-            locksUUIDMap.get(uuid).remove(lockPos);
+    public void removeLock(LockableBlock lb) {
+        UUID lockOwner = lb.getLockOwner();
+        BlockPos pos = lb.getBlockPos();
+
+        if(locksUUIDMap.get(lockOwner) != null) {
+            locksUUIDMap.get(lockOwner).remove(pos);
+        }
+
+        if (locksUUIDMap.get(lb.getLockOwner()) != null) {
+            locksUUIDMap.get(lockOwner).remove(pos);
         }
     }
 
@@ -82,8 +86,8 @@ public class LocksPersistentState extends PersistentState {
         return false;
     }
 
-    public static LocksPersistentState get(ServerWorld world) {
-        return world.getPersistentStateManager().getOrCreate(LocksPersistentState::new, "territorial_world_locks");
+    public static WorldLockStorage get(ServerWorld world) {
+        return world.getPersistentStateManager().getOrCreate(WorldLockStorage::new, "territorial_world_locks");
     }
 
     @Override

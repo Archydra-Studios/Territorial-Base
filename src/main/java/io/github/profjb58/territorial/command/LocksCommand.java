@@ -7,7 +7,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import io.github.profjb58.territorial.util.UuidUtils;
-import io.github.profjb58.territorial.world.LocksPersistentState;
+import io.github.profjb58.territorial.world.WorldLockStorage;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.TranslatableText;
@@ -46,7 +46,7 @@ public final class LocksCommand {
     private static int listLocksByPlayerName(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
         ServerCommandSource scs = ctx.getSource();
         String playerName = StringArgumentType.getString(ctx, "player name");
-        LocksPersistentState lps = LocksPersistentState.get(scs.getWorld());
+        WorldLockStorage lps = WorldLockStorage.get(scs.getWorld());
         UUID uuid = null;
 
         for(String serverPlayerName : scs.getPlayerNames()) {
@@ -76,7 +76,7 @@ public final class LocksCommand {
 
     private static int listLocks(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
         ServerCommandSource scs = ctx.getSource();
-        LocksPersistentState lps = LocksPersistentState.get(scs.getWorld());
+        WorldLockStorage lps = WorldLockStorage.get(scs.getWorld());
         if(lps.listLocks(scs.getPlayer().getUuid(), scs.getPlayer())) {
             return Command.SINGLE_SUCCESS;
         }

@@ -1,5 +1,6 @@
 package io.github.profjb58.territorial.event;
 
+import io.github.profjb58.territorial.block.LockableBlock;
 import io.github.profjb58.territorial.blockEntity.LockableBlockEntity;
 import io.github.profjb58.territorial.util.LockUtils;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
@@ -8,7 +9,6 @@ import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 
@@ -27,8 +27,10 @@ public class InteractionHandlers {
                 if(!player.isCreative() || !player.isHolding(TerritorialRegistry.LOCKPICK_CREATIVE)) {
                     LockableBlockEntity lbe = new LockableBlockEntity(world, hitResult.getBlockPos());
                     if (lbe.exists()) {
-                        if (!lbe.getLockOwner().equals(player.getUuid())) {
+                        LockableBlock lb = lbe.getBlock();
+                        if (!lb.getLockOwner().equals(player.getUuid())) {
                             player.sendMessage(new TranslatableText("message.territorial.locked"), true);
+                            LockUtils.playSound(LockUtils.LockSound.DENIED_ENTRY, lb.getBlockPos(), world);
                             return ActionResult.FAIL;
                         }
                     }
@@ -68,7 +70,7 @@ public class InteractionHandlers {
 
         // Locked block broken by a player that isn't the owner
         PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, entity) -> {
-            LockableBlockEntity lbe = new LockableBlockEntity((ServerWorld) world, pos);
+            LockableBlockEntity lbe = new LockableBlockEntity(world, pos);
             if(lbe.exists()) {
                 BlockEntity be = lbe.getBlockEntity();
                 if(be instanceof Inventory) {
@@ -89,6 +91,7 @@ public class InteractionHandlers {
                         }
                     }
                 }
+                LockUtils.playSound(LockUtils.LockSound.LOCK_DESTROYED, pos, world);
             }
             return true; // Never cancel the block break
         });

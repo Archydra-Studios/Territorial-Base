@@ -21,7 +21,6 @@ public class ServerWorldHandlers {
     private static int lockTicksCounter = 0;
 
     public static void init() {
-
         // Start server world ticks
         ServerTickEvents.START_WORLD_TICK.register(serverWorld -> {
             List<ServerPlayerEntity> players = serverWorld.getPlayers();
@@ -52,7 +51,7 @@ public class ServerWorldHandlers {
                 LockableBlockEntity lbe = new LockableBlockEntity(world, pos);
                 if(lbe.exists()) {
                     float power = ((ExplosionAccessor) explosion).getPower();
-                    return !(power > lbe.getBlastResistance());
+                    return !(power > lbe.getBlock().getBlastResistance());
                 }
                 return false;
             });
