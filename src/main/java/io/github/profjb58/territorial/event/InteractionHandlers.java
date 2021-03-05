@@ -2,6 +2,7 @@ package io.github.profjb58.territorial.event;
 
 import io.github.profjb58.territorial.block.LockableBlock;
 import io.github.profjb58.territorial.blockEntity.LockableBlockEntity;
+import io.github.profjb58.territorial.item.PadlockItem;
 import io.github.profjb58.territorial.util.LockUtils;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
@@ -9,6 +10,8 @@ import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 
@@ -27,9 +30,36 @@ public class InteractionHandlers {
                 if(!player.isCreative() || !player.isHolding(TerritorialRegistry.LOCKPICK_CREATIVE)) {
                     LockableBlockEntity lbe = new LockableBlockEntity(world, hitResult.getBlockPos());
                     if (lbe.exists()) {
+                        ItemStack itemStack = player.getStackInHand(player.getActiveHand());
+                        String itemStackName = itemStack.getName().getString();
                         LockableBlock lb = lbe.getBlock();
-                        if (!lb.getLockOwner().equals(player.getUuid())) {
-                            player.sendMessage(new TranslatableText("message.territorial.locked"), true);
+
+                        if(player.isSneaking() && (itemStack.getItem() instanceof PadlockItem)) {
+                            return ActionResult.PASS;
+                        }
+
+                        boolean keyFound = false;
+                        if(player.isHolding(TerritorialRegistry.KEY) && itemStackName.equals(lb.getLockId())) {
+                            keyFound = true;
+                        }
+                        else {
+                            // Cycle through the players items to check if they contain a matching key
+                           for(ItemStack invItemStack : player.inventory.main) {
+                               Item invItem = invItemStack.getItem();
+                               String invItemStackName = invItemStack.getName().getString();
+                               if(invItem == TerritorialRegistry.KEY && invItemStackName.equals(lb.getLockId())) {
+                                   keyFound = true;
+                               }
+                           }
+                        }
+
+                        if(!keyFound) {
+                            if (!lb.getLockOwner().equals(player.getUuid())) { // No matching key found
+                                player.sendMessage(new TranslatableText("message.territorial.locked"), true);
+                            }
+                            else { // Owns the lock but no matching key was found
+                                player.sendMessage(new TranslatableText("message.territorial.lock_no_key"), true);
+                            }
                             LockUtils.playSound(LockUtils.LockSound.DENIED_ENTRY, lb.getBlockPos(), world);
                             return ActionResult.FAIL;
                         }

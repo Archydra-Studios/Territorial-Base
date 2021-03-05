@@ -3,6 +3,7 @@ package io.github.profjb58.territorial.item;
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.TerritorialServer;
 import io.github.profjb58.territorial.block.LockableBlock;
+import io.github.profjb58.territorial.event.TerritorialRegistry;
 import io.github.profjb58.territorial.networking.C2SPackets;
 import io.github.profjb58.territorial.networking.S2CPackets;
 import io.github.profjb58.territorial.util.ActionLogger;
@@ -56,9 +57,6 @@ public class PadlockItem extends Item {
                             tag.putUuid("lock_owner_uuid", lb.getLockOwner());
                             tag.putInt("lock_type", LockUtils.getLockTypeInt(lb.getLockType()));
 
-                            if(!player.isCreative()) {
-                                player.getStackInHand(player.getActiveHand()).decrement(1);
-                            }
                             player.sendMessage(new TranslatableText("message.territorial.lock_successful"), true);
                             if(SideUtils.isDedicatedServer()) {
                                 TerritorialServer.actionLogger.write(ActionLogger.LogType.INFO,
@@ -78,7 +76,6 @@ public class PadlockItem extends Item {
                         try {
                             be.fromTag(be.getCachedState(), tag);
                         } catch (Exception ignored) {}
-                        return ActionResult.SUCCESS;
                     }
                 }
                 else {

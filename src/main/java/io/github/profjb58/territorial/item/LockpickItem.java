@@ -63,6 +63,7 @@ public class LockpickItem extends Item {
                     }
                 }
                 ctx.getPlayer().sendMessage(new TranslatableText("message.territorial.no_lock"), true);
+                ctx.getPlayer().sendMessage(new TranslatableText("message.territorial.no_lock"), true);
             }
         }
 
