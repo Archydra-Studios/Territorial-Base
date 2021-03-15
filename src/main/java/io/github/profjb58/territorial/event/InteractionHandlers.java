@@ -2,6 +2,7 @@ package io.github.profjb58.territorial.event;
 
 import io.github.profjb58.territorial.block.LockableBlock;
 import io.github.profjb58.territorial.blockEntity.LockableBlockEntity;
+import io.github.profjb58.territorial.effect.LockFatigueInstance;
 import io.github.profjb58.territorial.item.PadlockItem;
 import io.github.profjb58.territorial.util.LockUtils;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
@@ -10,8 +11,8 @@ import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 
@@ -30,37 +31,24 @@ public class InteractionHandlers {
                 if(!player.isCreative() || !player.isHolding(TerritorialRegistry.LOCKPICK_CREATIVE)) {
                     LockableBlockEntity lbe = new LockableBlockEntity(world, hitResult.getBlockPos());
                     if (lbe.exists()) {
-                        ItemStack itemStack = player.getStackInHand(player.getActiveHand());
-                        String itemStackName = itemStack.getName().getString();
                         LockableBlock lb = lbe.getBlock();
+                        ItemStack heldItemStack = player.getStackInHand(player.getActiveHand());
 
-                        if(player.isSneaking() && (itemStack.getItem() instanceof PadlockItem)) {
+                        if(player.isSneaking() && (heldItemStack.getItem() instanceof PadlockItem)) {
+                            if(!player.isCreative() && ) {
+                                player.getMainHandStack().decrement(1);
+                            }
                             return ActionResult.PASS;
                         }
 
-                        boolean keyFound = false;
-                        if(player.isHolding(TerritorialRegistry.KEY) && itemStackName.equals(lb.getLockId())) {
-                            keyFound = true;
-                        }
-                        else {
-                            // Cycle through the players items to check if they contain a matching key
-                           for(ItemStack invItemStack : player.inventory.main) {
-                               Item invItem = invItemStack.getItem();
-                               String invItemStackName = invItemStack.getName().getString();
-                               if(invItem == TerritorialRegistry.KEY && invItemStackName.equals(lb.getLockId())) {
-                                   keyFound = true;
-                               }
-                           }
-                        }
-
-                        if(!keyFound) {
+                        if(!lb.hasMatchingKey((ServerPlayerEntity) player)) {
                             if (!lb.getLockOwner().equals(player.getUuid())) { // No matching key found
                                 player.sendMessage(new TranslatableText("message.territorial.locked"), true);
                             }
                             else { // Owns the lock but no matching key was found
                                 player.sendMessage(new TranslatableText("message.territorial.lock_no_key"), true);
                             }
-                            LockUtils.playSound(LockUtils.LockSound.DENIED_ENTRY, lb.getBlockPos(), world);
+                            lb.playSound(LockableBlock.LockSound.DENIED_ENTRY, world);
                             return ActionResult.FAIL;
                         }
                     }
@@ -75,15 +63,12 @@ public class InteractionHandlers {
 
             if(world.isClient) {
                 if(lbe.exists()) {
-                    LockUtils.addEffect(player, blockPos);
+                    LockFatigueInstance.addEffect(player, blockPos);
                 }
             }
             else {
                 if(lbe.exists()) { // Failsafe, fired just in-case client server data isn't synced to the client
-                    LockUtils.addEffect(player, blockPos);
-                }
-                else {
-                    LockUtils.removeEffect(player);
+                    LockFatigueInstance.addEffect(player, blockPos);
                 }
                 ticksSinceBlockAttack = 0; // Update ticks since last attack on the dedicated or integrated server
             }
@@ -93,7 +78,7 @@ public class InteractionHandlers {
         // Attack entity handler
         AttackEntityCallback.EVENT.register((player, world, hand, entity, entityHitResult) -> {
             if(!world.isClient()) {
-                LockUtils.removeEffect(player);
+                LockFatigueInstance.removeEffect(player);
             }
             return ActionResult.PASS;
         });
@@ -121,7 +106,7 @@ public class InteractionHandlers {
                         }
                     }
                 }
-                LockUtils.playSound(LockUtils.LockSound.LOCK_DESTROYED, pos, world);
+                lbe.getBlock().playSound(LockableBlock.LockSound.LOCK_DESTROYED, world);
             }
             return true; // Never cancel the block break
         });

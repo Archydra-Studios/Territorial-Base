@@ -1,23 +1,21 @@
 package io.github.profjb58.territorial.event;
 
 import io.github.profjb58.territorial.Territorial;
-import io.github.profjb58.territorial.block.SafeBlock;
+import io.github.profjb58.territorial.block.LockableBlock.LockType;
 import io.github.profjb58.territorial.blockEntity.SafeBlockEntity;
 import io.github.profjb58.territorial.command.LocksCommand;
+import io.github.profjb58.territorial.effect.LockFatigueInstance;
 import io.github.profjb58.territorial.item.LockpickItem;
 import io.github.profjb58.territorial.item.LockpickItem.LockPickType;
 import io.github.profjb58.territorial.item.PadlockItem;
 import io.github.profjb58.territorial.effect.LockFatigueEffect;
-import io.github.profjb58.territorial.util.LockUtils.*;
+import io.github.profjb58.territorial.util.LockUtils;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.MinecraftClientGame;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
@@ -42,7 +40,7 @@ public class TerritorialRegistry {
     // Block Entities
     public static final BlockEntityType<SafeBlockEntity> SAFE_BLOCK_ENTITY = BlockEntityType.Builder.create(SafeBlockEntity::new, SAFE_BLOCK).build(null);
 
-    public static final StatusEffect LOCK_FATIGUE = new LockFatigueEffect();
+    public static final LockFatigueEffect LOCK_FATIGUE = new LockFatigueEffect();
 
     public static void registerAll() {
         registerItems();

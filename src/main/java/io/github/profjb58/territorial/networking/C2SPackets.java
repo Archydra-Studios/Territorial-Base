@@ -1,6 +1,7 @@
 package io.github.profjb58.territorial.networking;
 
 import io.github.profjb58.territorial.Territorial;
+import io.github.profjb58.territorial.effect.LockFatigueInstance;
 import io.github.profjb58.territorial.event.TerritorialRegistry;
 import io.github.profjb58.territorial.util.LockUtils;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -19,7 +20,7 @@ public class C2SPackets {
             final BlockPos target = buf.readBlockPos();
 
             server.execute(() -> {
-                if(!LockUtils.addEffect(player, target)) {
+                if(!LockFatigueInstance.addEffect(player, target)) {
                     player.removeStatusEffect(TerritorialRegistry.LOCK_FATIGUE);
                 }
             });

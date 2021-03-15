@@ -25,7 +25,7 @@ public class LockableBlockEntity {
         if (tag != null) {
             this.lb = new LockableBlock(tag.getString("lock_id"),
                     tag.getUuid("lock_owner_uuid"),
-                    LockUtils.getLockType(tag.getInt("lock_type")),
+                    LockableBlock.getLockType(tag.getInt("lock_type")),
                     blockPos);
             this.world = world;
         }
@@ -63,7 +63,7 @@ public class LockableBlockEntity {
             if(tag != null) {
                 tag.putString("lock_id", lb.getLockId());
                 tag.putUuid("lock_owner_uuid", lb.getLockOwner());
-                tag.putInt("lock_type", LockUtils.getLockTypeInt(lb.getLockType()));
+                tag.putInt("lock_type", lb.getLockTypeInt());
                 updateNbtFromTag(tag);
 
                 WorldLockStorage lps = WorldLockStorage.get((ServerWorld) world);

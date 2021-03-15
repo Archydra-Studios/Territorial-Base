@@ -44,7 +44,7 @@ public class LockpickItem extends Item {
                         if(lbe.remove()) {
                             player.sendMessage(new TranslatableText("message.territorial.lock_removed"), true);
                             BlockPos pos = ctx.getBlockPos();
-                            ItemStack padlockStack = LockUtils.getItemStackFromLock(lb.getLockType(), lb.getLockId(), 1);
+                            ItemStack padlockStack = lb.getLockItemStack(1);
                             ItemEntity padlockEntity = new ItemEntity(ctx.getWorld(), pos.getX(), pos.getY(), pos.getZ(), padlockStack);
                             ctx.getWorld().spawnEntity(padlockEntity);
 
