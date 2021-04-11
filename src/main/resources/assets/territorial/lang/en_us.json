@@ -1,31 +1,65 @@
 {
+  "text.autoconfig.territorial.title": "Territorial Config",
+  "text.autoconfig.territorial.option.locks.showLockName": "Show lock name",
+  "text.autoconfig.territorial.category.locks": "        Locks        ",
+  "text.autoconfig.territorial.category.claims": "        Claims        ",
+  "text.autoconfig.territorial.category.traps": "        Traps        ",
+
   "item.territorial.ender_amulet": "Ender Amulet",
   "item.territorial.key":"Key",
+  "item.territorial.master_key":"Master Key",
   "item.territorial.padlock": "Padlock",
   "item.territorial.padlock_gold": "Gold Padlock",
   "item.territorial.padlock_diamond": "Diamond Padlock",
   "item.territorial.padlock_netherite": "Netherite Padlock",
-  "item.territorial.padlock_creative": "Creative Padlock",
+  "item.territorial.padlock_unbreakable": "Unbreakable Padlock",
   "item.territorial.lockpick": "Lockpick",
-  "item.territorial.lockpick_netherite": "Netherite Lockpick",
-  "item.territorial.lockpick_creative": "Creative Lockpick",
+  "item.territorial.keyring": "Keyring",
   "itemGroup.territorial.territorial_base": "Territorial (base)",
 
   "message.territorial.lock_successful": "§aLock protection added!",
   "message.territorial.lock_removed": "§eLock protection removed!",
   "message.territorial.no_lock": "§cThis block is not locked...",
-  "message.territorial.locked": "§cBlock is currently locked, no matching key found",
+  "message.territorial.locked": "§cBlock is locked, no matching key found",
   "message.territorial.lock_no_key": "§eLocked block belongs to you, but no matching key was found",
-  "message.territorial.lock_failed": "§cBlock is already locked...",
+  "message.territorial.lock_failed": "§cBlock is already locked",
+  "message.territorial.lock_not_lockable" : "§cCannot lock this block",
   "message.territorial.lock_claimed": "§cAlready locked by %s",
   "message.territorial.lock_unnamed": "§eThis lock needs a name",
+  "message.territorial.master_key_vanished": "§a*POOF*§r A Master Key vanished!",
   "message.territorial.key_unnamed": "§eThis key needs a name",
+  "message.territorial.key_copy_success": "§aKey successfully assigned from lock",
+  "message.territorial.key_copy_fail": "§cCannot assign key from this lock, you don't own it",
 
   "message.territorial.list_locks_header": "§a[Territorial]§r Locks assigned to %s:",
   "message.territorial.locks_match_failed": "[Territorial] Failed to find any locks for this player",
-  "message.territorial.locks_match_failed_player": "[Territorial] You haven't locked anything yet...",
+  "message.territorial.locks_match_failed_player": "[Territorial] You haven't locked anything yet",
 
   "title.territorial.config": "Territorial Config",
 
-  "effect.territorial.lock_fatigue": "Lock Fatigue"
+  "effect.territorial.lock_fatigue": "Lock Fatigue",
+
+  "advancements.territorial.padlock": "Always Use Protection",
+  "advancements.territorial.padlock.desc": "Craft a Padlock",
+  "advancements.territorial.lockpick": "Alohomora!",
+  "advancements.territorial.lockpick.desc": "Use a Lockpick",
+  "advancements.territorial.keyring": "Should've Put a Ring on It",
+  "advancements.territorial.keyring.desc": "Craft a Keyring for Storing Keys",
+  "advancements.territorial.key": "Open Sesame!",
+  "advancements.territorial.key.desc": "Craft a Key",
+
+  "tooltip.territorial.shift": "§7Hold §e§oShift §7for usage",
+  "tooltip.territorial.key_shift_0": "§lAccessing locked blocks",
+  "tooltip.territorial.key_shift_1": "§7Keep this key in your inventory",
+  "tooltip.territorial.key_shift_2": "§7and make sure the locks id",
+  "tooltip.territorial.key_shift_3": "§7matches the keys",
+  "tooltip.territorial.key_shift_4": "§lRemoving a lock",
+  "tooltip.territorial.key_shift_5": "§7Shift right click with a key in hand",
+  "tooltip.territorial.key_unnamed": "§7This key needs a name",
+  "tooltip.territorial.master_key": "§dUnlocks all",
+
+  "tooltip.territorial.padlock_shift": "§7Shift right click to lock a block",
+  "tooltip.territorial.padlock_unnamed": "§7This lock needs a name",
+
+  "tooltip.territorial.keyring.master_key": "§dMaster Key"
 }

@@ -16,8 +16,16 @@ repositories {
 		name = "CottonMC"
 		url = "https://server.bbkr.space/artifactory/libs-release"
 	}
-
-	maven { url 'https://repo.repsy.io/mvn/gandiber/geckolib' }
+	maven {
+		name = "TerraformersMC"
+		url = "https://maven.terraformersmc.com/"
+	}
+	maven {
+		name ="Siphalor"
+		url = "https://maven.siphalor.de"
+	}
+	maven { url 'https://maven.blamejared.com' }
+	maven { url "https://maven.shedaniel.me/" }
 }
 
 dependencies {
@@ -27,45 +35,12 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	modImplementation("io.github.cottonmc:LibGui:${project.libgui_version}") {
-		exclude group: "net.fabricmc.fabric-api", module: "fabric-api"
-	}
-	include("io.github.cottonmc:LibGui:${project.libgui_version}") {
-		exclude group: "net.fabricmc.fabric-api", module: "fabric-api"
-	}
-
-	modApi("me.sargunvohra.mcmods:autoconfig1u:${project.auto_config_version}") {
-		exclude group: "net.fabricmc.fabric-api", module: "fabric-api"
-	}
-
-	include("me.sargunvohra.mcmods:autoconfig1u:${project.auto_config_version}") {
-		exclude group: "net.fabricmc.fabric-api", module: "fabric-api"
-	}
-
-	modApi("me.shedaniel.cloth:config-2:${project.cloth_config_version}") {
-		exclude group: "net.fabricmc.fabric-api", module: "fabric-api"
-	}
-	include("me.shedaniel.cloth:config-2:${project.cloth_config_version}") {
-		exclude group: "net.fabricmc.fabric-api", module: "fabric-api"
-	}
-
-	modImplementation("io.github.prospector:modmenu:${project.modmenu_version}") {
-		exclude group: "net.fabricmc.fabric-api", module: "fabric-api"
-	}
-
-	include("io.github.prospector:modmenu:${project.modmenu_version}") {
-		exclude group: "net.fabricmc.fabric-api", module: "fabric-api"
-	}
-
-	modCompileOnly("me.shedaniel:RoughlyEnoughItems-api:${project.rei_version}") {
-		exclude group: "net.fabricmc.fabric-api", module: "fabric-api"
-	}
-
-	modImplementation 'software.bernie.geckolib:geckolib-fabric-1.16.5:3.0.20:dev'
-
-	modRuntime("me.shedaniel:RoughlyEnoughItems:${project.rei_version}") {
-		exclude group: "net.fabricmc.fabric-api", module: "fabric-api"
-	}
+	modImplementation(include("vazkii.patchouli:Patchouli:${project.patchouli_version}"))
+	modImplementation(include("io.github.cottonmc:LibGui:${project.libgui_version}"))
+	modApi(include("me.sargunvohra.mcmods:autoconfig1u:${project.auto_config_version}"))
+	modImplementation("de.siphalor:nbtcrafting-1.16:${project.nbtcrafing_version}")
+	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+	modImplementation "me.shedaniel:RoughlyEnoughItems:${project.rei_version}"
 }
 
 processResources {

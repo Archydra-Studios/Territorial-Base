@@ -1,13 +1,6 @@
 package io.github.profjb58.territorial.util;
 
 import io.github.profjb58.territorial.Territorial;
-import io.github.profjb58.territorial.access.StatusEffectInstanceAccess;
-import io.github.profjb58.territorial.block.LockableBlock;
-import io.github.profjb58.territorial.blockEntity.LockableBlockEntity;
-import io.github.profjb58.territorial.event.TerritorialRegistry;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
 
 import java.util.Random;
 
@@ -22,7 +15,7 @@ public class LockUtils {
             Image: https://imgur.com/a/a53Ta1O
             Demos graph: https://www.desmos.com/calculator/ngqiafekap */
 
-            double breakMultiplier = Territorial.getConfig().breakMultiplier;
+            double breakMultiplier = Territorial.getConfig().getBreakMultiplier();
             double a = breakMultiplier / (Math.exp(1/1.5) - 1);
             double multiplier = a * (Math.exp(1/(amplifier + 0.5)) -1);
             return (float) multiplier;

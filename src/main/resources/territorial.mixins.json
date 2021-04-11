@@ -7,11 +7,12 @@
     "BlockBreakSpeedMixin",
     "BlockEntityMixin",
     "ExplosionAccessor",
-    "StatusEffectInstanceMixin",
-    "ServerWorldMixin"
+    "ServerWorldMixin",
+    "StatusEffectInstanceMixin"
   ],
   "client": [
-    "ClientPlayerInteractionMixin"
+    "ClientPlayerInteractionMixin",
+    "OverlayRemainingAccessor"
   ],
   "server": [
   ],

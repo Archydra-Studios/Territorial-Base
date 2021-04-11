@@ -1,6 +1,6 @@
 package io.github.profjb58.territorial.mixin;
 
-import io.github.profjb58.territorial.event.TerritorialRegistry;
+import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.util.LockUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;

@@ -1,10 +1,12 @@
 package io.github.profjb58.territorial.block;
 
-import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.effect.LockFatigueInstance;
-import io.github.profjb58.territorial.event.TerritorialRegistry;
+import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
+import io.github.profjb58.territorial.inventory.ItemInventory;
+import io.github.profjb58.territorial.item.KeyringItem;
 import io.github.profjb58.territorial.util.LockUtils;
 import io.github.profjb58.territorial.world.WorldLockStorage;
+import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -17,19 +19,21 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
 public class LockableBlock {
 
     private final String lockId;
-    private final UUID lockOwner;
+    private final UUID lockOwnerUuid;
+    private final String lockOwnerName;
     private final LockType lockType;
     private final BlockPos blockPos;
     private float blastResistance, fatigueMultiplier;
 
     public enum LockType {
-        CREATIVE,
+        UNBREAKABLE,
         IRON,
         GOLD,
         DIAMOND,
@@ -42,9 +46,16 @@ public class LockableBlock {
         LOCK_DESTROYED
     }
 
-    public LockableBlock(String lockId, UUID lockOwner, LockType lockType, BlockPos blockPos) {
+    public enum LockEntityResult {
+        NO_ENTITY_EXISTS,
+        FAIL,
+        SUCCESS
+    }
+
+    public LockableBlock(String lockId, UUID lockOwnerUuid, String lockOwnerName, LockType lockType, BlockPos blockPos) {
         this.lockId = lockId;
-        this.lockOwner = lockOwner;
+        this.lockOwnerUuid = lockOwnerUuid;
+        this.lockOwnerName = lockOwnerName;
         this.lockType = lockType;
         this.blockPos = blockPos;
 
@@ -55,17 +66,18 @@ public class LockableBlock {
     }
 
     public boolean exists() {
-        return lockOwner != null && lockType != null && blockPos != null;
+        return lockOwnerUuid != null && lockType != null && blockPos != null;
     }
 
-    public boolean createEntity(World world) {
+    public LockEntityResult createEntity(World world) {
         if(!world.isClient) {
             BlockEntity be = world.getBlockEntity(blockPos);
             if(be != null) {
                 CompoundTag tag = be.toTag(new CompoundTag());
                 if(!tag.contains("lock_id")) { // No lock has been assigned to the block entity
                     tag.putString("lock_id", lockId);
-                    tag.putUuid("lock_owner_uuid", lockOwner);
+                    tag.putUuid("lock_owner_uuid", lockOwnerUuid);
+                    tag.putString("lock_owner_name", lockOwnerName);
                     tag.putInt("lock_type", getLockTypeInt());
 
                     // Store locks position in persitent storage
@@ -74,31 +86,50 @@ public class LockableBlock {
                     try {
                         be.fromTag(be.getCachedState(), tag);
                     } catch (Exception ignored) {}
-                    return true;
+
+                    // Sync data to the client
+                    ((BlockEntityClientSerializable) be).sync();
+                    return LockEntityResult.SUCCESS;
+                }
+                else {
+                    return LockEntityResult.FAIL;
                 }
             }
         }
-        return false;
+        return LockEntityResult.NO_ENTITY_EXISTS;
     }
 
-    public boolean hasMatchingKey(ServerPlayerEntity player) {
+    @Nullable
+    public ItemStack findMatchingKey(ServerPlayerEntity player, boolean checkInventory) {
         ItemStack itemStack = player.getStackInHand(player.getActiveHand());
         String itemStackName = itemStack.getName().getString();
 
-        if(player.isHolding(TerritorialRegistry.KEY) && itemStackName.equals(lockId)) {
-            return true;
+        if(player.isHolding(TerritorialRegistry.MASTER_KEY) ||
+                (player.isHolding(TerritorialRegistry.KEY) && itemStackName.equals(lockId))) {
+            return itemStack;
         }
-        else {
+        else if(checkInventory){
             // Cycle through the players items to check if they contain a matching key
             for(ItemStack invItemStack : player.inventory.main) {
-                Item invItem = invItemStack.getItem();
-                String invItemStackName = invItemStack.getName().getString();
-                if(invItem == TerritorialRegistry.KEY && invItemStackName.equals(lockId)) {
-                    return true;
+                if(checkValidKey(invItemStack)) {
+                    return invItemStack;
+                }
+                else if(invItemStack.getItem() instanceof KeyringItem) { // Check keyrings as well if any are found
+                    ItemInventory itemInventory = new ItemInventory(invItemStack, 9);
+                    itemInventory.loadFromAttachedItemTag();
+                    for(ItemStack keyringInvStack : itemInventory.getItems()) {
+                        if(checkValidKey(keyringInvStack)) return keyringInvStack;
+                    }
                 }
             }
         }
-        return false;
+        return null;
+    }
+
+    private boolean checkValidKey(ItemStack itemStack) {
+        Item item = itemStack.getItem();
+        String itemStackName = itemStack.getName().getString();
+        return item == TerritorialRegistry.MASTER_KEY || (item == TerritorialRegistry.KEY && itemStackName.equals(lockId));
     }
 
     public void playSound(LockSound sound, World world)
@@ -135,8 +166,8 @@ public class LockableBlock {
     public ItemStack getLockItemStack(int amount) {
         ItemStack padlock;
         switch(lockType) {
-            case CREATIVE:
-                padlock = new ItemStack(TerritorialRegistry.PADLOCK_CREATIVE, amount);
+            case UNBREAKABLE:
+                padlock = new ItemStack(TerritorialRegistry.PADLOCK_UNBREAKABLE, amount);
                 break;
             case IRON:
                 padlock = new ItemStack(TerritorialRegistry.PADLOCK, amount);
@@ -159,8 +190,8 @@ public class LockableBlock {
 
     public int getLockFatigueAmplifier() {
         switch(lockType) {
-            case CREATIVE:
-                return 4;
+            case UNBREAKABLE: // Shouldn't be modified
+                return Integer.MAX_VALUE;
             case NETHERITE:
                 return 3;
             case DIAMOND:
@@ -174,7 +205,7 @@ public class LockableBlock {
 
     public int getLockTypeInt() {
         switch(lockType) {
-            case CREATIVE:
+            case UNBREAKABLE:
                 return -1;
             case IRON:
                 return 1;
@@ -192,7 +223,7 @@ public class LockableBlock {
     public static LockType getLockType(int lockType) {
         switch(lockType) {
             case -1:
-                return LockType.CREATIVE;
+                return LockType.UNBREAKABLE;
             case 1:
                 return LockType.IRON;
             case 2:
@@ -208,7 +239,7 @@ public class LockableBlock {
 
     private float getBlastResistance(LockType lockType) {
         switch(lockType) {
-            case CREATIVE:
+            case UNBREAKABLE:
                 return Float.POSITIVE_INFINITY; // Impossible to break
             case NETHERITE:
                 return 8; // Wither
@@ -223,7 +254,8 @@ public class LockableBlock {
         }
     }
 
-    public UUID getLockOwner() { return lockOwner; }
+    public UUID getLockOwnerUuid() { return lockOwnerUuid; }
+    public String getLockOwnerName() { return lockOwnerName; }
     public String getLockId() { return lockId; }
     public LockType getLockType() { return lockType; }
     public BlockPos getBlockPos() { return blockPos; }

@@ -1,11 +1,8 @@
 package io.github.profjb58.territorial.effect;
 
-import io.github.profjb58.territorial.access.StatusEffectInstanceAccess;
 import io.github.profjb58.territorial.block.LockableBlock;
-import io.github.profjb58.territorial.blockEntity.LockableBlockEntity;
-import io.github.profjb58.territorial.event.TerritorialRegistry;
-import jdk.internal.org.jline.utils.Status;
-import net.minecraft.entity.effect.StatusEffect;
+import io.github.profjb58.territorial.block.entity.LockableBlockEntity;
+import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;

@@ -1,15 +1,17 @@
 package io.github.profjb58.territorial;
 
 import io.github.profjb58.territorial.config.TBConfig;
-import io.github.profjb58.territorial.event.*;
+import io.github.profjb58.territorial.event.AttackHandlers;
+import io.github.profjb58.territorial.event.DestructionHandlers;
+import io.github.profjb58.territorial.event.ServerTickHandlers;
+import io.github.profjb58.territorial.event.UseBlockHandler;
+import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.networking.C2SPackets;
-import io.github.profjb58.territorial.util.DebugTimer;
-import io.github.profjb58.territorial.world.ChunkLockStorage;
+import io.github.profjb58.territorial.util.debug.DebugTimer;
 import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
-import me.sargunvohra.mcmods.autoconfig1u.serializer.GsonConfigSerializer;
+import me.sargunvohra.mcmods.autoconfig1u.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
@@ -18,24 +20,28 @@ import org.apache.logging.log4j.Logger;
 
 public class Territorial implements ModInitializer {
 
+	public static final boolean DEBUG_MODE = false;
+
 	public static final String MOD_ID = "territorial";
 	public static final String BASE_GROUP_ID = "territorial_base";
 	public static final Logger logger = LogManager.getLogger();
 	public static DebugTimer dt;
 
-	
 	public static final ItemGroup BASE_GROUP = FabricItemGroupBuilder.build(
 			new Identifier(MOD_ID, BASE_GROUP_ID),
 			() -> new ItemStack(TerritorialRegistry.LOCKPICK));
 
 	@Override
 	public void onInitialize() {
-		AutoConfig.register(TBConfig.class, GsonConfigSerializer::new);
+		AutoConfig.register(TBConfig.class, JanksonConfigSerializer::new);
+		getConfig().checkBounds();
 
 		// Event handlers
 		TerritorialRegistry.registerAll();
-		InteractionHandlers.init();
-		ServerWorldHandlers.init();
+		AttackHandlers.init();
+		ServerTickHandlers.init();
+		UseBlockHandler.init();
+		DestructionHandlers.init();
 
 		// Packet handlers
 		C2SPackets.init();

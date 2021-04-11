@@ -28,7 +28,7 @@ public class WorldLockStorage extends PersistentState {
     public void addLock(LockableBlock lb) {
         removeLock(lb); // Remove existing lock if one is already there
 
-        UUID lockOwner = lb.getLockOwner();
+        UUID lockOwner = lb.getLockOwnerUuid();
         BlockPos pos = lb.getBlockPos();
 
         LinkedList<BlockPos> playerLocks;
@@ -45,14 +45,14 @@ public class WorldLockStorage extends PersistentState {
     }
 
     public void removeLock(LockableBlock lb) {
-        UUID lockOwner = lb.getLockOwner();
+        UUID lockOwner = lb.getLockOwnerUuid();
         BlockPos pos = lb.getBlockPos();
 
         if(locksUUIDMap.get(lockOwner) != null) {
             locksUUIDMap.get(lockOwner).remove(pos);
         }
 
-        if (locksUUIDMap.get(lb.getLockOwner()) != null) {
+        if (locksUUIDMap.get(lb.getLockOwnerUuid()) != null) {
             locksUUIDMap.get(lockOwner).remove(pos);
         }
     }

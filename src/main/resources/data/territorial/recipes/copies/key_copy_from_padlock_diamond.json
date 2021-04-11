@@ -1,0 +1,38 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "territorial:padlock_diamond",
+      "remainder": {
+        "item": "territorial:padlock_diamond",
+        "data": {
+          "$": "$ i0"
+        }
+      },
+      "data": {
+        "require": {
+          "display": {
+            "Name": ""
+          }
+        }
+      }
+    },
+    {
+      "item": "territorial:key",
+      "data":{
+        "deny": {
+          "display": {
+            "Name": ""
+          }
+        }
+      }
+    }
+  ],
+  "result":
+  {
+    "item": "territorial:key",
+    "data": {
+      "$": "$ i0"
+    }
+  }
+}
