@@ -33,4 +33,14 @@ public class ItemInventory implements BaseInventory {
             setStack(i, getItems().get(i));
         }
     }
+
+    public int getAmountOfFilledSlots() {
+        int amount = 0;
+        for(ItemStack itemStack : inventory) {
+            if(!itemStack.isEmpty()) {
+                amount++;
+            }
+        }
+        return amount;
+    }
 }

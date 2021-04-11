@@ -14,7 +14,6 @@ import net.minecraft.screen.slot.SlotActionType;
 
 public class KeyringScreenHandler extends BaseScreenHandler {
 
-    private ItemInventory itemInventory;
     private Item prevSlotClickItem = Blocks.AIR.asItem();
 
     // Called on the client
@@ -52,7 +51,7 @@ public class KeyringScreenHandler extends BaseScreenHandler {
 
     @Override
     void createScreen(PlayerInventory playerInventory, ItemStack keyringStack) {
-        itemInventory = new ItemInventory(keyringStack, 9);
+        ItemInventory itemInventory = new ItemInventory(keyringStack, 9);
         itemInventory.loadFromAttachedItemTag();
 
         // Close similarity to the Hopper Screen
