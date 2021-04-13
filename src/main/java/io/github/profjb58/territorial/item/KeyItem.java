@@ -4,6 +4,7 @@ import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.TerritorialServer;
 import io.github.profjb58.territorial.block.LockableBlock;
 import io.github.profjb58.territorial.block.entity.LockableBlockEntity;
+import io.github.profjb58.territorial.util.SideUtils;
 import io.github.profjb58.territorial.util.TextUtils;
 import io.github.profjb58.territorial.util.debug.ActionLogger;
 import io.github.profjb58.territorial.world.WorldLockStorage;
@@ -62,53 +63,30 @@ public class KeyItem extends Item {
         return ActionResult.PASS;
     }*/
 
-    // Only for shift-click functionality. Main functionality in `UseBlockHandler`
+    // Shift click functionality
     @Override
     public ActionResult useOnBlock(ItemUsageContext ctx) {
         PlayerEntity player = ctx.getPlayer();
-        if(player != null) {
-            if(player.isSneaking() && !ctx.getWorld().isClient) {
-                LockableBlockEntity lbe = new LockableBlockEntity(ctx.getWorld(), ctx.getBlockPos());
-                if(lbe.exists()) { // Lockable block found
-                    LockableBlock lb = lbe.getBlock();
-                    if(lb.findMatchingKey((ServerPlayerEntity) player, false) != null || masterKey) {
-                        if(lbe.remove()) {
-                            // Remove the lock
-                            ItemStack padlockStack = lb.getLockItemStack(1);
-                            BlockPos pos = ctx.getBlockPos();
-                            ctx.getWorld().spawnEntity(new ItemEntity(ctx.getWorld(), pos.getX(), pos.getY(), pos.getZ(), padlockStack));
-                            player.sendMessage(new TranslatableText("message.territorial.lock_removed"), true);
-
-                            // Remove from persistent storage
-                            WorldLockStorage.get((ServerWorld) ctx.getWorld()).removeLock(lb);
-
-                            if(masterKey) {
-                                ItemStack lock = player.getStackInHand(player.getActiveHand());
-                                // Check if the master key should vanish after a single use
-                                if(Territorial.getConfig().masterKeyVanish()) {
-                                    lock.decrement(1);
-                                    player.sendMessage(new TranslatableText("message.territorial.master_key_vanished"), false);
-                                    TerritorialServer.actionLogger.write(ActionLogger.LogType.INFO, ActionLogger.LogModule.LOCKS,
-                                            "Player " + player.getName().getString() + " used a master key at location " + lb.getBlockPos());
-                                }
-                            }
-                            return ActionResult.SUCCESS;
-                        }
-                        else {
-                            // Really shouldn't happen, but just encase
-                            Territorial.logger.error("Lockpick failed to remove NBT lock data :(. Please report this as an issue");
-                        }
+        if (player != null && !ctx.getWorld().isClient && player.isSneaking()) {
+            LockableBlockEntity lbe = new LockableBlockEntity(ctx.getWorld(), ctx.getBlockPos());
+            if(lbe.exists()) {
+                LockableBlock lb = lbe.getBlock();
+                if(lb.findMatchingKey((ServerPlayerEntity) player, false) != null) {
+                    if(lbe.remove()) {
+                        onRemoveLock(ctx, lb); // Remove the lock
+                        WorldLockStorage.get((ServerWorld) ctx.getWorld()).removeLock(lb); // Remove from persistent storage
                     }
                     else {
-                        // Lock picking mechanics
-                        return ActionResult.SUCCESS;
+                        // Really shouldn't happen, but just encase
+                        Territorial.logger.error("Lockpick failed to remove NBT lock data :(. Please report this as an issue");
                     }
                 }
-                ctx.getPlayer().sendMessage(new TranslatableText("message.territorial.no_lock"), true);
+                if(masterKey) onUseMasterKey(player.getStackInHand(player.getActiveHand()), (ServerPlayerEntity) player, lb);
+            }
+            else {
                 ctx.getPlayer().sendMessage(new TranslatableText("message.territorial.no_lock"), true);
             }
         }
-
         return ActionResult.PASS;
     }
 
@@ -132,6 +110,28 @@ public class KeyItem extends Item {
             else {
                 tooltip.add(new TranslatableText("tooltip.territorial.key_unnamed"));
             }
+        }
+    }
+
+    public void onUseMasterKey(ItemStack masterKeyStack, ServerPlayerEntity player, LockableBlock lb) {
+        if(Territorial.getConfig().masterKeyVanish()) { // Check if the master key should vanish after a single use
+            masterKeyStack.decrement(1);
+            player.sendMessage(new TranslatableText("message.territorial.master_key_vanished"), false);
+
+            if(SideUtils.isDedicatedServer()) {
+                TerritorialServer.actionLogger.write(ActionLogger.LogType.INFO, ActionLogger.LogModule.LOCKS,
+                        "Player " + player.getName().getString() + " used a master key at location " + lb.getBlockPos());
+            }
+        }
+    }
+
+    void onRemoveLock(ItemUsageContext ctx, LockableBlock lb) {
+        ServerPlayerEntity player = (ServerPlayerEntity) ctx.getPlayer();
+        if (player != null) {
+            ItemStack padlockStack = lb.getLockItemStack(1);
+            BlockPos pos = ctx.getBlockPos();
+            ctx.getWorld().spawnEntity(new ItemEntity(ctx.getWorld(), pos.getX(), pos.getY(), pos.getZ(), padlockStack));
+            ctx.getPlayer().sendMessage(new TranslatableText("message.territorial.lock_removed"), true);
         }
     }
 

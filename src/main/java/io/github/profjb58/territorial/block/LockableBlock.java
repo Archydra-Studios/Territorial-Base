@@ -8,6 +8,7 @@ import io.github.profjb58.territorial.util.LockUtils;
 import io.github.profjb58.territorial.world.WorldLockStorage;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -17,9 +18,9 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.LiteralText;
+import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -50,6 +51,10 @@ public class LockableBlock {
         NO_ENTITY_EXISTS,
         FAIL,
         SUCCESS
+    }
+
+    public class KeyResult {
+
     }
 
     public LockableBlock(String lockId, UUID lockOwnerUuid, String lockOwnerName, LockType lockType, BlockPos blockPos) {
@@ -99,31 +104,30 @@ public class LockableBlock {
         return LockEntityResult.NO_ENTITY_EXISTS;
     }
 
-    @Nullable
-    public ItemStack findMatchingKey(ServerPlayerEntity player, boolean checkInventory) {
+    public Pair<ItemStack, Inventory> findMatchingKey(ServerPlayerEntity player, boolean checkInventory) {
         ItemStack itemStack = player.getStackInHand(player.getActiveHand());
         String itemStackName = itemStack.getName().getString();
 
         if(player.isHolding(TerritorialRegistry.MASTER_KEY) ||
                 (player.isHolding(TerritorialRegistry.KEY) && itemStackName.equals(lockId))) {
-            return itemStack;
+            return new Pair<>(itemStack, player.inventory);
         }
         else if(checkInventory){
             // Cycle through the players items to check if they contain a matching key
             for(ItemStack invItemStack : player.inventory.main) {
                 if(checkValidKey(invItemStack)) {
-                    return invItemStack;
+                    return new Pair<>(invItemStack, player.inventory);
                 }
-                else if(invItemStack.getItem() instanceof KeyringItem) { // Check keyrings as well if any are found
+                else if(invItemStack.getItem() instanceof KeyringItem) {
                     ItemInventory itemInventory = new ItemInventory(invItemStack, 9);
                     itemInventory.loadFromAttachedItemTag();
                     for(ItemStack keyringInvStack : itemInventory.getItems()) {
-                        if(checkValidKey(keyringInvStack)) return keyringInvStack;
+                        if(checkValidKey(keyringInvStack)) return new Pair<>(keyringInvStack, itemInventory);
                     }
                 }
             }
         }
-        return null;
+        return new Pair<>(null, null);
     }
 
     private boolean checkValidKey(ItemStack itemStack) {

@@ -8,6 +8,7 @@
   "item.territorial.ender_amulet": "Ender Amulet",
   "item.territorial.key":"Key",
   "item.territorial.master_key":"Master Key",
+  "item.territorial.ender_key": "Ender Key",
   "item.territorial.padlock": "Padlock",
   "item.territorial.padlock_gold": "Gold Padlock",
   "item.territorial.padlock_diamond": "Diamond Padlock",
@@ -61,5 +62,10 @@
   "tooltip.territorial.padlock_shift": "§7Shift right click to lock a block",
   "tooltip.territorial.padlock_unnamed": "§7This lock needs a name",
 
-  "tooltip.territorial.keyring.master_key": "§dMaster Key"
+  "tooltip.territorial.keyring.master_key": "§dMaster Key",
+
+  "tooltip.territorial.ender_key_unnamed": "§7This key needs the name of a victim",
+  "tooltip.territorial.ender_key_shift_0": "§lAccessing a victims Ender Chest",
+  "tooltip.territorial.ender_key_shift_1": "§7Match the keys name to your victim",
+  "tooltip.territorial.ender_key_shift_2": "§7Then right click to activate"
 }

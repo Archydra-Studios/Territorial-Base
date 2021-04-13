@@ -87,7 +87,7 @@ public class WorldLockStorage extends PersistentState {
     }
 
     public static WorldLockStorage get(ServerWorld world) {
-        return world.getPersistentStateManager().getOrCreate(WorldLockStorage::new, "territorial_world_locks");
+        return world.getChunkManager().getPersistentStateManager().getOrCreate(WorldLockStorage::new, "territorial_world_locks");
     }
 
     @Override

@@ -32,6 +32,7 @@ public class PadlockItem extends Item {
         this.type = type;
     }
 
+    // Shift click functionality
     @Override
     public ActionResult useOnBlock(ItemUsageContext ctx) {
         PlayerEntity player = ctx.getPlayer();
@@ -52,13 +53,16 @@ public class PadlockItem extends Item {
                     if(!lb.getLockId().equals("") && lock.hasCustomName()) {
                         switch(lb.createEntity(ctx.getWorld())) {
                             case SUCCESS:
+                                if(!player.isCreative()) {
+                                    lock.decrement(1);
+                                }
                                 player.sendMessage(new TranslatableText("message.territorial.lock_successful"), true);
+                                lb.playSound(LockableBlock.LockSound.LOCK_ADDED, player.getEntityWorld());
                                 if(SideUtils.isDedicatedServer()) {
                                     TerritorialServer.actionLogger.write(ActionLogger.LogType.INFO,
                                             ActionLogger.LogModule.LOCKS,
                                             player.getName().getString() + " claimed block entity at: " + ctx.getBlockPos());
                                 }
-                                lb.playSound(LockableBlock.LockSound.LOCK_ADDED, player.getEntityWorld());
                                 break;
                             case FAIL:
                                 player.sendMessage(new TranslatableText("message.territorial.lock_failed"), true);

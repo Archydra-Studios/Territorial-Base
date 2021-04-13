@@ -1,23 +1,17 @@
 package io.github.profjb58.territorial.mixin;
 
-import com.mojang.authlib.GameProfile;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Random;
+import java.util.HashSet;
 import java.util.UUID;
 
 @Mixin(BlockEntity.class)
@@ -27,6 +21,7 @@ public abstract class BlockEntityMixin implements BlockEntityClientSerializable{
     private UUID territorial_ownerUuid;
     private int territorial_lockType;
     private String territorial_ownerName;
+    HashSet<BlockPos> positions = new HashSet<>();
 
     @Inject(at = @At("HEAD"), method = "toTag")
     public void toTag(CompoundTag tag, CallbackInfoReturnable<CompoundTag> cir) {
