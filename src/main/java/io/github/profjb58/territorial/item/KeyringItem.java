@@ -30,29 +30,29 @@ public class KeyringItem extends Item {
     }
 
     @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        user.setCurrentHand(hand);
-        ItemStack itemStack = user.getStackInHand(hand);
+    public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+        player.setCurrentHand(hand);
+        ItemStack keyringItemStack = player.getStackInHand(hand);
 
-        if(user.world != null && !user.world.isClient) {
-            user.openHandledScreen(new ExtendedScreenHandlerFactory() {
+        if(world != null && !world.isClient) {
+            player.openHandledScreen(new ExtendedScreenHandlerFactory() {
                 @Override
                 public void writeScreenOpeningData(ServerPlayerEntity serverPlayerEntity, PacketByteBuf packetByteBuf) {
-                    packetByteBuf.writeItemStack(itemStack); // Pass stack data to the inventory
+                    packetByteBuf.writeItemStack(keyringItemStack); // Pass stack data to the inventory
                 }
 
                 @Override
                 public Text getDisplayName() {
-                    return new TranslatableText(itemStack.getItem().getTranslationKey());
+                    return new TranslatableText(keyringItemStack.getItem().getTranslationKey());
                 }
 
                 @Override
                 public @Nullable ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-                    return new KeyringScreenHandler(syncId, inv, itemStack);
+                    return new KeyringScreenHandler(syncId, inv, keyringItemStack);
                 }
             });
         }
-        return TypedActionResult.pass(itemStack);
+        return TypedActionResult.pass(keyringItemStack);
     }
 
     @Override

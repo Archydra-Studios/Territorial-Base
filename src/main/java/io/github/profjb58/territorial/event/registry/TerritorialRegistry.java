@@ -61,8 +61,8 @@ public class TerritorialRegistry {
         // Keys
         Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "key"), KEY);
         Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "master_key"), MASTER_KEY);
-        Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "ender_key"), ENDER_KEY);
         Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "keyring"), KEYRING);
+        Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "ender_key"), ENDER_KEY);
 
         // Locks
         Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "padlock"), PADLOCK);

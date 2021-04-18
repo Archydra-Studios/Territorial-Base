@@ -44,8 +44,15 @@ public class TBConfig implements ConfigData {
         private double breakMultiplier = 0.02;
 
         @ConfigEntry.Gui.Excluded
-        @Comment("Make the master key vanish")
+        @Comment("Make the master key vanish when it's used")
         private boolean makeMasterKeyVanish = true;
+
+        @ConfigEntry.Gui.Excluded
+        private boolean enableEnderKey = true;
+
+        @ConfigEntry.Gui.Excluded
+        @Comment("Number of attempts made in finding a single item stack from a victims ender chest")
+        private int enderKeyRolls = 5;
     }
 
     @Config(name = "claims")
@@ -62,31 +69,38 @@ public class TBConfig implements ConfigData {
     public void checkBounds() {
         getMinOpLevel();
         getBreakMultiplier();
+        getEnderKeyRolls();
         loaded = true;
     }
 
-    private <T> void warnFalseValue(String name, T value, T defaultValue) {
+    private <T> T warnFalseValue(String name, T value, T defaultValue) {
         if(!loaded || Territorial.DEBUG_MODE) {
             Territorial.logger.warn("Incorrect value for " + name + ": " + value.toString() + " set in the config file, choosing default value: " + defaultValue.toString());
         }
+        return defaultValue;
     }
 
     public boolean showLockName() { return locks.showLockName; }
-
     public boolean masterKeyVanish() { return locks.makeMasterKeyVanish; }
+    public boolean enderKeyEnabled() { return locks.enableEnderKey; }
 
     public int getMinOpLevel() {
         if(locks.minOpLevel < 1 || locks.minOpLevel > 4) {
-            warnFalseValue("minOpLevel", locks.minOpLevel, 3);
-            return 3;
+            return warnFalseValue("minOpLevel", locks.minOpLevel, 3);
         }
         return locks.minOpLevel;
     }
 
+    public int getEnderKeyRolls() {
+        if(locks.enderKeyRolls < 0 || locks.enderKeyRolls > 100) {
+            return warnFalseValue("enderKeyRolls", locks.enderKeyRolls, 5);
+        }
+        return locks.enderKeyRolls;
+    }
+
     public double getBreakMultiplier() {
         if(locks.breakMultiplier < 0.001 || locks.breakMultiplier > 1) {
-            warnFalseValue("breakMultiplier", locks.breakMultiplier,0.02);
-            return 0.02;
+            return warnFalseValue("breakMultiplier", locks.breakMultiplier,0.02);
         }
         return locks.breakMultiplier;
     }
