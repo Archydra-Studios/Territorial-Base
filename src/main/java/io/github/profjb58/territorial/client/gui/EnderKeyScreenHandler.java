@@ -124,4 +124,5 @@ public class EnderKeyScreenHandler extends GenericContainerScreenHandler {
             targetPlayer.sendMessage(new TranslatableText("message.territorial.enderchest.warn", playerName), false);
         }
     }
+
 }

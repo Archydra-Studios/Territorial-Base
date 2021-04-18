@@ -74,6 +74,8 @@ public class EnderKeyItem extends Item {
                     player.openHandledScreen(new SimpleNamedScreenHandlerFactory((i, playerInventory, playerEntity) ->
                             new EnderKeyScreenHandler(i, playerInventory, displayInv, enderChestInv, target),
                             new TranslatableText("container.territorial.enderchest", targetName)));
+
+                    if(!player.isCreative()) itemStack.decrement(1);
                 } else {
                     player.sendMessage(new TranslatableText("message.territorial.enderchest.unknown_player",
                             itemStackName), true);
