@@ -1,6 +1,7 @@
 package io.github.profjb58.territorial.event.registry;
 
 import io.github.profjb58.territorial.Territorial;
+import io.github.profjb58.territorial.block.LaserBlock;
 import io.github.profjb58.territorial.block.LockableBlock.LockType;
 import io.github.profjb58.territorial.block.entity.SafeBlockEntity;
 import io.github.profjb58.territorial.client.gui.KeyringScreenHandler;
@@ -14,6 +15,7 @@ import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
@@ -36,6 +38,7 @@ public class TerritorialRegistry {
 
     // Blocks
     public static final Block SAFE_BLOCK = new Block(FabricBlockSettings.of(Material.METAL).strength(4.0f));
+    public static final Block LASER_TRANSMITTER = new LaserBlock();
 
     // Block Entities
     public static final BlockEntityType<SafeBlockEntity> SAFE_BLOCK_ENTITY = BlockEntityType.Builder.create(SafeBlockEntity::new, SAFE_BLOCK).build(null);
@@ -78,6 +81,9 @@ public class TerritorialRegistry {
 
     private static void registerBlocks() {
         Registry.register(Registry.BLOCK, new Identifier(Territorial.MOD_ID, "safe"), SAFE_BLOCK);
+
+        Registry.register(Registry.BLOCK, new Identifier(Territorial.MOD_ID, "laser_transmitter"), LASER_TRANSMITTER);
+        Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "laser_transmitter"), new BlockItem(LASER_TRANSMITTER, new FabricItemSettings().group(Territorial.BASE_GROUP)));
     }
 
     private static void registerBlockEntities() {

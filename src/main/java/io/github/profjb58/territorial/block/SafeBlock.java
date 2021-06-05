@@ -16,4 +16,5 @@ public class SafeBlock extends Block implements BlockEntityProvider {
     public @Nullable BlockEntity createBlockEntity(BlockView world) {
         return null;
     }
+
 }

@@ -5,6 +5,8 @@
   "text.autoconfig.territorial.category.claims": "        Claims        ",
   "text.autoconfig.territorial.category.traps": "        Traps        ",
 
+  "block.territorial.laser_transmitter": "Laser Transmitter",
+
   "item.territorial.ender_amulet": "Ender Amulet",
   "item.territorial.key":"Key",
   "item.territorial.master_key":"Master Key",

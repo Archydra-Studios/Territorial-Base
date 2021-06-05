@@ -1,7 +1,7 @@
 package io.github.profjb58.territorial.client.gui;
 
 import io.github.cottonmc.cotton.gui.client.CottonHud;
-import io.github.cottonmc.cotton.gui.widget.*;
+import io.github.cottonmc.cotton.gui.widget.WTiledSprite;
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.block.LockableBlock;
 import io.github.profjb58.territorial.mixin.OverlayRemainingAccessor;

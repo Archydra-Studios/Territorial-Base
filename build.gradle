@@ -1,5 +1,6 @@
 plugins {
 	id 'fabric-loom' version '0.5-SNAPSHOT'
+	id 'com.github.johnrengelman.shadow' version '5.2.0'
 	id 'maven-publish'
 }
 
@@ -35,12 +36,15 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	modImplementation(include("vazkii.patchouli:Patchouli:${project.patchouli_version}"))
+	// modImplementation(include("vazkii.patchouli:Patchouli:${project.patchouli_version}"))
 	modImplementation(include("io.github.cottonmc:LibGui:${project.libgui_version}"))
 	modApi(include("me.sargunvohra.mcmods:autoconfig1u:${project.auto_config_version}"))
-	modImplementation("de.siphalor:nbtcrafting-1.16:${project.nbtcrafing_version}")
+	modImplementation(include("de.siphalor:nbtcrafting-1.16:${project.nbtcrafing_version}"))
 	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 	modImplementation "me.shedaniel:RoughlyEnoughItems:${project.rei_version}"
+
+	// SQLite stuff
+	implementation(include("org.xerial:sqlite-jdbc:${project.jdbc_version}"))
 }
 
 processResources {
@@ -57,6 +61,26 @@ tasks.withType(JavaCompile).configureEach {
 	// see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
 	// If Javadoc is generated, this must be specified in that task too.
 	it.options.encoding = "UTF-8"
+}
+
+//
+shadowJar {
+	configurations = [project.configurations.shadow]
+	classifier = "shadow"
+}
+jar {
+	from "LICENSE"
+}
+import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
+
+task relocateShadowJar(type: ConfigureShadowRelocation) {
+	target = tasks.shadowJar
+	prefix = "${project.group}.${project.archivesBaseName}.shadow"
+}
+tasks.shadowJar.dependsOn tasks.relocateShadowJar
+remapJar {
+	dependsOn shadowJar
+	input.set shadowJar.archiveFile.get()
 }
 
 java {
@@ -87,6 +111,6 @@ publishing {
 	}
 
 	repositories {
-		mavenLocal()
+		//mavenLocal()
 	}
 }
