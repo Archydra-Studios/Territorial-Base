@@ -1,22 +1,6 @@
 package io.github.profjb58.territorial.world;
 
-import io.github.profjb58.territorial.block.LockableBlock;
-import io.github.profjb58.territorial.util.TagUtils;
-import net.fabricmc.fabric.api.util.NbtType;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.PersistentState;
-
-import java.util.*;
-
+/**
 public class WorldLockStorage extends PersistentState {
 
     HashMap<UUID, LinkedList<BlockPos>> locksUUIDMap = new HashMap<>();
@@ -132,3 +116,4 @@ public class WorldLockStorage extends PersistentState {
         return compoundTag;
     }
 }
+ **/

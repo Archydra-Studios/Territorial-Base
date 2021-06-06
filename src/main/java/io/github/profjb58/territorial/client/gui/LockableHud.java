@@ -47,7 +47,7 @@ public class LockableHud {
                 Item item = lb.getLockItemStack(1).getItem();
                 lockImage = new WTiledSprite(32, 32, new Identifier(Territorial.MOD_ID, "textures/item/" + item.toString() + ".png"));
 
-                CottonHud.INSTANCE.add(lockImage, (hudWidth / 2) - 16, hudHeight - 100);
+                CottonHud.add(lockImage, (hudWidth / 2) - 16, hudHeight - 100);
             }
         }
         else {
@@ -59,25 +59,19 @@ public class LockableHud {
     }
 
     public void reset() {
-        CottonHud.INSTANCE.remove(lockImage);
+        CottonHud.remove(lockImage);
         ((OverlayRemainingAccessor) MinecraftClient.getInstance().inGameHud).setOverlayRemaining(0); // Clears the action message
     }
 
     private String getLockableFormattingColour(LockableBlock.LockType lockType) {
-        switch(lockType) {
-            case NETHERITE:
-                return "§0";
-            case DIAMOND:
-                return "§b";
-            case IRON:
-                return "§7";
-            case GOLD:
-                return "§6";
-            case UNBREAKABLE:
-                return "§d";
-            default:
-                return "§f";
-        }
+        return switch (lockType) {
+            case NETHERITE -> "§0";
+            case DIAMOND -> "§b";
+            case IRON -> "§7";
+            case GOLD -> "§6";
+            case UNBREAKABLE -> "§d";
+            default -> "§f";
+        };
     }
 
     public void ignoreCycle() {

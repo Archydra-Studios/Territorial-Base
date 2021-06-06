@@ -6,12 +6,8 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import io.github.profjb58.territorial.util.UuidUtils;
-import io.github.profjb58.territorial.world.WorldLockStorage;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.TranslatableText;
-
-import java.util.UUID;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
@@ -43,6 +39,8 @@ public final class LockCommands {
     private static int listLocksByPlayerName(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
         ServerCommandSource scs = ctx.getSource();
         String playerName = StringArgumentType.getString(ctx, "player name");
+
+        /*
         WorldLockStorage lps = WorldLockStorage.get(scs.getWorld());
 
         UUID uuid = UuidUtils.findUuid(playerName);
@@ -53,10 +51,14 @@ public final class LockCommands {
         else {
             throw LOCKS_MATCH_FAILED.create();
         }
+        */
+        return Command.SINGLE_SUCCESS;
     }
 
     private static int listLocks(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
         ServerCommandSource scs = ctx.getSource();
+
+        /*
         WorldLockStorage lps = WorldLockStorage.get(scs.getWorld());
         if(lps.listLocks(scs.getPlayer().getUuid(), scs.getPlayer())) {
             return Command.SINGLE_SUCCESS;
@@ -64,5 +66,7 @@ public final class LockCommands {
         else {
             throw LOCKS_MATCH_FAILED_PLAYER.create();
         }
+        */
+        return Command.SINGLE_SUCCESS;
     }
 }

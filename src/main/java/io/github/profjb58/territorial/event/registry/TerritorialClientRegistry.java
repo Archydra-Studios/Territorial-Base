@@ -23,7 +23,8 @@ public class TerritorialClientRegistry {
     private static void registerItemPredicates() {
         // Keyring item predicate
         // TODO - Maybe optimize this later
-        FabricModelPredicateProviderRegistry.register(TerritorialRegistry.KEYRING, new Identifier("stage"), (itemStack, clientWorld, livingEntity) -> {
+
+        FabricModelPredicateProviderRegistry.register(TerritorialRegistry.KEYRING, new Identifier("stage"), (itemStack, clientWorld, livingEntity, seed) -> {
             ItemInventory keyringInventory = new ItemInventory(itemStack, 9);
             keyringInventory.loadFromAttachedItemTag();
             int numKeys = keyringInventory.getAmountOfFilledSlots();

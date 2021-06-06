@@ -28,25 +28,25 @@ public class KeyringScreenHandler extends BaseScreenHandler {
     }
 
     @Override
-    public ItemStack onSlotClick(int slotId, int clickData, SlotActionType actionType, PlayerEntity playerEntity) {
+    public void onSlotClick(int slotId, int clickData, SlotActionType actionType, PlayerEntity playerEntity) {
         if(slotId >= 0) {
             ItemStack itemStack = getSlot(slotId).getStack();
             Item item = itemStack.getItem();
 
             if(actionType == SlotActionType.QUICK_MOVE) {
-                if(!(item instanceof KeyItem)) return itemStack;
+                if(!(item instanceof KeyItem)) return;
             }
             else {
                 if(!(item instanceof KeyItem) && !(prevSlotClickItem instanceof KeyItem)) {
                     prevSlotClickItem = item;
                     if(slotId < inventorySize) {
-                        return itemStack;
+                        return;
                     }
                 }
             }
             prevSlotClickItem = item;
         }
-        return super.onSlotClick(slotId, clickData, actionType, playerEntity);
+        super.onSlotClick(slotId, clickData, actionType, playerEntity);
     }
 
     @Override

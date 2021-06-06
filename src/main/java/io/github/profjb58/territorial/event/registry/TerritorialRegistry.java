@@ -3,7 +3,6 @@ package io.github.profjb58.territorial.event.registry;
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.block.LaserBlock;
 import io.github.profjb58.territorial.block.LockableBlock.LockType;
-import io.github.profjb58.territorial.block.entity.SafeBlockEntity;
 import io.github.profjb58.territorial.client.gui.KeyringScreenHandler;
 import io.github.profjb58.territorial.command.LockCommands;
 import io.github.profjb58.territorial.effect.LockFatigueEffect;
@@ -14,7 +13,6 @@ import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.Material;
-import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.screen.ScreenHandlerType;
@@ -39,9 +37,6 @@ public class TerritorialRegistry {
     // Blocks
     public static final Block SAFE_BLOCK = new Block(FabricBlockSettings.of(Material.METAL).strength(4.0f));
     public static final Block LASER_TRANSMITTER = new LaserBlock();
-
-    // Block Entities
-    public static final BlockEntityType<SafeBlockEntity> SAFE_BLOCK_ENTITY = BlockEntityType.Builder.create(SafeBlockEntity::new, SAFE_BLOCK).build(null);
 
     public static final LockFatigueEffect LOCK_FATIGUE = new LockFatigueEffect();
 
@@ -87,7 +82,7 @@ public class TerritorialRegistry {
     }
 
     private static void registerBlockEntities() {
-        Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(Territorial.MOD_ID), SAFE_BLOCK_ENTITY);
+        // Nothing here yet
     }
 
     private static void registerCommands() {

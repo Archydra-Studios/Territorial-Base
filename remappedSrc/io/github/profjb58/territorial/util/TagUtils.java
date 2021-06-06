@@ -1,8 +1,5 @@
 package io.github.profjb58.territorial.util;
 
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 
 public class TagUtils {

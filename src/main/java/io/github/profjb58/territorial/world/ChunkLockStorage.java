@@ -1,14 +1,6 @@
 package io.github.profjb58.territorial.world;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.PersistentState;
-
-import java.util.HashMap;
-import java.util.HashSet;
-
+/**
 // TODO - non block entity locks
 public class ChunkLockStorage extends PersistentState {
 
@@ -21,11 +13,8 @@ public class ChunkLockStorage extends PersistentState {
     }
 
     @Override
-    public void fromTag(CompoundTag tag) {
-    }
-
-    @Override
-    public CompoundTag toTag(CompoundTag tag) {
+    public NbtCompound writeNbt(NbtCompound tag) {
         return null;
     }
 }
+**/
