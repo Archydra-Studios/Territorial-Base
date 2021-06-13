@@ -1,0 +1,29 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "IID",
+        "ARQ",
+        "IID"
+    ],
+    "key": {
+        "I": {
+            "item": "minecraft:iron_block"
+        },
+        "D": {
+            "item": "minecraft:cobbled_deepslate"
+        },
+        "A": {
+            "item": "minecraft:amethyst_shard"
+        },
+        "R": {
+            "item": "minecraft:redstone"
+        },
+        "Q": {
+            "item": "minecraft:quartz"
+        }
+    },
+    "result": {
+        "item": "territorial:laser_transmitter",
+        "count": 1
+    }
+}

@@ -29,6 +29,10 @@ repositories {
 	maven { url "https://maven.shedaniel.me/" }
 }
 
+minecraft {
+	accessWidener =  file("src/main/resources/territorial.accesswidener")
+}
+
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -39,9 +43,9 @@ dependencies {
 	// modImplementation(include("vazkii.patchouli:Patchouli:${project.patchouli_version}"))
 	modImplementation(include("io.github.cottonmc:LibGui:${project.libgui_version}"))
 	modApi(include("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}"))
-	modImplementation(include("de.siphalor:nbtcrafting-1.17:${project.nbtcrafing_version}"))
+	//modImplementation(include("de.siphalor:nbtcrafting-1.17:${project.nbtcrafing_version}"))
 	//modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
-	modImplementation "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
+	//modImplementation "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
 
 	// SQLite stuff
 	implementation(include("org.xerial:sqlite-jdbc:${project.jdbc_version}"))

@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "accessWidener": "territorial.accesswidener",
   "id": "territorial",
   "version": "${version}",
 
