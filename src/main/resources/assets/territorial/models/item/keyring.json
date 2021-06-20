@@ -1,11 +1,11 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "territorial:item/keyring"
+    "layer0": "territorial:item/keyrings/keyring"
   },
   "overrides": [
-    { "predicate": { "stage": 0.25 }, "model": "territorial:item/keyring_0" },
-    { "predicate": { "stage": 0.5 }, "model": "territorial:item/keyring_1" },
-    { "predicate": { "stage": 0.75 }, "model": "territorial:item/keyring_2" }
+    { "predicate": { "stage": 0.25 }, "model": "territorial:item/keyrings/keyring_0" },
+    { "predicate": { "stage": 0.5 }, "model": "territorial:item/keyrings/keyring_1" },
+    { "predicate": { "stage": 0.75 }, "model": "territorial:item/keyrings/keyring_2" }
   ]
 }

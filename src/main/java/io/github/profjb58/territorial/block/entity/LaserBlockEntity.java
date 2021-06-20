@@ -34,11 +34,6 @@ public class LaserBlockEntity extends BlockEntity {
         super.readNbt(nbt);
     }
 
-    public BlockPos getLaserEndPos() { return endPos; }
-    public int getLaserLength() { return length; }
-    public float getLaserWidth() { return width; }
-
-
     public static void clientTick(World world, BlockPos pos, BlockState state, LaserBlockEntity be) {
         if (tickCounter >= TICK_COUNTER_UPDATE) {
             tickCounter = 0;

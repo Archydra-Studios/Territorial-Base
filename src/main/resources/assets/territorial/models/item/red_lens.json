@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "territorial:item/keys/ender_key"
+    "layer0": "territorial:item/lenses/red_lens"
   }
 }

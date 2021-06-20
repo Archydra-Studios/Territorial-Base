@@ -10,6 +10,8 @@ import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegi
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredicateProviderRegistry;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
@@ -19,8 +21,8 @@ public class TerritorialClientRegistry {
         ScreenRegistry.register(TerritorialRegistry.KEYRING_SCREEN_HANDLER_TYPE, KeyringScreen::new);
         registerItemPredicates();
 
-        // TODO - Get translucency to work at some point
         BlockRenderLayerMap.INSTANCE.putBlock(TerritorialRegistry.LASER_TRANSMITTER, RenderLayer.getCutoutMipped());
+        BlockRenderLayerMap.INSTANCE.putBlock(TerritorialRegistry.LASER_RECEIVER, RenderLayer.getCutoutMipped());
 
         registerBlockEntityRenderers();
     }
@@ -38,6 +40,16 @@ public class TerritorialClientRegistry {
             keyringInventory.loadFromAttachedItemTag();
             int numKeys = keyringInventory.getAmountOfFilledSlots();
             return numKeys / 9F;
+        });
+
+        FabricModelPredicateProviderRegistry.register(TerritorialRegistry.LENS, new Identifier("colour"), (itemStack, clientWorld, livingEntity, seed) -> {
+            NbtCompound tag = itemStack.getSubTag("beam");
+
+            if(tag != null) {
+                int colourId = tag.getInt("colour");
+                return colourId / 16F;
+            }
+            return 0F;
         });
     }
 }

@@ -6,6 +6,7 @@
   "text.autoconfig.territorial.category.traps": "        Traps        ",
 
   "block.territorial.laser_transmitter": "Laser Transmitter",
+  "block.territorial.laser.receiver": "Laser Receiver",
 
   "item.territorial.ender_amulet": "Ender Amulet",
   "item.territorial.key":"Key",
@@ -18,6 +19,8 @@
   "item.territorial.padlock_unbreakable": "Unbreakable Padlock",
   "item.territorial.lockpick": "Lockpick",
   "item.territorial.keyring": "Keyring",
+  "item.territorial.lens": "Lens",
+
   "itemGroup.territorial.territorial_base": "Territorial (base)",
 
   "message.territorial.lock_successful": "§aLock protection added!",
@@ -75,6 +78,16 @@
   "tooltip.territorial.ender_key_shift_0": "§lAccessing a victims Ender Chest",
   "tooltip.territorial.ender_key_shift_1": "§7Match the keys name to your victim",
   "tooltip.territorial.ender_key_shift_2": "§7Then right click to activate",
+
+  "tooltip.territorial.lens_strength_0": "§e§oPrimitive",
+  "tooltip.territorial.lens_strength_1": "§6§oFocused",
+  "tooltip.territorial.lens_strength_2": "§4§oDeadly",
+
+  "tooltip.territorial.modifier.sparkle": "§7§oSparkle",
+  "tooltip.territorial.modifier.highlight": "§7§oHighlight",
+  "tooltip.territorial.modifier.death": "§7§oInsta Death",
+  "tooltip.territorial.modifier.rainbow": "§7§oRainbow",
+  "tooltip.territorial.modifier.light": "§7§oLight",
 
   "container.territorial.enderchest": "%s's Ender Chest"
 }

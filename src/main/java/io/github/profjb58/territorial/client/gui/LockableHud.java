@@ -70,7 +70,6 @@ public class LockableHud {
             case IRON -> "§7";
             case GOLD -> "§6";
             case UNBREAKABLE -> "§d";
-            default -> "§f";
         };
     }
 
