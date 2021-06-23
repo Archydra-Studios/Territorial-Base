@@ -6,7 +6,7 @@
   "text.autoconfig.territorial.category.traps": "        Traps        ",
 
   "block.territorial.laser_transmitter": "Laser Transmitter",
-  "block.territorial.laser.receiver": "Laser Receiver",
+  "block.territorial.laser_receiver": "Laser Receiver",
 
   "item.territorial.ender_amulet": "Ender Amulet",
   "item.territorial.key":"Key",

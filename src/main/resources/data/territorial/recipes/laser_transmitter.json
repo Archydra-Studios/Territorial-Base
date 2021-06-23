@@ -1,29 +1,31 @@
 {
-    "type": "minecraft:crafting_shaped",
-    "pattern": [
-        "IID",
-        "ARQ",
-        "IID"
-    ],
-    "key": {
-        "I": {
-            "item": "minecraft:iron_block"
-        },
-        "D": {
-            "item": "minecraft:cobbled_deepslate"
-        },
-        "A": {
-            "item": "minecraft:amethyst_shard"
-        },
-        "R": {
-            "item": "minecraft:redstone"
-        },
-        "Q": {
-            "item": "minecraft:quartz"
-        }
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IID",
+    "GRL",
+    "IID"
+  ],
+  "key": {
+    "L": {
+      "item": "territorial:lens"
     },
-    "result": {
-        "item": "territorial:laser_transmitter",
-        "count": 1
+    "I": {
+      "item": "minecraft:iron_block"
+    },
+    "D": {
+      "item": "minecraft:deepslate"
+    },
+    "G": {
+      "item": "minecraft:glowstone"
+    },
+    "R": {
+      "item": "minecraft:redstone"
     }
+  },
+  "result": {
+    "item": "territorial:laser_transmitter",
+    "data": {
+      "$": "$ i5"
+    }
+  }
 }

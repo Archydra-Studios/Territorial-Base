@@ -1,6 +1,6 @@
 {
   "parent": "territorial:item/keyring",
   "textures": {
-    "layer0": "territorial:item/keyring_2"
+    "layer0": "territorial:item/keyrings/keyring_2"
   }
 }

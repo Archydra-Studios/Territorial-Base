@@ -1,7 +1,8 @@
 package io.github.profjb58.territorial.event.registry;
 
 import io.github.profjb58.territorial.Territorial;
-import io.github.profjb58.territorial.block.LaserBlock;
+import io.github.profjb58.territorial.block.LaserReceiverBlock;
+import io.github.profjb58.territorial.block.LaserTransmitterBlock;
 import io.github.profjb58.territorial.block.LockableBlock.LockType;
 import io.github.profjb58.territorial.block.entity.LaserBlockEntity;
 import io.github.profjb58.territorial.block.enums.LaserType;
@@ -19,17 +20,12 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.recipe.*;
 import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class TerritorialRegistry {
 
@@ -49,8 +45,8 @@ public class TerritorialRegistry {
 
     // Blocks
     public static final Block SAFE_BLOCK = new Block(FabricBlockSettings.of(Material.METAL).strength(4.0f));
-    public static final Block LASER_TRANSMITTER = new LaserBlock(LaserType.TRANSMITTER);
-    public static final Block LASER_RECEIVER = new LaserBlock(LaserType.RECEIVER);
+    public static final Block LASER_TRANSMITTER = new LaserTransmitterBlock();
+    public static final Block LASER_RECEIVER = new LaserReceiverBlock();
 
     // Block Entities
     public static final BlockEntityType<LaserBlockEntity> LASER_BLOCK_ENTITY
@@ -132,10 +128,6 @@ public class TerritorialRegistry {
         BlockEntityType<T> blockEntityType = builder.build(null);
         Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(Territorial.MOD_ID, id), blockEntityType);
         return blockEntityType;
-    }
-
-    static <S extends RecipeSerializer<T>, T extends Recipe<?>> S registerRecipeSerializer(String id, S serializer) {
-        return Registry.register(Registry.RECIPE_SERIALIZER, new Identifier(Territorial.MOD_ID, id), serializer);
     }
 
     private static Item createBlankItem() {

@@ -63,6 +63,13 @@ public class TBConfig implements ConfigData {
     @Config(name = "traps")
     private static class TrapsModule implements ConfigData {
 
+        @ConfigEntry.Gui.Excluded
+        @Comment("Maximum distance the laser transmitter can reach. Keep between 1 and 200")
+        private int laserTransmitterMaxReach = 90;
+
+        @ConfigEntry.Gui.Excluded
+        @Comment("Use raycasts for more accurate laser transmitter beam collision checks (performance intensive)")
+        private boolean laserTransmitterUseRaycasts = true;
     }
 
     // Cycle through bounded config options to check if they produce a false value
@@ -70,6 +77,7 @@ public class TBConfig implements ConfigData {
         getMinOpLevel();
         getBreakMultiplier();
         getEnderKeyRolls();
+        getLaserTransmitterMaxReach();
         loaded = true;
     }
 
@@ -83,6 +91,7 @@ public class TBConfig implements ConfigData {
     public boolean showLockName() { return locks.showLockName; }
     public boolean masterKeyVanish() { return locks.makeMasterKeyVanish; }
     public boolean enderKeyEnabled() { return locks.enableEnderKey; }
+    public boolean laserTransmitterUseRaycast() { return traps.laserTransmitterUseRaycasts; }
 
     public int getMinOpLevel() {
         if(locks.minOpLevel < 1 || locks.minOpLevel > 4) {
@@ -103,5 +112,12 @@ public class TBConfig implements ConfigData {
             return warnFalseValue("breakMultiplier", locks.breakMultiplier,0.02);
         }
         return locks.breakMultiplier;
+    }
+
+    public int getLaserTransmitterMaxReach() {
+        if(traps.laserTransmitterMaxReach < 1 || traps.laserTransmitterMaxReach > 200) {
+            return warnFalseValue("laserTransmitterMaxReach", traps.laserTransmitterMaxReach, 90);
+        }
+        return traps.laserTransmitterMaxReach;
     }
 }

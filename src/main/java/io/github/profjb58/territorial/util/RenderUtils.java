@@ -1,10 +1,14 @@
 package io.github.profjb58.territorial.util;
 
+import io.github.cottonmc.cotton.gui.widget.data.Color;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.util.math.Vector3d;
+import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec3f;
+import net.minecraft.util.math.Vector4f;
 
 public class RenderUtils {
 
@@ -16,15 +20,17 @@ public class RenderUtils {
      * @param facing Direction in which the line should be drawn
      * @param w Line width
      * @param l Line length
-     * @param r Red
-     * @param g Green
-     * @param b Blue
-     * @param a Alpha
+     * @param colour RGB colour array
+     * @param a Colour alpha
      */
-    public static void drawQuadLine(MatrixStack matrices, VertexConsumer consumer, Direction facing, float w, float l, int r, int g, int b, int a) {
+    public static void drawQuadLine(MatrixStack matrices, VertexConsumer consumer, Direction facing, float w, float l, float[] colour, float a) {
         // Get the transformation matrix and translate to the center
         Matrix4f transMatrix = matrices.peek().getModel();
         matrices.translate(0.5, 0.5, 0.5);
+
+        float r = colour[0];
+        float g = colour[1];
+        float b = colour[2];
 
         // TODO - Switch to facing.getRotationQuaternion() approach at some point to optimise
         // Translations constructed from a north facing direction, hence rotate for other directions

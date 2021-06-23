@@ -22,8 +22,6 @@ public class TerritorialClientRegistry {
         registerItemPredicates();
 
         BlockRenderLayerMap.INSTANCE.putBlock(TerritorialRegistry.LASER_TRANSMITTER, RenderLayer.getCutoutMipped());
-        BlockRenderLayerMap.INSTANCE.putBlock(TerritorialRegistry.LASER_RECEIVER, RenderLayer.getCutoutMipped());
-
         registerBlockEntityRenderers();
     }
 
