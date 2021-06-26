@@ -8,7 +8,8 @@
     "BlockEntityMixin",
     "ExplosionAccessor",
     "ServerWorldMixin",
-    "StatusEffectInstanceMixin"
+    "StatusEffectInstanceMixin",
+    "AnvilChunkStorageAccessor"
   ],
   "client": [
     "ClientPlayerInteractionMixin",

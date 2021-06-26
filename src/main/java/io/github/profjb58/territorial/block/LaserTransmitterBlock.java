@@ -3,6 +3,7 @@ package io.github.profjb58.territorial.block;
 import io.github.profjb58.territorial.block.entity.LaserBlockEntity;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.util.TextUtils;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerBlockEntityEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -10,9 +11,12 @@ import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.packet.s2c.play.BlockEventS2CPacket;
+import net.minecraft.server.world.BlockEvent;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.*;
 import net.minecraft.state.property.Properties;
@@ -47,6 +51,11 @@ public class LaserTransmitterBlock extends BlockWithEntity implements BlockEntit
         stateManager.add(FACING);
         stateManager.add(POWERED);
         stateManager.add(POWER);
+    }
+
+    @Override
+    public boolean onSyncedBlockEvent(BlockState state, World world, BlockPos pos, int type, int data) {
+        return super.onSyncedBlockEvent(state, world, pos, type, data);
     }
 
     @Nullable
@@ -97,7 +106,7 @@ public class LaserTransmitterBlock extends BlockWithEntity implements BlockEntit
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(type, TerritorialRegistry.LASER_BLOCK_ENTITY, world.isClient ? LaserBlockEntity::clientTick : null);
+        return checkType(type, TerritorialRegistry.LASER_BLOCK_ENTITY, LaserBlockEntity::tick);
     }
 
     @Override

@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "territorial:block/laser_segment" }
+  }
+}

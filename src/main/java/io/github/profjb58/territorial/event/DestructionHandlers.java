@@ -15,7 +15,6 @@ import java.util.LinkedList;
 public class DestructionHandlers {
 
     public static void init() {
-
         // Locked block broken by a player that isn't the owner
         PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, entity) -> {
             LockableBlockEntity lbe = new LockableBlockEntity(world, pos);

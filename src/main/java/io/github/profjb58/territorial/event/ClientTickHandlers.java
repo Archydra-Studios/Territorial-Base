@@ -21,7 +21,6 @@ public class ClientTickHandlers {
     private static int lockableViewCounter = 0;
 
     public static void init() {
-
         ClientTickEvents.START_WORLD_TICK.register((clientWorld) -> {
             if(lockableViewCounter >= LOCKABLE_VIEW_CHECK_TICK_INTERVAL) {
                 ClientPlayerEntity player = MinecraftClient.getInstance().player;

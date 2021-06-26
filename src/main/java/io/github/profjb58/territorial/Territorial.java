@@ -2,10 +2,7 @@ package io.github.profjb58.territorial;
 
 import io.github.profjb58.territorial.config.TBConfig;
 import io.github.profjb58.territorial.database.DatabaseManager;
-import io.github.profjb58.territorial.event.AttackHandlers;
-import io.github.profjb58.territorial.event.DestructionHandlers;
-import io.github.profjb58.territorial.event.ServerTickHandlers;
-import io.github.profjb58.territorial.event.UseBlockHandler;
+import io.github.profjb58.territorial.event.*;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.networking.C2SPackets;
 import io.github.profjb58.territorial.util.debug.DebugTimer;

@@ -5,7 +5,6 @@ import io.github.profjb58.territorial.block.LaserReceiverBlock;
 import io.github.profjb58.territorial.block.LaserTransmitterBlock;
 import io.github.profjb58.territorial.block.LockableBlock.LockType;
 import io.github.profjb58.territorial.block.entity.LaserBlockEntity;
-import io.github.profjb58.territorial.block.enums.LaserType;
 import io.github.profjb58.territorial.client.gui.KeyringScreenHandler;
 import io.github.profjb58.territorial.command.LockCommands;
 import io.github.profjb58.territorial.effect.LockFatigueEffect;

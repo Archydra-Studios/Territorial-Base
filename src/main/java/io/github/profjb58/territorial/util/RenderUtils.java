@@ -75,5 +75,7 @@ public class RenderUtils {
         consumer.vertex(transMatrix, 0, w, 0).color(r,g,b,a).next();
         consumer.vertex(transMatrix, -w, w, 0).color(r,g,b,a).next();
         consumer.vertex(transMatrix, -w, 0, 0).color(r,g,b,a).next();
+
+        matrices.translate(0.5, 0.5, 0.5);
     }
 }

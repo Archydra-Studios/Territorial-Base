@@ -10,13 +10,9 @@ import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.state.property.Properties;
-import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.Direction;
 
 public class LaserBlockEntityRenderer implements BlockEntityRenderer<LaserBlockEntity> {
-
-    private final float[] signalStrengthWidths = { 0.001f, 0.0015f, 0.0030f, 0.0045f, 0.0070f, 0.01f, 0.0135f, 0.02f, 0.025f, 0.035f, 0.06f, 0.1f, 0.16f, 0.25f, 0.38f };
-
 
     public LaserBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {}
 
@@ -30,8 +26,8 @@ public class LaserBlockEntityRenderer implements BlockEntityRenderer<LaserBlockE
 
         // Don't render anything if it isn't being powered
         if(power != 0) {
-            float w = signalStrengthWidths[power - 1];
-            float l = 30;
+            float w = LaserBlockEntity.SIGNAL_STRENGTH_WIDTHS[power - 1];
+            float l = be.getReach();
 
             // Opaque beam
             matrices.push();
@@ -45,7 +41,6 @@ public class LaserBlockEntityRenderer implements BlockEntityRenderer<LaserBlockE
                 matrices.pop();
             }
         }
-
         // Lens
         matrices.push();
         RenderUtils.drawQuadLine(matrices, lineConsumer, facing, 0.5f, 0.38f, colour, 220);

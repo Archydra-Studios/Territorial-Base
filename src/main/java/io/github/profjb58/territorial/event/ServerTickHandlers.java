@@ -56,8 +56,7 @@ public class ServerTickHandlers {
     private static void enderKeyScreenTick(ServerPlayerEntity player) {
         if(Territorial.getConfig().enderKeyEnabled()) {
             if (enderKeyScreenCounter >= ENDER_KEY_INV_TICK_INTERVAL) {
-                if (player.currentScreenHandler instanceof EnderKeyScreenHandler) {
-                    EnderKeyScreenHandler screenHandler = (EnderKeyScreenHandler) player.currentScreenHandler;
+                if (player.currentScreenHandler instanceof EnderKeyScreenHandler screenHandler) {
                     screenHandler.tick();
                 }
                 enderKeyScreenCounter = 0;
