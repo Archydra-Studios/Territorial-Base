@@ -2,6 +2,7 @@ package io.github.profjb58.territorial.client.render.entity;
 
 import io.github.profjb58.territorial.block.entity.LaserBlockEntity;
 import io.github.profjb58.territorial.client.render.CustomRenderLayers;
+import io.github.profjb58.territorial.util.PosUtils;
 import io.github.profjb58.territorial.util.RenderUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumer;
@@ -9,8 +10,12 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3f;
 
 import java.util.Arrays;
 
@@ -25,36 +30,55 @@ public class LaserBlockEntityRenderer implements BlockEntityRenderer<LaserBlockE
             {137, 50, 183}  // Purple
     };
 
-    private static int rainbowTargetIndex = 0;
     private static final float[] rainbowColour = new float[]{0, 0, 0};
+    private static int rainbowTargetIndex = 0;
 
     public LaserBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {}
 
     @Override
     public void render(LaserBlockEntity be, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
+        Direction facing = be.getCachedState().get(Properties.FACING);
         int power = be.getCachedState().get(Properties.POWER);
-        boolean isRainbow = be.isRainbow();
+        boolean isRainbow = be.getMods().get("rainbow");
+        boolean isSparkle = be.getMods().get("sparkle");
 
         float[] colour = isRainbow ? rainbowColour : be.getColour().getColorComponents();
         VertexConsumer lineConsumer = vertexConsumers.getBuffer(CustomRenderLayers.QUAD_LINES);
-        Direction facing = be.getCachedState().get(Properties.FACING);
 
         // Don't render anything if it isn't being powered
         if(power != 0) {
-            float w = LaserBlockEntity.SIGNAL_STRENGTH_WIDTHS[power - 1];
-            float l = be.getReach();
-
-            // Opaque beam
-            matrices.push();
-            RenderUtils.drawQuadLine(matrices, lineConsumer, facing, w/2, l, colour, 10);
-            matrices.pop();
-
-            // Transparent beam (fancy graphics)
-            if(MinecraftClient.isFancyGraphicsOrBetter()) {
-                matrices.push();
-                RenderUtils.drawQuadLine(matrices, lineConsumer, facing, w, l, colour, 180);
-                matrices.pop();
+            if(isSparkle) {
+                ClientWorld clientWorld = (ClientWorld) be.getWorld();
+                if(clientWorld != null) {
+                    if(be.getSparkleDistance() < be.getReach()) {
+                        Vec3d sparklePos = Vec3d.of(be.getPos()).add(PosUtils.zeroMove(Vec3d.of(facing.getVector()).multiply(be.getSparkleDistance()), 0.5));
+                        clientWorld.addParticle(new DustParticleEffect(new Vec3f(colour[0], colour[1], colour[2]), 1f),
+                                true, sparklePos.getX() , sparklePos.getY(), sparklePos.getZ(),
+                                0.1, 0.1, 0.1);
+                    }
+                    be.incrementSparkleDistance();
+                    if(be.getSparkleDistance() >= be.getMaxReach()) {
+                        be.resetSparkleDistance();
+                    }
+                }
             }
+            else {
+                float w = LaserBlockEntity.SIGNAL_STRENGTH_WIDTHS[power - 1];
+                float l = be.getReach();
+
+                // Opaque beam
+                matrices.push();
+                RenderUtils.drawQuadLine(matrices, lineConsumer, facing, w/2, l, colour, 10);
+                matrices.pop();
+
+                // Transparent beam (fancy graphics)
+                if(MinecraftClient.isFancyGraphicsOrBetter()) {
+                    matrices.push();
+                    RenderUtils.drawQuadLine(matrices, lineConsumer, facing, w, l, colour, 180);
+                    matrices.pop();
+                }
+            }
+
         }
         // Lens
         matrices.push();
@@ -76,7 +100,7 @@ public class LaserBlockEntityRenderer implements BlockEntityRenderer<LaserBlockE
             }
             else {
                 if(Arrays.equals(targetColour, rainbowColour)) {
-                    if(rainbowTargetIndex == 5) rainbowTargetIndex = 0;
+                    if(rainbowTargetIndex == (RAINBOW_COLOURS.length - 1)) rainbowTargetIndex = 0;
                     else rainbowTargetIndex++;
                     break;
                 }

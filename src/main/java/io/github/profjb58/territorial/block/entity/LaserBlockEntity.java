@@ -27,10 +27,11 @@ import java.util.Map;
 public class LaserBlockEntity extends BlockEntity implements BlockEntityClientSerializable {
 
     public static final float[] SIGNAL_STRENGTH_WIDTHS = { 0.001f, 0.0015f, 0.0030f, 0.0045f, 0.0070f, 0.01f, 0.0135f, 0.02f, 0.025f, 0.035f, 0.06f, 0.1f, 0.16f, 0.25f, 0.38f };
-    private static final int TICK_UPDATE_RATE = 5;
+    private static final int TICK_UPDATE_RATE = 10;
     private static int tickCounter = 0;
 
     private int strength, colour, reach, prevReach, maxReach, prevPower;
+    private float sparkleDistance = 0;
     private Vec3d startPos, endPos;
     private Map<String, Boolean> mods = new HashMap<>();
 
@@ -51,7 +52,7 @@ public class LaserBlockEntity extends BlockEntity implements BlockEntityClientSe
         int power = state.get(Properties.POWER);
         if(power == 0) return;
 
-        if(tickCounter == TICK_UPDATE_RATE) {
+        if(tickCounter >= TICK_UPDATE_RATE) {
             tickCounter = 0;
             Direction facing = state.get(Properties.FACING);
             BlockPos posIterator;
@@ -110,7 +111,7 @@ public class LaserBlockEntity extends BlockEntity implements BlockEntityClientSe
                             entity.setGlowing(true);
                         }
                         if(be.mods.get("death")) {
-                            entity.damage(DamageSource.LIGHTNING_BOLT, 3.0f);
+                            entity.damage(DamageSource.GENERIC, 3.0f);
                         }
                     }
                 }
@@ -121,50 +122,46 @@ public class LaserBlockEntity extends BlockEntity implements BlockEntityClientSe
     @Override
     public NbtCompound writeNbt(NbtCompound tag) {
         super.writeNbt(tag);
-
+        toSharedTag(tag);
         tag.putByte("strength", (byte) strength);
-        tag.putInt("colour", colour);
-        tag.putInt("reach", reach);
-        tag.putInt("max_reach", maxReach);
-
-        for(Map.Entry<String, Boolean> entry : mods.entrySet()) {
-            tag.putBoolean(entry.getKey(), entry.getValue());
-        }
+        tag.putBoolean("highlight", mods.get("highlight"));
+        tag.putBoolean("death", mods.get("death"));
         return super.writeNbt(tag);
     }
 
     @Override
     public void readNbt(NbtCompound tag) {
         super.readNbt(tag);
-
+        fromSharedTag(tag);
         strength = tag.getByte("strength");
-        colour = tag.getInt("colour");
-        reach = tag.getInt("reach");
-        maxReach = tag.getInt("max_reach");
-
-        for(Map.Entry<String, Boolean> entry : mods.entrySet()) {
-            entry.setValue(tag.getBoolean(entry.getKey()));
-        }
+        mods.put("highlight", tag.getBoolean("highlight"));
+        mods.put("death", tag.getBoolean("death"));
     }
 
     @Override
     public NbtCompound toClientTag(NbtCompound tag) {
+        return toSharedTag(tag);
+    }
+
+    @Override
+    public void fromClientTag(NbtCompound tag) {
+        fromSharedTag(tag);
+    }
+
+    private NbtCompound toSharedTag(NbtCompound tag) {
         tag.putInt("reach", reach);
         tag.putInt("colour", colour);
         tag.putInt("max_reach", maxReach);
-
         tag.putBoolean("rainbow", mods.get("rainbow"));
         tag.putBoolean("sparkle", mods.get("sparkle"));
         tag.putBoolean("light", mods.get("light"));
         return tag;
     }
 
-    @Override
-    public void fromClientTag(NbtCompound tag) {
+    private void fromSharedTag(NbtCompound tag) {
         reach = tag.getInt("reach");
         colour = tag.getInt("colour");
         maxReach = tag.getInt("max_reach");
-
         mods.put("rainbow", tag.getBoolean("rainbow"));
         mods.put("sparkle", tag.getBoolean("sparkle"));
         mods.put("light", tag.getBoolean("light"));
@@ -172,16 +169,15 @@ public class LaserBlockEntity extends BlockEntity implements BlockEntityClientSe
 
     public void setStrength(int strength) { this.strength = strength; }
     public void setColour(int colour) { this.colour = colour; }
-
     public void assignMods(Map<String, Boolean> mods) {
         this.mods = mods;
     }
+    public void incrementSparkleDistance() { sparkleDistance += 0.3f; }
+    public void resetSparkleDistance() { sparkleDistance = 0; }
 
-    public int getStrength() { return strength; }
     public int getReach() { return reach; }
+    public int getMaxReach() { return maxReach; }
+    public float getSparkleDistance() { return sparkleDistance; }
     public DyeColor getColour() { return DyeColor.byId(colour); }
-
-    public boolean isRainbow() { return mods.get("rainbow"); }
-    public boolean isSparkle() { return mods.get("sparkle"); }
-    public boolean isLight() { return mods.get("light"); }
+    public Map<String, Boolean> getMods() { return mods; }
 }

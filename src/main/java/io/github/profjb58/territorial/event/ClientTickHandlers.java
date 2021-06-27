@@ -23,6 +23,8 @@ public class ClientTickHandlers {
 
     public static void init() {
         ClientTickEvents.START_WORLD_TICK.register((clientWorld) -> {
+            // TODO - Replace raycasts with a less expensive implementation
+            /*
             if(lockableViewCounter >= LOCKABLE_VIEW_CHECK_TICK_INTERVAL) {
                 ClientPlayerEntity player = MinecraftClient.getInstance().player;
 
@@ -41,6 +43,7 @@ public class ClientTickHandlers {
                 }
                 lockableViewCounter = 0;
             }
+            */
             lockableViewCounter++;
             LaserBlockEntityRenderer.rainbowColourTick();
         });
