@@ -1,6 +1,7 @@
 package io.github.profjb58.territorial.event;
 
 import io.github.profjb58.territorial.block.entity.LockableBlockEntity;
+import io.github.profjb58.territorial.client.render.entity.LaserBlockEntityRenderer;
 import io.github.profjb58.territorial.util.ClientUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -41,6 +42,11 @@ public class ClientTickHandlers {
                 lockableViewCounter = 0;
             }
             lockableViewCounter++;
+            LaserBlockEntityRenderer.rainbowColourTick();
+        });
+
+        ClientTickEvents.END_CLIENT_TICK.register((clientWorld) -> {
+            LaserBlockEntityRenderer.rainbowColourTick();
         });
     }
 }

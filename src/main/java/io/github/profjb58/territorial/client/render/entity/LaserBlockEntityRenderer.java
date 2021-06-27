@@ -12,15 +12,30 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.Direction;
 
+import java.util.Arrays;
+
 public class LaserBlockEntityRenderer implements BlockEntityRenderer<LaserBlockEntity> {
+
+    private static final float[][] RAINBOW_COLOURS = new float[][]{
+            {176, 46, 38},  // Red
+            {249, 128, 29}, // Orange
+            {255, 216, 61}, // Yellow
+            {93, 124, 21},  // Lime
+            {60, 68, 169},  // Blue
+            {137, 50, 183}  // Purple
+    };
+
+    private static int rainbowTargetIndex = 0;
+    private static final float[] rainbowColour = new float[]{0, 0, 0};
 
     public LaserBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {}
 
     @Override
     public void render(LaserBlockEntity be, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         int power = be.getCachedState().get(Properties.POWER);
-        float[] colour = be.getColour().getColorComponents();
+        boolean isRainbow = be.isRainbow();
 
+        float[] colour = isRainbow ? rainbowColour : be.getColour().getColorComponents();
         VertexConsumer lineConsumer = vertexConsumers.getBuffer(CustomRenderLayers.QUAD_LINES);
         Direction facing = be.getCachedState().get(Properties.FACING);
 
@@ -50,5 +65,22 @@ public class LaserBlockEntityRenderer implements BlockEntityRenderer<LaserBlockE
     @Override
     public boolean rendersOutsideBoundingBox(LaserBlockEntity blockEntity) {
         return true;
+    }
+
+    public static void rainbowColourTick() {
+        float[] targetColour = RAINBOW_COLOURS[rainbowTargetIndex];
+        for(int i=0; i < 3; i++) {
+            if(targetColour[i] != rainbowColour[i]) {
+                if(targetColour[i] - rainbowColour[i] > 0) rainbowColour[i]++;
+                else rainbowColour[i]--;
+            }
+            else {
+                if(Arrays.equals(targetColour, rainbowColour)) {
+                    if(rainbowTargetIndex == 5) rainbowTargetIndex = 0;
+                    else rainbowTargetIndex++;
+                    break;
+                }
+            }
+        }
     }
 }
