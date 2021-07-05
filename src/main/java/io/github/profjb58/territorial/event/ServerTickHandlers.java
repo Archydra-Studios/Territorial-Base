@@ -2,7 +2,7 @@ package io.github.profjb58.territorial.event;
 
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.client.gui.EnderKeyScreenHandler;
-import io.github.profjb58.territorial.effect.StatusEffectInstanceAccess;
+import io.github.profjb58.territorial.entity.effect.StatusEffectInstanceAccess;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.entity.effect.StatusEffectInstance;

@@ -1,4 +1,4 @@
-package io.github.profjb58.territorial.effect;
+package io.github.profjb58.territorial.entity.effect;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.AttributeContainer;

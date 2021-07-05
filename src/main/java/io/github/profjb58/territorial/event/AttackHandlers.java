@@ -1,7 +1,7 @@
 package io.github.profjb58.territorial.event;
 
 import io.github.profjb58.territorial.block.entity.LockableBlockEntity;
-import io.github.profjb58.territorial.effect.LockFatigueInstance;
+import io.github.profjb58.territorial.entity.effect.LockFatigueInstance;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.minecraft.util.ActionResult;

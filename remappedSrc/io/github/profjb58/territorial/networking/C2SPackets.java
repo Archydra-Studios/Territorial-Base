@@ -1,7 +1,7 @@
 package io.github.profjb58.territorial.networking;
 
 import io.github.profjb58.territorial.Territorial;
-import io.github.profjb58.territorial.effect.LockFatigueInstance;
+import io.github.profjb58.territorial.entity.effect.LockFatigueInstance;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.util.Identifier;

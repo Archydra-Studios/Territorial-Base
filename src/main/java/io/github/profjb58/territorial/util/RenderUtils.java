@@ -4,11 +4,10 @@ import io.github.cottonmc.cotton.gui.widget.data.Color;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.util.math.Vector3d;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.DyeColor;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Matrix4f;
-import net.minecraft.util.math.Vec3f;
-import net.minecraft.util.math.Vector4f;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.*;
 
 public class RenderUtils {
 
@@ -77,5 +76,11 @@ public class RenderUtils {
         consumer.vertex(transMatrix, -w, 0, 0).color(r,g,b,a).next();
 
         matrices.translate(0.5, 0.5, 0.5);
+    }
+
+    public static BlockPos getRaycastPos(PlayerEntity player, double maxDistance) {
+        HitResult result = player.raycast(maxDistance, 1f, false);
+        Vec3d hitVec = result.getPos();
+        return new BlockPos(hitVec.x, hitVec.y, hitVec.z);
     }
 }

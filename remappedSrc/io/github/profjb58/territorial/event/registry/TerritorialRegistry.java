@@ -6,7 +6,7 @@ import io.github.profjb58.territorial.block.LockableBlock.LockType;
 import io.github.profjb58.territorial.block.entity.SafeBlockEntity;
 import io.github.profjb58.territorial.client.gui.KeyringScreenHandler;
 import io.github.profjb58.territorial.command.LockCommands;
-import io.github.profjb58.territorial.effect.LockFatigueEffect;
+import io.github.profjb58.territorial.entity.effect.LockFatigueEffect;
 import io.github.profjb58.territorial.item.*;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;

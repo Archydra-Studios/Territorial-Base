@@ -68,23 +68,8 @@ public class LaserTransmitterBlock extends BlockWithEntity implements BlockEntit
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         world.setBlockState(pos, state.with(POWER, world.getReceivedRedstonePower(pos)), 3);
         BlockEntity be = world.getBlockEntity(pos);
-        if(!world.isClient && be != null) {
-            if(be instanceof LaserBlockEntity lbe) {
-                NbtCompound stackTag = stack.getSubTag("beam");
-                if(stackTag != null) {
-                    lbe.setStrength(stackTag.getByte("strength"));
-                    lbe.setColour(stackTag.getInt("colour"));
-                    lbe.assignMods(Map.of(
-                            "rainbow", stackTag.getBoolean("rainbow"),
-                            "sparkle", stackTag.getBoolean("sparkle"),
-                            "death", stackTag.getBoolean("death"),
-                            "highlight", stackTag.getBoolean("highlight"),
-                            "light", stackTag.getBoolean("light")
-                    ));
-                    lbe.markDirty();
-                    lbe.sync();
-                }
-            }
+        if(!world.isClient && be instanceof LaserBlockEntity lbe) {
+            lbe.createFromLens(stack);
         }
     }
 

@@ -8,8 +8,10 @@ import io.github.profjb58.territorial.networking.C2SPackets;
 import io.github.profjb58.territorial.util.debug.DebugTimer;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
@@ -56,5 +58,9 @@ public class Territorial implements ModInitializer {
 
 	public static TBConfig getConfig() {
 		return AutoConfig.getConfigHolder(TBConfig.class).getConfig();
+	}
+
+	public static boolean isDedicatedServer() {
+		return FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER;
 	}
 }

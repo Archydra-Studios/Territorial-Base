@@ -1,10 +1,10 @@
 package io.github.profjb58.territorial.block;
 
-import io.github.profjb58.territorial.effect.LockFatigueInstance;
+import io.github.profjb58.territorial.entity.effect.LockFatigueInstance;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.inventory.ItemInventory;
 import io.github.profjb58.territorial.item.KeyringItem;
-import io.github.profjb58.territorial.util.LockUtils;
+import io.github.profjb58.territorial.util.MathUtils;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.inventory.Inventory;
@@ -60,7 +60,7 @@ public class LockableBlock {
 
         if(lockType != null) {
             this.blastResistance = getBlastResistance(lockType);
-            this.fatigueMultiplier = LockUtils.Calculations.getLockFatigueMultiplier(getLockFatigueAmplifier());
+            this.fatigueMultiplier = MathUtils.Locks.getLockFatigueMultiplier(getLockFatigueAmplifier());
         }
     }
 

@@ -4,11 +4,11 @@ import io.github.profjb58.territorial.Territorial;
 
 import java.util.Random;
 
-public class LockUtils {
+public class MathUtils {
 
     private static final float TICKS_PER_SECOND = 60;
 
-    public static class Calculations {
+    public static class Locks {
 
         public static float getLockFatigueMultiplier(float amplifier) {
         /*  Exponential decay function

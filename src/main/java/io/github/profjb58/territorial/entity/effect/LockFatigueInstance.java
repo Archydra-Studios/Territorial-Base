@@ -1,4 +1,4 @@
-package io.github.profjb58.territorial.effect;
+package io.github.profjb58.territorial.entity.effect;
 
 import io.github.profjb58.territorial.block.LockableBlock;
 import io.github.profjb58.territorial.block.entity.LockableBlockEntity;
@@ -9,7 +9,7 @@ import net.minecraft.util.math.BlockPos;
 
 public class LockFatigueInstance extends StatusEffectInstance {
 
-    public LockFatigueInstance(LockFatigueEffect type, int duration, int amplifier, boolean ambient, boolean visible) {
+    public LockFatigueInstance(LockFatigueStatusEffect type, int duration, int amplifier, boolean ambient, boolean visible) {
         super(type, duration, amplifier, ambient, visible);
     }
 

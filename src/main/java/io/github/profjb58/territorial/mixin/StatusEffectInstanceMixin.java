@@ -1,6 +1,6 @@
 package io.github.profjb58.territorial.mixin;
 
-import io.github.profjb58.territorial.effect.StatusEffectInstanceAccess;
+import io.github.profjb58.territorial.entity.effect.StatusEffectInstanceAccess;
 import io.github.profjb58.territorial.util.TagUtils;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;

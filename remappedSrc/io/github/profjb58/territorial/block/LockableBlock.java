@@ -1,6 +1,6 @@
 package io.github.profjb58.territorial.block;
 
-import io.github.profjb58.territorial.effect.LockFatigueInstance;
+import io.github.profjb58.territorial.entity.effect.LockFatigueInstance;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.inventory.ItemInventory;
 import io.github.profjb58.territorial.item.KeyringItem;

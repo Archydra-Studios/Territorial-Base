@@ -1,4 +1,4 @@
-package io.github.profjb58.territorial.util.debug;
+package io.github.profjb58.territorial.util;
 
 import io.github.profjb58.territorial.Territorial;
 import net.fabricmc.api.EnvType;
@@ -17,13 +17,13 @@ public class ActionLogger {
     public enum LogType {
         INFO,
         WARNING,
-        ERROR,
-        BLANK
+        ERROR
     }
 
     public enum LogModule {
         LOCKS,
         CLAIMS,
+        TRAPS,
         BLANK
     }
 
@@ -55,30 +55,18 @@ public class ActionLogger {
             FileWriter logWriter = new FileWriter(LOGS_DIRECTORY + "territorial.log", true);
             String typeSpecifier, moduleSpecifier;
 
-            switch (type) {
-                case INFO:
-                    typeSpecifier = " [INFO] ";
-                    break;
-                case WARNING:
-                    typeSpecifier = " [WARNING] ";
-                    break;
-                case ERROR:
-                    typeSpecifier = " [ERROR] ";
-                    break;
-                default:
-                    typeSpecifier = " ";
-            }
+            typeSpecifier = switch (type) {
+                case INFO -> " [INFO] ";
+                case WARNING -> " [WARNING] ";
+                case ERROR -> " [ERROR] ";
+            };
 
-            switch(module) {
-                case CLAIMS:
-                    moduleSpecifier = "(claims) - ";
-                    break;
-                case LOCKS:
-                    moduleSpecifier = "(locks) - ";
-                    break;
-                default:
-                    moduleSpecifier = "- ";
-            }
+            moduleSpecifier = switch (module) {
+                case CLAIMS -> "(claims) - ";
+                case LOCKS -> "(locks) - ";
+                case TRAPS -> "(traps) - ";
+                case BLANK -> "- ";
+            };
 
             logWriter.write(formattedDateTime + typeSpecifier + moduleSpecifier + message + "\n");
             logWriter.close();

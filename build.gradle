@@ -43,7 +43,7 @@ dependencies {
 	modImplementation(include("io.github.cottonmc:LibGui:${project.libgui_version}"))
 	modApi(include("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}"))
 	modImplementation(include("de.siphalor:nbtcrafting-1.17:${project.nbtcrafing_version}"))
-	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+	//modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 
 	//modImplementation "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
 

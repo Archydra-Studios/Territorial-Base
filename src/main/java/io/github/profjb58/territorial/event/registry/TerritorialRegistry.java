@@ -7,7 +7,7 @@ import io.github.profjb58.territorial.block.LockableBlock.LockType;
 import io.github.profjb58.territorial.block.entity.LaserBlockEntity;
 import io.github.profjb58.territorial.client.gui.KeyringScreenHandler;
 import io.github.profjb58.territorial.command.LockCommands;
-import io.github.profjb58.territorial.effect.LockFatigueEffect;
+import io.github.profjb58.territorial.entity.effect.LockFatigueStatusEffect;
 import io.github.profjb58.territorial.item.*;
 import io.github.profjb58.territorial.recipe.LensRecipe;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
@@ -51,7 +51,7 @@ public class TerritorialRegistry {
     public static final BlockEntityType<LaserBlockEntity> LASER_BLOCK_ENTITY
             = registerBlockEntity("laser_be", FabricBlockEntityTypeBuilder.create(LaserBlockEntity::new, LASER_TRANSMITTER));
 
-    public static final LockFatigueEffect LOCK_FATIGUE = new LockFatigueEffect();
+    public static final LockFatigueStatusEffect LOCK_FATIGUE = new LockFatigueStatusEffect();
 
     public static final Identifier KEYRING_SCREEN_ID = new Identifier(Territorial.MOD_ID, "keyring");
     public static final ScreenHandlerType<KeyringScreenHandler> KEYRING_SCREEN_HANDLER_TYPE

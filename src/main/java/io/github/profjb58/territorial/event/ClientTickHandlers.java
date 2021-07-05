@@ -1,16 +1,9 @@
 package io.github.profjb58.territorial.event;
 
-import io.github.profjb58.territorial.block.entity.LockableBlockEntity;
 import io.github.profjb58.territorial.client.render.entity.LaserBlockEntityRenderer;
-import io.github.profjb58.territorial.util.ClientUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.util.math.BlockPos;
-
-import static io.github.profjb58.territorial.TerritorialClient.lockableHud;
 
 @Environment(EnvType.CLIENT)
 public class ClientTickHandlers {

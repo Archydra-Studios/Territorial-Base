@@ -31,7 +31,7 @@ public class TBConfig implements ConfigData {
 
         // TODO
         @Comment("Shows the lock name in the GUI")
-        private boolean showLockName = true;
+        public boolean showLockName = true;
 
         // TODO
         @ConfigEntry.Gui.Excluded
@@ -67,6 +67,10 @@ public class TBConfig implements ConfigData {
         @ConfigEntry.Gui.Excluded
         @Comment("Maximum distance the laser transmitter can reach. Keep between 1 and 60")
         private int laserTransmitterMaxReach = 48;
+
+        @ConfigEntry.Gui.Excluded
+        @Comment("Whether the laser targets all mobs or just players")
+        private boolean laserTargetsAllMobs = true;
     }
 
     // Cycle through bounded config options to check if they produce a false value
@@ -88,6 +92,7 @@ public class TBConfig implements ConfigData {
     public boolean showLockName() { return locks.showLockName; }
     public boolean masterKeyVanish() { return locks.makeMasterKeyVanish; }
     public boolean enderKeyEnabled() { return locks.enableEnderKey; }
+    public boolean laserTargetsAllMobs() { return traps.laserTargetsAllMobs; }
 
     public int getMinOpLevel() {
         if(locks.minOpLevel < 1 || locks.minOpLevel > 4) {

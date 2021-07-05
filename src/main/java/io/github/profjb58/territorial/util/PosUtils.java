@@ -2,16 +2,17 @@ package io.github.profjb58.territorial.util;
 
 import net.minecraft.util.math.Vec3d;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.stream.DoubleStream;
 
 public class PosUtils {
 
     public static Vec3d zeroMove(Vec3d vecIn, double amount) {
-        double[] vecMoved = DoubleStream.of(vecIn.x, vecIn.y, vecIn.z)
-                .map(n -> {
-                    if(n == 0) n += amount;
-                    return n;
-                }).toArray();
-        return new Vec3d(vecMoved[0], vecMoved[1], vecMoved[2]);
+        return new Vec3d(
+                (vecIn.x == 0) ? vecIn.x + amount : vecIn.x,
+                (vecIn.y == 0) ? vecIn.y + amount : vecIn.y,
+                (vecIn.z == 0) ? vecIn.z + amount : vecIn.z
+        );
     }
 }
