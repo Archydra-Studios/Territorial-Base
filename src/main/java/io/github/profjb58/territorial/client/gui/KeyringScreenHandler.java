@@ -59,13 +59,11 @@ public class KeyringScreenHandler extends BaseScreenHandler {
         for(i = 0; i < 9; ++i) {
             this.addSlot(new Slot(itemInventory, i, 8 + i * 18, 20));
         }
-
         for(i = 0; i < 3; ++i) {
             for(int l = 0; l < 9; ++l) {
                 this.addSlot(new Slot(playerInventory, l + i * 9 + 9, 8 + l * 18, i * 18 + 51));
             }
         }
-
         for(i = 0; i < 9; ++i) {
             this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 109));
         }

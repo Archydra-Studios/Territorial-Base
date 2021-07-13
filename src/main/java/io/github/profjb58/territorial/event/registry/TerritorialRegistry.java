@@ -57,6 +57,9 @@ public class TerritorialRegistry {
     public static final ScreenHandlerType<KeyringScreenHandler> KEYRING_SCREEN_HANDLER_TYPE
             = ScreenHandlerRegistry.registerExtended(KEYRING_SCREEN_ID, KeyringScreenHandler::new);
 
+    // Recipe serializers
+    public static final SpecialRecipeSerializer<LensRecipe> LENS_RECIPE_SERIALIZER = new SpecialRecipeSerializer<>(LensRecipe::new);
+
     /*static {
         // Lens
         for(DyeColor color : DyeColor.values()) {
@@ -120,7 +123,7 @@ public class TerritorialRegistry {
     }
 
     private static void registerRecipes() {
-        Registry.register(Registry.RECIPE_SERIALIZER, new Identifier(Territorial.MOD_ID, "crafting_special_lens"), new SpecialRecipeSerializer<>(LensRecipe::new));
+        Registry.register(Registry.RECIPE_SERIALIZER, new Identifier(Territorial.MOD_ID, "crafting_special_lens"), LENS_RECIPE_SERIALIZER);
     }
 
     public static <T extends BlockEntity> BlockEntityType<T> registerBlockEntity(String id, FabricBlockEntityTypeBuilder<T> builder) {

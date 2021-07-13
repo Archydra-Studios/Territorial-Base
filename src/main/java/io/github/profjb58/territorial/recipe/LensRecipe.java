@@ -119,7 +119,7 @@ public class LensRecipe extends SpecialCraftingRecipe {
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return null;
+        return TerritorialRegistry.LENS_RECIPE_SERIALIZER;
     }
 
     static {

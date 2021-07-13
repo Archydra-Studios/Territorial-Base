@@ -27,25 +27,23 @@ import net.minecraft.world.World;
 
 import java.util.*;
 
+import static net.minecraft.util.math.Direction.UP;
+
 public class  LaserBlockEntity extends BlockEntity implements BlockEntityClientSerializable {
 
     public static final float[] SIGNAL_STRENGTH_WIDTHS = { 0.001f, 0.0015f, 0.0030f, 0.0045f, 0.0070f, 0.01f, 0.0135f, 0.02f, 0.025f, 0.035f, 0.06f, 0.1f, 0.16f, 0.25f, 0.38f };
-    private static final int TICK_UPDATE_RATE = 10;
-    private static int tickCounter = 0;
+    private static final int MAX_ENTITIES_PER_BEAM_TICK = 30;
 
-    private int strength, colour, reach, prevReach, maxReach, prevPower;
-    private float sparkleDistance = 0;
+    private int strength, colour, maxReach, prevPower;
+    private float sparkleDistance, reach, prevReach;
     private Vec3d startPos, endPos;
     private Map<String, Boolean> mods = new HashMap<>();
+    private Entity trackedEntity;
 
     public LaserBlockEntity(BlockPos pos, BlockState state) {
         super(TerritorialRegistry.LASER_BLOCK_ENTITY, pos, state);
-        strength = 0;
-        reach = 0;
-        prevReach = 0;
+        prevPower = -1;
         maxReach = Territorial.getConfig().getLaserTransmitterMaxReach();
-
-        // Laser beam modifications
         mods.put("sparkle", false);
         mods.put("rainbow", false);
         mods.put("highlight", false);
@@ -73,40 +71,94 @@ public class  LaserBlockEntity extends BlockEntity implements BlockEntityClientS
     public ItemStack getLensStack() {
         ItemStack lensStack = TerritorialRegistry.LENS.getDefaultStack();
         lensStack.putSubTag("beam", writeNbt(new NbtCompound()));
+
+        // Remove block identifying features
+        NbtCompound beamSubTag = lensStack.getSubTag("beam");
+        if(beamSubTag != null) {
+            beamSubTag.remove("x");
+            beamSubTag.remove("y");
+            beamSubTag.remove("z");
+            beamSubTag.remove("max_reach");
+        }
         return lensStack;
     }
 
     public static void tick(World world, BlockPos pos, BlockState state, LaserBlockEntity be) {
-        if(state.get(Properties.POWER) == 0) return;
+        int power = state.get(Properties.POWER);
+        if(power == 0) return;
 
-        if(tickCounter >= TICK_UPDATE_RATE) {
-            tickCounter = 0;
-            beamTick(world, pos, state, be);
+        List<Entity> entities = new ArrayList<>(0);
+        if(be.reach != be.prevReach || power != be.prevPower) {
+            Direction facing = state.get(Properties.FACING);
+            if(power != be.prevPower) {
+                be.startPos = Vec3d.ofCenter(pos)
+                        .add(PosUtils.zeroMove(Vec3d.of(facing.getVector()).multiply(0.5), SIGNAL_STRENGTH_WIDTHS[power - 1] / 2));
+            }
+            be.endPos = Vec3d.ofCenter(pos)
+                    .add(PosUtils.zeroMove(Vec3d.of(facing.getVector()).multiply(be.reach + 0.5), -(SIGNAL_STRENGTH_WIDTHS[power - 1] / 2)));
+            be.prevReach = be.reach;
+            be.prevPower = power;
         }
-        tickCounter++;
-        if(!world.isClient) {
-            effectsTick((ServerWorld) world, pos, state, be);
+        if(be.startPos != null && be.endPos != null) {
+            entities = world.getOtherEntities(null, new Box(be.startPos, be.endPos));
+            applyEffects(entities, state.get(Properties.FACING), be);
         }
+        beamTick(world, pos, state, be, entities);
     }
 
-    private static void beamTick(World world, BlockPos pos, BlockState state, LaserBlockEntity be) {
+    private static void beamTick(World world, BlockPos pos, BlockState state, LaserBlockEntity be, List<Entity> entitiesCollided) {
         Direction facing = state.get(Properties.FACING);
         BlockPos posIterator;
         BlockState bs;
+        boolean foundReceiver = false;
 
-        for(int i = 0; i < be.maxReach; i++) {
-            posIterator = pos.offset(facing, i);
-            bs = world.getBlockState(posIterator);
+        if(entitiesCollided.size() > 0) { // Collides with an entity
+            int entityCounter = 0;
+            float trackedReach = be.reach;
 
-            if(be.mods.get("light") && !world.isClient && bs.isAir()) {
-                world.setBlockState(posIterator, Blocks.LIGHT.getDefaultState());
-            }
-            if((bs.getOpacity(world, posIterator) >= 15 && !bs.isOf(Blocks.BEDROCK)) || (i == (be.maxReach -1))) {
-                be.reach = i;
-                break;
+            for(Entity entity : entitiesCollided) {
+                float distance = PosUtils.getDistanceAlongAxis(Vec3d.of(be.getPos()).add(0.5, 0.5, 0.5),
+                        entity.getPos(), facing.getAxis());
+
+                if(distance <= (be.maxReach - 1f)) {
+                    if(be.trackedEntity != null && distance < be.maxReach) {
+                        if(entity.equals(be.trackedEntity)) trackedReach = distance;
+                    }
+                    if(distance <= trackedReach) {
+                        be.trackedEntity = entity;
+                        be.reach = distance;
+                        trackedReach = distance;
+                    }
+                }
+                entityCounter++;
+                if(entityCounter >= MAX_ENTITIES_PER_BEAM_TICK) break;
             }
         }
+        else { // Check for block collisions
+            for(int i = 0; i < be.maxReach; i++) {
+                posIterator = pos.offset(facing, i);
+                bs = world.getBlockState(posIterator);
 
+                // Check for adding/removing light blocks
+                if (be.mods.get("light") && !world.isClient && bs.isAir()) {
+                    world.setBlockState(posIterator, Blocks.LIGHT.getDefaultState());
+                }
+                // Check for a receiver
+                if (bs.getBlock() == TerritorialRegistry.LASER_RECEIVER) {
+                    if (facing.equals(bs.get(Properties.FACING).getOpposite())) {
+                        world.setBlockState(posIterator, bs
+                                .with(Properties.POWER, state.get(Properties.POWER))
+                                .with(Properties.POWERED, true));
+                    }
+                    foundReceiver = true;
+                }
+                // Extend the lasers reach up to the first Opaque block or a receiver
+                if ((bs.getOpacity(world, posIterator) >= 15 && !bs.isOf(Blocks.BEDROCK)) || (i == (be.maxReach - 1)) || foundReceiver) {
+                    be.reach = i;
+                    break;
+                }
+            }
+        }
         if(!world.isClient) {
             ServerWorld serverWorld = (ServerWorld) world;
             int watchDistance = ((AnvilChunkStorageAccessor) serverWorld.getChunkManager().threadedAnvilChunkStorage).getWatchDistance();
@@ -120,74 +172,53 @@ public class  LaserBlockEntity extends BlockEntity implements BlockEntityClientS
         }
     }
 
-    private static void effectsTick(ServerWorld serverWorld, BlockPos pos, BlockState state, LaserBlockEntity be) {
-        if(be.strength > 0 || be.mods.get("death") || be.mods.get("highlight")) {
-            int power = state.get(Properties.POWER);
-
-            if(be.reach != be.prevReach || power != be.prevPower) { // if the reach distance changes adjust the hitbox
-                be.prevReach = be.reach;
-                be.prevPower = power;
-                Direction facing = state.get(Properties.FACING);
-
-                be.startPos = Vec3d.ofCenter(pos)
-                        .add(PosUtils.zeroMove(Vec3d.of(facing.getVector()).multiply(0.5), SIGNAL_STRENGTH_WIDTHS[power - 1] / 2));
-                be.endPos = Vec3d.ofCenter(pos)
-                        .add(PosUtils.zeroMove(Vec3d.of(facing.getVector().multiply(be.reach)), -(SIGNAL_STRENGTH_WIDTHS[power - 1]/ 2)));
-            }
-
-            if(be.startPos != null && be.endPos != null) {
-                List<Entity> entities = serverWorld.getOtherEntities(null, new Box(be.startPos, be.endPos), entity -> {
-                    if(Territorial.getConfig().laserTargetsAllMobs()) return true;
-                    else return entity.isPlayer();
-                });
-                applyEffects(entities, state.get(Properties.FACING), be);
-            }
-        }
-    }
-
     private static void applyEffects(List<Entity> entities, Direction facing, LaserBlockEntity be) {
         Item armorItem;
         int numArmorPieces;
-        boolean hitsLowerBody, hasGoldHelmet;
+        boolean hasGoldHelmet;
+        boolean targetAllMobs = Territorial.getConfig().laserTargetsAllMobs();
 
         for(Entity entity : entities) {
-            numArmorPieces = 0;
-            hasGoldHelmet = false;
-            hitsLowerBody = entity.getBlockY() == be.getPos().getY();
+            if(targetAllMobs || entity.isPlayer()) {
+                numArmorPieces = 0;
+                hasGoldHelmet = false;
 
-            // Check for gold (reflective) armor
-            for(ItemStack armorStack : entity.getArmorItems()) {
-                armorItem = armorStack.getItem();
-
-                if(entity instanceof HorseEntity && armorItem == Items.GOLDEN_HORSE_ARMOR
-                        || (facing == Direction.UP && armorItem == Items.GOLDEN_BOOTS)
-                        || (facing == Direction.DOWN && armorItem == Items.GOLDEN_HELMET)) return;
-                else {
-                    if(hitsLowerBody) {
-                        if(armorItem == Items.GOLDEN_LEGGINGS || armorItem == Items.GOLDEN_BOOTS) numArmorPieces++;
-                    }
+                // Gold (reflective) armor resistance
+                for(ItemStack armorStack : entity.getArmorItems()) {
+                    armorItem = armorStack.getItem();
+                    if(entity instanceof HorseEntity && armorItem == Items.GOLDEN_HORSE_ARMOR
+                            || (facing == UP && armorItem == Items.GOLDEN_BOOTS)
+                            || (facing == Direction.DOWN && armorItem == Items.GOLDEN_HELMET)) return;
                     else {
-                        if(armorItem == Items.GOLDEN_CHESTPLATE || armorItem == Items.GOLDEN_HELMET) numArmorPieces++;
+                        if(entity.getBlockY() == be.getPos().getY()) {
+                            if(armorItem == Items.GOLDEN_LEGGINGS || armorItem == Items.GOLDEN_BOOTS) numArmorPieces++;
+                        }
+                        else {
+                            if(armorItem == Items.GOLDEN_CHESTPLATE || armorItem == Items.GOLDEN_HELMET) numArmorPieces++;
+                        }
                     }
                     if(numArmorPieces == 2) return;
+                    if(armorItem == Items.GOLDEN_HELMET) hasGoldHelmet = true;
                 }
-                if(armorItem == Items.GOLDEN_HELMET) hasGoldHelmet = true;
-            }
-
-            if(entity.isPlayer() && be.strength > 0) {
-                if(!hasGoldHelmet)
-                    ((PlayerEntity)entity).addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 200 * be.strength));
-            }
-            if(be.strength > 1) {
-                entity.setOnFireFor(3);
-            }
-            if(be.mods.get("highlight")) {
-                if(entity.isLiving()) {
-                    ((LivingEntity)entity).addStatusEffect(new StatusEffectInstance(StatusEffects.GLOWING, 810));
+                // Blindness effect
+                if(entity.isPlayer() && be.strength > 0) {
+                    if(!hasGoldHelmet)
+                        ((PlayerEntity)entity).addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 200 * be.strength));
                 }
-            }
-            if(be.mods.get("death")) {
-                entity.damage(DamageSource.GENERIC, 4.0f);
+                // Fire effect
+                if(be.strength > 1) {
+                    entity.setOnFireFor(6);
+                }
+                // Highlight (Glow) effect
+                if(be.mods.get("highlight")) {
+                    if(entity.isLiving()) {
+                        ((LivingEntity)entity).addStatusEffect(new StatusEffectInstance(StatusEffects.GLOWING, 810));
+                    }
+                }
+                // Insta death effect
+                if(be.mods.get("death")) {
+                    entity.damage(DamageSource.GENERIC, 4.0f);
+                }
             }
         }
     }
@@ -222,7 +253,7 @@ public class  LaserBlockEntity extends BlockEntity implements BlockEntityClientS
     }
 
     private NbtCompound toSharedTag(NbtCompound tag) {
-        tag.putInt("reach", reach);
+        tag.putFloat("reach", reach);
         tag.putInt("colour", colour);
         tag.putInt("max_reach", maxReach);
         tag.putBoolean("rainbow", mods.get("rainbow"));
@@ -232,7 +263,7 @@ public class  LaserBlockEntity extends BlockEntity implements BlockEntityClientS
     }
 
     private void fromSharedTag(NbtCompound tag) {
-        reach = tag.getInt("reach");
+        reach = tag.getFloat("reach");
         colour = tag.getInt("colour");
         maxReach = tag.getInt("max_reach");
         mods.put("rainbow", tag.getBoolean("rainbow"));
@@ -246,7 +277,8 @@ public class  LaserBlockEntity extends BlockEntity implements BlockEntityClientS
     public void incrementSparkleDistance() { sparkleDistance += 0.3f; }
     public void resetSparkleDistance() { sparkleDistance = 0; }
 
-    public int getReach() { return reach; }
+    public float getReach() { return reach; }
+    public float getPrevReach() { return prevReach; }
     public int getMaxReach() { return maxReach; }
     public float getSparkleDistance() { return sparkleDistance; }
     public DyeColor getColour() { return DyeColor.byId(colour); }

@@ -4,6 +4,7 @@ import io.github.profjb58.territorial.block.entity.LaserBlockEntity;
 import io.github.profjb58.territorial.client.render.CustomRenderLayers;
 import io.github.profjb58.territorial.util.PosUtils;
 import io.github.profjb58.territorial.util.RenderUtils;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -11,8 +12,13 @@ import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.state.property.Properties;
+import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3f;
@@ -46,11 +52,11 @@ public class LaserBlockEntityRenderer implements BlockEntityRenderer<LaserBlockE
         VertexConsumer lineConsumer = vertexConsumers.getBuffer(CustomRenderLayers.QUAD_LINES);
 
         // Don't render anything if it isn't being powered
-        if(power != 0) {
+        if(power > 0) {
             if(isSparkle) {
                 ClientWorld clientWorld = (ClientWorld) be.getWorld();
                 if(clientWorld != null) {
-                    if(be.getSparkleDistance() < be.getReach()) {
+                    if(be.getSparkleDistance() < (be.getReach() - 0.5f)) {
                         Vec3d sparklePos = Vec3d.of(be.getPos()).add(PosUtils.zeroMove(Vec3d.of(facing.getVector()).multiply(be.getSparkleDistance()), 0.5));
                         clientWorld.addParticle(new DustParticleEffect(new Vec3f(colour[0], colour[1], colour[2]), 1f),
                                 true, sparklePos.getX() , sparklePos.getY(), sparklePos.getZ(),
@@ -64,7 +70,7 @@ public class LaserBlockEntityRenderer implements BlockEntityRenderer<LaserBlockE
             }
             else {
                 float w = LaserBlockEntity.SIGNAL_STRENGTH_WIDTHS[power - 1];
-                float l = be.getReach();
+                float l = be.getPrevReach() + ((be.getReach() - be.getPrevReach()) * tickDelta);
 
                 // Opaque beam
                 matrices.push();

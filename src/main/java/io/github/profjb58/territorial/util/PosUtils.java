@@ -1,5 +1,6 @@
 package io.github.profjb58.territorial.util;
 
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.Collection;
@@ -14,5 +15,15 @@ public class PosUtils {
                 (vecIn.y == 0) ? vecIn.y + amount : vecIn.y,
                 (vecIn.z == 0) ? vecIn.z + amount : vecIn.z
         );
+    }
+
+    public static float getDistanceAlongAxis(Vec3d vecStart, Vec3d vecFinish, Direction.Axis axis) {
+        double distance = 0;
+        switch(axis) {
+            case X -> distance = Math.abs(vecFinish.x - vecStart.x);
+            case Y -> distance = Math.abs(vecFinish.y - vecStart.y);
+            case Z -> distance = Math.abs(vecFinish.z - vecStart.z);
+        }
+        return (float) distance;
     }
 }
