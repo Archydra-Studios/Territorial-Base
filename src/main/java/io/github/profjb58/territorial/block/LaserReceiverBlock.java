@@ -13,7 +13,9 @@ import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class LaserReceiverBlock extends FacingBlock {
@@ -49,8 +51,13 @@ public class LaserReceiverBlock extends FacingBlock {
     }
 
     @Override
+    public int getWeakRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction) {
+        return (direction.equals(state.get(Properties.FACING))) ? state.get(Properties.POWER) : 0;
+    }
+
+    @Override
     public boolean emitsRedstonePower(BlockState state) {
-        return super.emitsRedstonePower(state);
+        return true;
     }
 
     static {
