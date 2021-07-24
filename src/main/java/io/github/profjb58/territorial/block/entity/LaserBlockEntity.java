@@ -1,7 +1,6 @@
 package io.github.profjb58.territorial.block.entity;
 
 import io.github.profjb58.territorial.Territorial;
-import io.github.profjb58.territorial.block.LaserReceiverBlock;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.mixin.AnvilChunkStorageAccessor;
 import io.github.profjb58.territorial.util.PosUtils;
@@ -39,6 +38,7 @@ public class  LaserBlockEntity extends BlockEntity implements BlockEntityClientS
     private float sparkleDistance, reach, prevReach;
     private Vec3d startPos, endPos;
     private Map<String, Boolean> mods = new HashMap<>();
+    private final Stack<BlockPos> lightBlocks = new Stack<>();
     private Entity trackedEntity;
     private BlockPos receiverPos;
 
@@ -87,14 +87,16 @@ public class  LaserBlockEntity extends BlockEntity implements BlockEntityClientS
 
     public static void tick(World world, BlockPos pos, BlockState state, LaserBlockEntity be) {
         int power = state.get(Properties.POWER);
-        if(power == 0) {
-            if(be.receiverPos != null) be.setReceiverState(false);
+        Direction facing = state.get(Properties.FACING);
+        if(power <= 0) {
+            if(be.receiverPos != null) be.setReceiverPowered(false);
+            if(be.mods.get("light") && be.prevPower != 0) {
+                be.toggleLightBlocks(false, facing);
+            }
             return;
         }
-
         List<Entity> entities = new ArrayList<>(0);
         if(be.reach != be.prevReach || power != be.prevPower) {
-            Direction facing = state.get(Properties.FACING);
             if(power != be.prevPower) {
                 be.startPos = Vec3d.ofCenter(pos)
                         .add(PosUtils.zeroMove(Vec3d.of(facing.getVector()).multiply(0.5), SIGNAL_STRENGTH_WIDTHS[power - 1] / 2));
@@ -133,7 +135,7 @@ public class  LaserBlockEntity extends BlockEntity implements BlockEntityClientS
                         be.trackedEntity = entity;
                         be.reach = distance;
                         trackedReach = distance;
-                        be.setReceiverState(false);
+                        be.setReceiverPowered(false);
                     }
                 }
                 entityCounter++;
@@ -145,27 +147,26 @@ public class  LaserBlockEntity extends BlockEntity implements BlockEntityClientS
                 posIterator = pos.offset(facing, i);
                 bs = world.getBlockState(posIterator);
 
-                // Check for adding/removing light blocks
-                if (be.mods.get("light") && !world.isClient && bs.isAir()) {
-                    world.setBlockState(posIterator, Blocks.LIGHT.getDefaultState());
-                }
                 // Check for a receiver
                 if (bs.getBlock() == TerritorialRegistry.LASER_RECEIVER) {
                     if (facing.equals(bs.get(Properties.FACING).getOpposite())) {
                         be.receiverPos = posIterator;
-                        be.setReceiverState(true);
+                        be.setReceiverPowered(true);
                     }
                     foundReceiver = true;
                 }
                 // Extend the lasers reach up to the first Opaque block or a receiver
                 if ((bs.getOpacity(world, posIterator) >= 15 && !bs.isOf(Blocks.BEDROCK)) || (i == (be.maxReach - 1)) || foundReceiver) {
-                    if(!foundReceiver) be.setReceiverState(false);
+                    if(!foundReceiver) be.setReceiverPowered(false);
                     be.reach = i;
                     break;
                 }
             }
         }
         if(!world.isClient) {
+            // Check for adding/removing light blocks
+            if(be.mods.get("light") && be.lightBlocks.empty()) be.toggleLightBlocks(true, facing);
+
             ServerWorld serverWorld = (ServerWorld) world;
             int watchDistance = ((AnvilChunkStorageAccessor) serverWorld.getChunkManager().threadedAnvilChunkStorage).getWatchDistance();
             int watchDistanceMaxReach = (watchDistance < 2) ? 16 : (watchDistance * 16) - 16;
@@ -229,7 +230,7 @@ public class  LaserBlockEntity extends BlockEntity implements BlockEntityClientS
         }
     }
 
-    private void setReceiverState(boolean powered) {
+    private void setReceiverPowered(boolean powered) {
         if(receiverPos != null && world != null) {
             BlockState receiverState = world.getBlockState(receiverPos);
             if(receiverState.getBlock().equals(TerritorialRegistry.LASER_RECEIVER)) {
@@ -239,6 +240,26 @@ public class  LaserBlockEntity extends BlockEntity implements BlockEntityClientS
                         .with(Properties.POWERED, powered));
             }
             if(!powered) receiverPos = null;
+        }
+    }
+
+    private void toggleLightBlocks(boolean powered, Direction facing) {
+        BlockPos posIterator;
+        if(world != null && !world.isClient) {
+            BlockState currentState;
+            for(int i=0; i < reach; i++) {
+                posIterator = pos.offset(facing, i);
+                currentState = world.getBlockState(posIterator);
+
+                if(powered && currentState.isAir()) {
+                    world.setBlockState(posIterator, Blocks.LIGHT.getDefaultState());
+                    lightBlocks.add(posIterator);
+                }
+                else if(currentState.equals(Blocks.LIGHT.getDefaultState())) {
+                    world.setBlockState(posIterator, Blocks.AIR.getDefaultState());
+                }
+                if(!powered) lightBlocks.clear();
+            }
         }
     }
 
