@@ -1,3 +1,6 @@
+# Photosensitive epilepsy warning
+Build v0.1.0 (1.17) contains lasers which if used in a certain way could possible be a trigger for those with photosensitive epilepsy. This will be fixed fairly soon
+
 # Territorial (Base)
 
 ### What is Territorial?
