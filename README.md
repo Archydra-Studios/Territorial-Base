@@ -9,4 +9,4 @@ Gone are the days of knowing your safe when you claim land or protect a chest. I
 This mod is licensed under `Creative Commons Zero v1.0 Universal`. Basically do whatever you want
 
 ### Photosensitive epilepsy warning (v0.1.0)
-Build v0.1.0 (1.17) contains lasers which if used in a certain way could possible be a trigger for those with photosensitive epilepsy. This will be fixed fairly soon
+Build v0.1.0 (1.17) contains lasers which if used in a certain way could be a possible trigger for those with photosensitive epilepsy. This will be fixed soon
