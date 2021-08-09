@@ -4,6 +4,7 @@ import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.mixin.AnvilChunkStorageAccessor;
 import io.github.profjb58.territorial.util.PosUtils;
+import io.github.profjb58.territorial.util.TickCounter;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -36,16 +37,18 @@ public class  LaserBlockEntity extends BlockEntity implements BlockEntityClientS
 
     private int strength, colour, maxReach, prevPower;
     private float sparkleDistance, reach, prevReach;
+    private boolean updateLights;
     private Vec3d startPos, endPos;
     private Map<String, Boolean> mods = new HashMap<>();
-    private final Stack<BlockPos> lightBlocks = new Stack<>();
     private Entity trackedEntity;
     private BlockPos receiverPos;
+    private final TickCounter lightBlocksCounter;
 
     public LaserBlockEntity(BlockPos pos, BlockState state) {
         super(TerritorialRegistry.LASER_BLOCK_ENTITY, pos, state);
         prevPower = -1;
         maxReach = Territorial.getConfig().getLaserTransmitterMaxReach();
+        lightBlocksCounter = new TickCounter(6);
         mods.put("sparkle", false);
         mods.put("rainbow", false);
         mods.put("highlight", false);
@@ -67,45 +70,52 @@ public class  LaserBlockEntity extends BlockEntity implements BlockEntityClientS
             ));
             markDirty();
             sync();
+
+            boolean powered = false;
+            if(tag.getBoolean("light")) powered = getCachedState().get(Properties.POWERED);
+            updateLightBlocks(powered, getCachedState().get(Properties.FACING));
         }
     }
 
-    public ItemStack getLensStack() {
-        ItemStack lensStack = TerritorialRegistry.LENS.getDefaultStack();
-        lensStack.putSubTag("beam", writeNbt(new NbtCompound()));
+    public ItemStack writeNbtStack(ItemStack stack) {
+        stack.putSubTag("beam", writeNbt(new NbtCompound()));
 
         // Remove block identifying features
-        NbtCompound beamSubTag = lensStack.getSubTag("beam");
+        NbtCompound beamSubTag = stack.getSubTag("beam");
         if(beamSubTag != null) {
+            beamSubTag.remove("id");
             beamSubTag.remove("x");
             beamSubTag.remove("y");
             beamSubTag.remove("z");
             beamSubTag.remove("max_reach");
         }
-        return lensStack;
+        return stack;
     }
 
     public static void tick(World world, BlockPos pos, BlockState state, LaserBlockEntity be) {
         int power = state.get(Properties.POWER);
         Direction facing = state.get(Properties.FACING);
+
         if(power <= 0) {
             if(be.receiverPos != null) be.setReceiverPowered(false);
-            if(be.mods.get("light") && be.prevPower != 0) {
-                be.toggleLightBlocks(false, facing);
-            }
+            if(be.mods.get("light") && be.prevPower != 0) be.updateLightBlocks(false, facing);
+            be.prevPower = power;
             return;
         }
-        List<Entity> entities = new ArrayList<>(0);
-        if(be.reach != be.prevReach || power != be.prevPower) {
+        else if(be.reach != be.prevReach || power != be.prevPower) {
             if(power != be.prevPower) {
                 be.startPos = Vec3d.ofCenter(pos)
                         .add(PosUtils.zeroMove(Vec3d.of(facing.getVector()).multiply(0.5), SIGNAL_STRENGTH_WIDTHS[power - 1] / 2));
             }
             be.endPos = Vec3d.ofCenter(pos)
                     .add(PosUtils.zeroMove(Vec3d.of(facing.getVector()).multiply(be.reach + 0.5), -(SIGNAL_STRENGTH_WIDTHS[power - 1] / 2)));
-            be.prevReach = be.reach;
+            be.updateLights = true;
             be.prevPower = power;
+            be.prevReach = be.reach;
         }
+        be.lightBlocksCounter.increment();
+
+        List<Entity> entities = new ArrayList<>(0);
         if(be.startPos != null && be.endPos != null) {
             entities = world.getOtherEntities(null, new Box(be.startPos, be.endPos));
             applyEffects(entities, state.get(Properties.FACING), be);
@@ -119,19 +129,19 @@ public class  LaserBlockEntity extends BlockEntity implements BlockEntityClientS
         BlockState bs;
         boolean foundReceiver = false;
 
-        if(entitiesCollided.size() > 0) { // Collides with an entity
+        if (entitiesCollided.size() > 0) { // Collides with an entity
             int entityCounter = 0;
             float trackedReach = be.reach;
 
-            for(Entity entity : entitiesCollided) {
+            for (Entity entity : entitiesCollided) {
                 float distance = PosUtils.getDistanceAlongAxis(Vec3d.of(be.getPos()).add(0.5, 0.5, 0.5),
                         entity.getPos(), facing.getAxis());
 
-                if(distance <= (be.maxReach - 1f)) {
-                    if(be.trackedEntity != null && distance < be.maxReach) {
-                        if(entity.equals(be.trackedEntity)) trackedReach = distance;
+                if (distance <= (be.maxReach - 1f)) {
+                    if (be.trackedEntity != null && distance < be.maxReach) {
+                        if (entity.equals(be.trackedEntity)) trackedReach = distance;
                     }
-                    if(distance <= trackedReach) {
+                    if (distance <= trackedReach) {
                         be.trackedEntity = entity;
                         be.reach = distance;
                         trackedReach = distance;
@@ -139,11 +149,10 @@ public class  LaserBlockEntity extends BlockEntity implements BlockEntityClientS
                     }
                 }
                 entityCounter++;
-                if(entityCounter >= MAX_ENTITIES_PER_BEAM_TICK) break;
+                if (entityCounter >= MAX_ENTITIES_PER_BEAM_TICK) break;
             }
-        }
-        else { // Check for block collisions
-            for(int i = 0; i < be.maxReach; i++) {
+        } else { // Check for block collisions
+            for (int i = 0; i < be.maxReach; i++) {
                 posIterator = pos.offset(facing, i);
                 bs = world.getBlockState(posIterator);
 
@@ -157,21 +166,23 @@ public class  LaserBlockEntity extends BlockEntity implements BlockEntityClientS
                 }
                 // Extend the lasers reach up to the first Opaque block or a receiver
                 if ((bs.getOpacity(world, posIterator) >= 15 && !bs.isOf(Blocks.BEDROCK)) || (i == (be.maxReach - 1)) || foundReceiver) {
-                    if(!foundReceiver) be.setReceiverPowered(false);
+                    if (!foundReceiver) be.setReceiverPowered(false);
                     be.reach = i;
                     break;
                 }
             }
         }
-        if(!world.isClient) {
+        if (!world.isClient) {
             // Check for adding/removing light blocks
-            if(be.mods.get("light") && be.lightBlocks.empty()) be.toggleLightBlocks(true, facing);
+            if (be.mods.get("light") && be.updateLights) {
+                be.updateLightBlocks(true, facing);
+            }
 
             ServerWorld serverWorld = (ServerWorld) world;
             int watchDistance = ((AnvilChunkStorageAccessor) serverWorld.getChunkManager().threadedAnvilChunkStorage).getWatchDistance();
             int watchDistanceMaxReach = (watchDistance < 2) ? 16 : (watchDistance * 16) - 16;
 
-            if(be.maxReach != watchDistanceMaxReach) {
+            if (be.maxReach != watchDistanceMaxReach) {
                 be.maxReach = Math.min(watchDistanceMaxReach, Territorial.getConfig().getLaserTransmitterMaxReach());
                 be.markDirty();
                 be.sync();
@@ -243,33 +254,48 @@ public class  LaserBlockEntity extends BlockEntity implements BlockEntityClientS
         }
     }
 
-    private void toggleLightBlocks(boolean powered, Direction facing) {
-        BlockPos posIterator;
-        if(world != null && !world.isClient) {
-            BlockState currentState;
-            for(int i=0; i < reach; i++) {
-                posIterator = pos.offset(facing, i);
-                currentState = world.getBlockState(posIterator);
+    public void updateLightBlocks(boolean powered, Direction facing) {
+        if(lightBlocksCounter.test() || !powered) {
+            updateLights = false;
+            BlockPos posIterator;
 
-                if(powered && currentState.isAir()) {
-                    world.setBlockState(posIterator, Blocks.LIGHT.getDefaultState());
-                    lightBlocks.add(posIterator);
+            if(world != null && !world.isClient) {
+                BlockState currentState;
+
+                for(int i=0; i <= maxReach; i++) {
+                    posIterator = pos.offset(facing, i);
+                    currentState = world.getBlockState(posIterator);
+
+                    if(powered) {
+                        if(i <= (int) reach && currentState.isAir()) {
+                            world.setBlockState(posIterator, Blocks.LIGHT.getDefaultState());
+                        }
+                        else if(i > (int) reach && currentState.equals(Blocks.LIGHT.getDefaultState())) {
+                            world.setBlockState(posIterator, Blocks.AIR.getDefaultState());
+                        }
+                    }
+                    else if(currentState.equals(Blocks.LIGHT.getDefaultState())){
+                        world.setBlockState(posIterator, Blocks.AIR.getDefaultState());
+                    }
                 }
-                else if(currentState.equals(Blocks.LIGHT.getDefaultState())) {
-                    world.setBlockState(posIterator, Blocks.AIR.getDefaultState());
-                }
-                if(!powered) lightBlocks.clear();
             }
         }
+    }
+
+    @Override
+    public void markRemoved() {
+        updateLightBlocks(false, getCachedState().get(Properties.FACING));
+        setReceiverPowered(false);
+        super.markRemoved();
     }
 
     @Override
     public NbtCompound writeNbt(NbtCompound tag) {
         super.writeNbt(tag);
         toSharedTag(tag);
-        tag.putByte("strength", (byte) strength);
-        tag.putBoolean("highlight", mods.get("highlight"));
-        tag.putBoolean("death", mods.get("death"));
+        if(tag.contains("strength")) tag.putByte("strength", (byte) strength);
+        if(tag.contains("highlight")) tag.putBoolean("highlight", mods.get("highlight"));
+        if(tag.contains("death")) tag.putBoolean("death", mods.get("death"));
         return super.writeNbt(tag);
     }
 
@@ -284,6 +310,9 @@ public class  LaserBlockEntity extends BlockEntity implements BlockEntityClientS
 
     @Override
     public NbtCompound toClientTag(NbtCompound tag) {
+        if(tag.contains("strength")) tag.putByte("strength", (byte) 0);
+        if(tag.contains("highlight")) tag.putBoolean("highlight", false);
+        if(tag.contains("death")) tag.putBoolean("death", false);
         return toSharedTag(tag);
     }
 
@@ -293,17 +322,15 @@ public class  LaserBlockEntity extends BlockEntity implements BlockEntityClientS
     }
 
     private NbtCompound toSharedTag(NbtCompound tag) {
-        tag.putFloat("reach", reach);
         tag.putInt("colour", colour);
         tag.putInt("max_reach", maxReach);
-        tag.putBoolean("rainbow", mods.get("rainbow"));
-        tag.putBoolean("sparkle", mods.get("sparkle"));
-        tag.putBoolean("light", mods.get("light"));
+        if(tag.contains("rainbow")) tag.putBoolean("rainbow", mods.get("rainbow"));
+        if(tag.contains("sparkle")) tag.putBoolean("sparkle", mods.get("sparkle"));
+        if(tag.contains("light")) tag.putBoolean("light", mods.get("light"));
         return tag;
     }
 
     private void fromSharedTag(NbtCompound tag) {
-        reach = tag.getFloat("reach");
         colour = tag.getInt("colour");
         maxReach = tag.getInt("max_reach");
         mods.put("rainbow", tag.getBoolean("rainbow"));

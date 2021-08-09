@@ -56,7 +56,7 @@ public class LaserBlockEntityRenderer implements BlockEntityRenderer<LaserBlockE
             if(isSparkle) {
                 ClientWorld clientWorld = (ClientWorld) be.getWorld();
                 if(clientWorld != null) {
-                    if(be.getSparkleDistance() < (be.getReach() - 0.5f)) {
+                    if(be.getSparkleDistance() < be.getReach()) {
                         Vec3d sparklePos = Vec3d.of(be.getPos()).add(PosUtils.zeroMove(Vec3d.of(facing.getVector()).multiply(be.getSparkleDistance()), 0.5));
                         clientWorld.addParticle(new DustParticleEffect(new Vec3f(colour[0], colour[1], colour[2]), 1f),
                                 true, sparklePos.getX() , sparklePos.getY(), sparklePos.getZ(),

@@ -71,6 +71,9 @@ public class TBConfig implements ConfigData {
         @ConfigEntry.Gui.Excluded
         @Comment("Whether the laser targets all mobs or just players")
         private boolean laserTargetsAllMobs = true;
+
+        @Comment("Prevents flashing images, limits the rate at which lasers can update")
+        private boolean laserLimitUpdates = false;
     }
 
     // Cycle through bounded config options to check if they produce a false value
@@ -93,6 +96,7 @@ public class TBConfig implements ConfigData {
     public boolean masterKeyVanish() { return locks.makeMasterKeyVanish; }
     public boolean enderKeyEnabled() { return locks.enableEnderKey; }
     public boolean laserTargetsAllMobs() { return traps.laserTargetsAllMobs; }
+    public boolean limitUpdateRate() { return traps.laserLimitUpdates; }
 
     public int getMinOpLevel() {
         if(locks.minOpLevel < 1 || locks.minOpLevel > 4) {

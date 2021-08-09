@@ -3,6 +3,7 @@ package io.github.profjb58.territorial.item;
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.block.LaserTransmitterBlock;
 import io.github.profjb58.territorial.block.entity.LaserBlockEntity;
+import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.util.TextUtils;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.block.entity.BlockEntity;
@@ -70,9 +71,10 @@ public class LensItem extends Item {
         if (!world.isClient && be instanceof LaserBlockEntity lbe) {
             BlockPos pos = ctx.getBlockPos();
             PlayerEntity player = ctx.getPlayer();
+            ItemStack lensStack = TerritorialRegistry.LENS.getDefaultStack();
 
-            if(!Objects.equals(lbe.getLensStack().getSubTag("beam"), ctx.getStack().getSubTag("beam"))) {
-                ItemEntity lensToDrop = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), lbe.getLensStack());
+            if(!Objects.equals(lbe.writeNbtStack(lensStack).getSubTag("beam"), ctx.getStack().getSubTag("beam"))) {
+                ItemEntity lensToDrop = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), lbe.writeNbtStack(lensStack));
                 lbe.createFromLens(ctx.getStack());
                 if(player != null && !player.isCreative()) {
                     ctx.getStack().decrement(1);

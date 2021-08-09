@@ -125,7 +125,7 @@ public class LensRecipe extends SpecialCraftingRecipe {
     static {
         SPARKLE_MODIFIER = Ingredient.ofItems(Items.EMERALD);
         RAINBOW_MODIFIER = Ingredient.ofItems(Items.DIAMOND);
-        HIGHLIGHT_MODIFIER = Ingredient.ofItems(Items.GLOWSTONE_DUST);
+        HIGHLIGHT_MODIFIER = Ingredient.ofItems(Items.GLOW_INK_SAC);
         DEATH_MODIFIER = Ingredient.ofItems(Items.NETHER_STAR);
         LIGHT_MODIFIER = Ingredient.ofItems(Items.GLOW_BERRIES);
         SRENGTH_MODIFIER = Ingredient.ofItems(Items.AMETHYST_SHARD);

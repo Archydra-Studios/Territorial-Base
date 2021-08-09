@@ -1,5 +1,6 @@
 package io.github.profjb58.territorial.util;
 
+import io.github.cottonmc.cotton.gui.widget.WTiledSprite;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 
