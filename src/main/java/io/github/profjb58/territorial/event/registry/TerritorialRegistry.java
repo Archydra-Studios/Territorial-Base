@@ -4,6 +4,7 @@ import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.block.LaserReceiverBlock;
 import io.github.profjb58.territorial.block.LaserTransmitterBlock;
 import io.github.profjb58.territorial.block.LockableBlock.LockType;
+import io.github.profjb58.territorial.block.PlinthOfPeekingBlock;
 import io.github.profjb58.territorial.block.entity.LaserBlockEntity;
 import io.github.profjb58.territorial.client.gui.KeyringScreenHandler;
 import io.github.profjb58.territorial.command.LockCommands;
@@ -16,6 +17,7 @@ import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
@@ -46,6 +48,7 @@ public class TerritorialRegistry {
     public static final Block SAFE_BLOCK = new Block(FabricBlockSettings.of(Material.METAL).strength(4.0f));
     public static final Block LASER_TRANSMITTER = new LaserTransmitterBlock();
     public static final Block LASER_RECEIVER = new LaserReceiverBlock();
+    public static final Block PLINTH_OF_PEEKING = new PlinthOfPeekingBlock();
 
     // Block Entities
     public static final BlockEntityType<LaserBlockEntity> LASER_BLOCK_ENTITY
@@ -110,6 +113,9 @@ public class TerritorialRegistry {
 
         Registry.register(Registry.BLOCK, new Identifier(Territorial.MOD_ID, "laser_receiver"), LASER_RECEIVER);
         Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "laser_receiver"), new BlockItem(LASER_RECEIVER, new FabricItemSettings().group(Territorial.BASE_GROUP)));
+
+        Registry.register(Registry.BLOCK, new Identifier(Territorial.MOD_ID, "plinth_of_peeking"), PLINTH_OF_PEEKING);
+        Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "plinth_of_peeking"), new BlockItem(PLINTH_OF_PEEKING, new FabricItemSettings().group(Territorial.BASE_GROUP)));
     }
 
     private static void registerCommands() {
