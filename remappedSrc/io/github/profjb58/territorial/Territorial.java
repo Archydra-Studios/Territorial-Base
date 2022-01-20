@@ -2,17 +2,16 @@ package io.github.profjb58.territorial;
 
 import io.github.profjb58.territorial.config.TBConfig;
 import io.github.profjb58.territorial.database.DatabaseManager;
-import io.github.profjb58.territorial.event.AttackHandlers;
-import io.github.profjb58.territorial.event.DestructionHandlers;
-import io.github.profjb58.territorial.event.ServerTickHandlers;
-import io.github.profjb58.territorial.event.UseBlockHandler;
+import io.github.profjb58.territorial.event.*;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.networking.C2SPackets;
 import io.github.profjb58.territorial.util.debug.DebugTimer;
-import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
-import me.sargunvohra.mcmods.autoconfig1u.serializer.JanksonConfigSerializer;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
@@ -59,5 +58,9 @@ public class Territorial implements ModInitializer {
 
 	public static TBConfig getConfig() {
 		return AutoConfig.getConfigHolder(TBConfig.class).getConfig();
+	}
+
+	public static boolean isDedicatedServer() {
+		return FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER;
 	}
 }

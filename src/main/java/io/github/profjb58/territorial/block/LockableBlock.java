@@ -5,13 +5,13 @@ import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.inventory.ItemInventory;
 import io.github.profjb58.territorial.item.KeyringItem;
 import io.github.profjb58.territorial.util.MathUtils;
-import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
@@ -72,7 +72,8 @@ public class LockableBlock {
         if(!world.isClient) {
             BlockEntity be = world.getBlockEntity(blockPos);
             if(be != null) {
-                NbtCompound tag = be.writeNbt(new NbtCompound());
+
+                NbtCompound tag = be.createNbt();
                 if(!tag.contains("lock_id")) { // No lock has been assigned to the block entity
                     tag.putString("lock_id", lockId);
                     tag.putUuid("lock_owner_uuid", lockOwnerUuid);
@@ -87,7 +88,7 @@ public class LockableBlock {
                     } catch (Exception ignored) {}
 
                     // Sync data to the client
-                    ((BlockEntityClientSerializable) be).sync();
+                    ((ServerWorld) world).getChunkManager().markForUpdate(be.getPos());
                     return LockEntityResult.SUCCESS;
                 }
                 else {

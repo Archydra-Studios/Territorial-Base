@@ -63,8 +63,7 @@ public class KeyringItem extends Item {
         itemInventory.loadFromAttachedItemTag();
 
         for(ItemStack itemStack : itemInventory.getItems()) {
-            if (itemStack.getItem() instanceof KeyItem) {
-                KeyItem keyItem = (KeyItem) itemStack.getItem();
+            if (itemStack.getItem() instanceof KeyItem keyItem) {
                 if (keyItem.isMasterKey()) {
                     tooltip.add(new LiteralText("§d" + itemStack.getName().getString()));
                 } else {

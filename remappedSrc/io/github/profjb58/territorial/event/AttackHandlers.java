@@ -11,7 +11,6 @@ public class AttackHandlers {
     static int ticksSinceBlockAttack = 0;
 
     public static void init() {
-
         // Attack block handler
         AttackBlockCallback.EVENT.register((player, world, hand, blockPos, direction) -> {
             LockableBlockEntity lbe = new LockableBlockEntity(world, blockPos);

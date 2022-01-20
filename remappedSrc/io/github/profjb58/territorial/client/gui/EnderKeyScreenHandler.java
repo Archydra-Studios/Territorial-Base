@@ -28,7 +28,7 @@ public class EnderKeyScreenHandler extends GenericContainerScreenHandler {
     private final EnderChestInventory enderChestInventory;
     private final Queue<Integer> slotDestructionQueue;
     private Item prevSlotClickItem = Items.RED_STAINED_GLASS_PANE;
-    private ServerPlayerEntity targetPlayer;
+    private final ServerPlayerEntity targetPlayer;
 
     public EnderKeyScreenHandler(int syncId, PlayerInventory playerInventory, Inventory displayInventory,
                                  EnderChestInventory enderChestInventory, ServerPlayerEntity targetPlayer) {
@@ -78,7 +78,7 @@ public class EnderKeyScreenHandler extends GenericContainerScreenHandler {
     }
 
     @Override
-    public ItemStack onSlotClick(int slotId, int clickData, SlotActionType actionType, PlayerEntity playerEntity) {
+    public void onSlotClick(int slotId, int clickData, SlotActionType actionType, PlayerEntity playerEntity) {
         if(slotId >= 0) {
             ItemStack itemStack = getSlot(slotId).getStack();
             Item item = itemStack.getItem();
@@ -89,11 +89,11 @@ public class EnderKeyScreenHandler extends GenericContainerScreenHandler {
                             || item.equals(Items.RED_STAINED_GLASS_PANE);
                     if(actionType == SlotActionType.PICKUP) {
                         prevSlotClickItem = itemStack.getItem();
-                        if(blankItem) return Items.AIR.getDefaultStack();
+                        if(blankItem) return;
                         else warnTargetPlayer();
                     }
                     else {
-                        if (blankItem) return itemStack;
+                        if (blankItem) return;
                         else warnTargetPlayer();
                     }
                 }
@@ -101,18 +101,18 @@ public class EnderKeyScreenHandler extends GenericContainerScreenHandler {
                     boolean blankItem = prevSlotClickItem.equals(Items.LIGHT_GRAY_STAINED_GLASS_PANE)
                             || prevSlotClickItem.equals(Items.RED_STAINED_GLASS_PANE);
                     if(actionType == SlotActionType.PICKUP && blankItem) {
-                        return Items.AIR.getDefaultStack();
+                        return;
                     }
                     else {
-                        return itemStack;
+                        return;
                     }
                 }
             }
             else {
-                return Items.AIR.getDefaultStack();
+                return;
             }
         }
-        return super.onSlotClick(slotId, clickData, actionType, playerEntity);
+        super.onSlotClick(slotId, clickData, actionType, playerEntity);
     }
 
     private void warnTargetPlayer() {

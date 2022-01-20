@@ -117,7 +117,7 @@ public class LaserTransmitterBlock extends BlockWithEntity implements BlockEntit
     public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options) {
         super.appendTooltip(stack, world, tooltip, options);
 
-        NbtCompound tag = stack.getSubTag("beam");
+        NbtCompound tag = stack.getSubNbt("beam");
         if(tag != null) {
             // Colour
             DyeColor dyeColour = Optional.of(DyeColor.byId(tag.getInt("colour"))).orElse(DyeColor.WHITE);

@@ -4,10 +4,8 @@ import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.TerritorialServer;
 import io.github.profjb58.territorial.block.LockableBlock;
 import io.github.profjb58.territorial.block.entity.LockableBlockEntity;
-import io.github.profjb58.territorial.util.SideUtils;
 import io.github.profjb58.territorial.util.TextUtils;
-import io.github.profjb58.territorial.util.debug.ActionLogger;
-import io.github.profjb58.territorial.world.WorldLockStorage;
+import io.github.profjb58.territorial.util.ActionLogger;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
@@ -17,7 +15,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
@@ -74,7 +71,7 @@ public class KeyItem extends Item {
                 if(lb.findMatchingKey((ServerPlayerEntity) player, false) != null) {
                     if(lbe.remove()) {
                         onRemoveLock(ctx, lb); // Remove the lock
-                        WorldLockStorage.get((ServerWorld) ctx.getWorld()).removeLock(lb); // Remove from persistent storage
+                        //WorldLockStorage.get((ServerWorld) ctx.getWorld()).removeLock(lb); // Remove from persistent storage
                     }
                     else {
                         // Really shouldn't happen, but just encase
@@ -118,7 +115,7 @@ public class KeyItem extends Item {
             masterKeyStack.decrement(1);
             player.sendMessage(new TranslatableText("message.territorial.master_key_vanished"), false);
 
-            if(SideUtils.isDedicatedServer()) {
+            if(Territorial.isDedicatedServer()) {
                 TerritorialServer.actionLogger.write(ActionLogger.LogType.INFO, ActionLogger.LogModule.LOCKS,
                         "Player " + player.getName().getString() + " used a master key at location " + lb.getBlockPos());
             }

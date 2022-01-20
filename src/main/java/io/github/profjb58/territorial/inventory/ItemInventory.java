@@ -22,12 +22,12 @@ public class ItemInventory implements BaseInventory {
 
     @Override
     public void markDirty() {
-        NbtCompound stackTag = attachedItemStack.getOrCreateTag();
+        NbtCompound stackTag = attachedItemStack.getOrCreateNbt();
         Inventories.writeNbt(stackTag, getItems());
     }
 
     public void loadFromAttachedItemTag() {
-        Inventories.readNbt(attachedItemStack.getOrCreateTag(), getItems());
+        Inventories.readNbt(attachedItemStack.getOrCreateNbt(), getItems());
 
         for(int i=0; i < this.size(); i++) {
             setStack(i, getItems().get(i));

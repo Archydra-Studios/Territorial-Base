@@ -1,15 +1,9 @@
 package io.github.profjb58.territorial.event;
 
-import io.github.profjb58.territorial.block.entity.LockableBlockEntity;
-import io.github.profjb58.territorial.util.ClientUtils;
+import io.github.profjb58.territorial.client.render.entity.LaserBlockEntityRenderer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.util.math.BlockPos;
-
-import static io.github.profjb58.territorial.TerritorialClient.lockableHud;
 
 @Environment(EnvType.CLIENT)
 public class ClientTickHandlers {
@@ -21,8 +15,9 @@ public class ClientTickHandlers {
     private static int lockableViewCounter = 0;
 
     public static void init() {
-
         ClientTickEvents.START_WORLD_TICK.register((clientWorld) -> {
+            // TODO - Replace raycasts with a less expensive implementation
+            /*
             if(lockableViewCounter >= LOCKABLE_VIEW_CHECK_TICK_INTERVAL) {
                 ClientPlayerEntity player = MinecraftClient.getInstance().player;
 
@@ -41,7 +36,13 @@ public class ClientTickHandlers {
                 }
                 lockableViewCounter = 0;
             }
+            */
             lockableViewCounter++;
+            LaserBlockEntityRenderer.rainbowColourTick();
+        });
+
+        ClientTickEvents.END_CLIENT_TICK.register((clientWorld) -> {
+            LaserBlockEntityRenderer.rainbowColourTick();
         });
     }
 }

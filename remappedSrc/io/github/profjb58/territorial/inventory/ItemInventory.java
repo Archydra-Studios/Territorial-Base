@@ -2,7 +2,7 @@ package io.github.profjb58.territorial.inventory;
 
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.collection.DefaultedList;
 
 public class ItemInventory implements BaseInventory {
@@ -22,12 +22,12 @@ public class ItemInventory implements BaseInventory {
 
     @Override
     public void markDirty() {
-        CompoundTag stackTag = attachedItemStack.getOrCreateTag();
-        Inventories.toTag(stackTag, getItems());
+        NbtCompound stackTag = attachedItemStack.getOrCreateTag();
+        Inventories.writeNbt(stackTag, getItems());
     }
 
     public void loadFromAttachedItemTag() {
-        Inventories.fromTag(attachedItemStack.getOrCreateTag(), getItems());
+        Inventories.readNbt(attachedItemStack.getOrCreateTag(), getItems());
 
         for(int i=0; i < this.size(); i++) {
             setStack(i, getItems().get(i));

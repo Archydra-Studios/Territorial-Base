@@ -24,7 +24,7 @@ public class RenderUtils {
      */
     public static void drawQuadLine(MatrixStack matrices, VertexConsumer consumer, Direction facing, float w, float l, float[] colour, float a) {
         // Get the transformation matrix and translate to the center
-        Matrix4f transMatrix = matrices.peek().getModel();
+        Matrix4f transMatrix = matrices.peek().getPositionMatrix();
         matrices.translate(0.5, 0.5, 0.5);
 
         float r = colour[0];

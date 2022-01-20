@@ -41,7 +41,7 @@ public class TerritorialClientRegistry {
         });
 
         FabricModelPredicateProviderRegistry.register(TerritorialRegistry.LENS, new Identifier("colour"), (itemStack, clientWorld, livingEntity, seed) -> {
-            NbtCompound tag = itemStack.getSubTag("beam");
+            NbtCompound tag = itemStack.getSubNbt("beam");
 
             if(tag != null) {
                 int colourId = tag.getInt("colour");

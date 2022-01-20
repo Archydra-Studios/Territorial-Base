@@ -5,12 +5,12 @@ import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectType;
+import net.minecraft.entity.effect.StatusEffectCategory;
 
 public class LockFatigueStatusEffect extends StatusEffect {
 
     public LockFatigueStatusEffect() {
-        super(StatusEffectType.HARMFUL, 4866583);
+        super(StatusEffectCategory.HARMFUL, 4866583);
         addAttributeModifier(EntityAttributes.GENERIC_ATTACK_SPEED, "89C60584-6295-11EB-AE93-0242AC130002", -0.10000000149011612D, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
     }
 

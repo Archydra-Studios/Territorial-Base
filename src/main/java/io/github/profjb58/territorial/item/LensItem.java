@@ -37,7 +37,7 @@ public class LensItem extends Item {
     @Override
     public Text getName(ItemStack stack) {
         Text translationText = new TranslatableText(this.getTranslationKey());
-        NbtCompound tag = stack.getSubTag("beam");
+        NbtCompound tag = stack.getSubNbt("beam");
 
         if (tag != null) {
             DyeColor dyeColour = Optional.of(DyeColor.byId(tag.getInt("colour"))).orElse(DyeColor.WHITE);
@@ -50,7 +50,7 @@ public class LensItem extends Item {
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext ctx) {
         super.appendTooltip(stack, world, tooltip, ctx);
-        NbtCompound tag = stack.getSubTag("beam");
+        NbtCompound tag = stack.getSubNbt("beam");
         if (tag != null) {
             int strengthMod = tag.getByte("strength");
             tooltip.add(new TranslatableText("tooltip.territorial.lens_strength_" + strengthMod));
@@ -73,7 +73,7 @@ public class LensItem extends Item {
             PlayerEntity player = ctx.getPlayer();
             ItemStack lensStack = TerritorialRegistry.LENS.getDefaultStack();
 
-            if(!Objects.equals(lbe.writeNbtStack(lensStack).getSubTag("beam"), ctx.getStack().getSubTag("beam"))) {
+            if(!Objects.equals(lbe.writeNbtStack(lensStack).getSubNbt("beam"), ctx.getStack().getSubNbt("beam"))) {
                 ItemEntity lensToDrop = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), lbe.writeNbtStack(lensStack));
                 lbe.createFromLens(ctx.getStack());
                 if(player != null && !player.isCreative()) {

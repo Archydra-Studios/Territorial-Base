@@ -5,8 +5,7 @@ import io.github.profjb58.territorial.TerritorialClient;
 import io.github.profjb58.territorial.TerritorialServer;
 import io.github.profjb58.territorial.block.LockableBlock;
 import io.github.profjb58.territorial.block.LockableBlock.LockType;
-import io.github.profjb58.territorial.util.SideUtils;
-import io.github.profjb58.territorial.util.debug.ActionLogger;
+import io.github.profjb58.territorial.util.ActionLogger;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
@@ -51,25 +50,25 @@ public class PadlockItem extends Item {
                             ctx.getBlockPos());
 
                     if(!lb.getLockId().equals("") && lock.hasCustomName()) {
-                        switch(lb.createEntity(ctx.getWorld())) {
-                            case SUCCESS:
-                                if(!player.isCreative()) {
+                        switch (lb.createEntity(ctx.getWorld())) {
+                            case SUCCESS -> {
+                                if (!player.isCreative()) {
                                     lock.decrement(1);
                                 }
                                 player.sendMessage(new TranslatableText("message.territorial.lock_successful"), true);
                                 lb.playSound(LockableBlock.LockSound.LOCK_ADDED, player.getEntityWorld());
-                                if(SideUtils.isDedicatedServer()) {
+                                if (Territorial.isDedicatedServer()) {
                                     TerritorialServer.actionLogger.write(ActionLogger.LogType.INFO,
                                             ActionLogger.LogModule.LOCKS,
                                             player.getName().getString() + " claimed block entity at: " + ctx.getBlockPos());
                                 }
-                                break;
-                            case FAIL:
+                            }
+                            case FAIL -> {
                                 player.sendMessage(new TranslatableText("message.territorial.lock_failed"), true);
                                 lb.playSound(LockableBlock.LockSound.DENIED_ENTRY, player.getEntityWorld());
                                 return ActionResult.FAIL;
-                            case NO_ENTITY_EXISTS:
-                                player.sendMessage(new TranslatableText("message.territorial.lock_not_lockable"), true);
+                            }
+                            case NO_ENTITY_EXISTS -> player.sendMessage(new TranslatableText("message.territorial.lock_not_lockable"), true);
                         }
                     }
                     else {

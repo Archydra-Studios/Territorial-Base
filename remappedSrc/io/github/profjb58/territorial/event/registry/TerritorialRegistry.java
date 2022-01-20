@@ -1,22 +1,29 @@
 package io.github.profjb58.territorial.event.registry;
 
 import io.github.profjb58.territorial.Territorial;
-import io.github.profjb58.territorial.block.LaserBlock;
+import io.github.profjb58.territorial.block.LaserReceiverBlock;
+import io.github.profjb58.territorial.block.LaserTransmitterBlock;
 import io.github.profjb58.territorial.block.LockableBlock.LockType;
-import io.github.profjb58.territorial.block.entity.SafeBlockEntity;
+import io.github.profjb58.territorial.block.PlinthOfPeekingBlock;
+import io.github.profjb58.territorial.block.entity.LaserBlockEntity;
 import io.github.profjb58.territorial.client.gui.KeyringScreenHandler;
 import io.github.profjb58.territorial.command.LockCommands;
-import io.github.profjb58.territorial.entity.effect.LockFatigueEffect;
+import io.github.profjb58.territorial.entity.effect.LockFatigueStatusEffect;
 import io.github.profjb58.territorial.item.*;
+import io.github.profjb58.territorial.recipe.LensRecipe;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.Material;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.recipe.*;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -33,31 +40,43 @@ public class TerritorialRegistry {
     public static final Item PADLOCK_NETHERITE = new PadlockItem(LockType.NETHERITE);
     public static final Item PADLOCK_UNBREAKABLE = new PadlockItem(LockType.UNBREAKABLE);
     public static final Item LOCKPICK = new LockpickItem();
-    public static final Item ENDER_AMULET = new Item(new FabricItemSettings().group(Territorial.BASE_GROUP));
+    public static final Item ENDER_AMULET = createBlankItem();
     public static final Item KEYRING = new KeyringItem();
+    public static final Item LENS = new LensItem();
 
     // Blocks
     public static final Block SAFE_BLOCK = new Block(FabricBlockSettings.of(Material.METAL).strength(4.0f));
-    public static final Block LASER_TRANSMITTER = new LaserBlock();
+    public static final Block LASER_TRANSMITTER = new LaserTransmitterBlock();
+    public static final Block LASER_RECEIVER = new LaserReceiverBlock();
+    public static final Block PLINTH_OF_PEEKING = new PlinthOfPeekingBlock();
 
     // Block Entities
-    public static final BlockEntityType<SafeBlockEntity> SAFE_BLOCK_ENTITY = BlockEntityType.Builder.create(SafeBlockEntity::new, SAFE_BLOCK).build(null);
+    public static final BlockEntityType<LaserBlockEntity> LASER_BLOCK_ENTITY
+            = registerBlockEntity("laser_be", FabricBlockEntityTypeBuilder.create(LaserBlockEntity::new, LASER_TRANSMITTER));
 
-    public static final LockFatigueEffect LOCK_FATIGUE = new LockFatigueEffect();
+    public static final LockFatigueStatusEffect LOCK_FATIGUE = new LockFatigueStatusEffect();
 
     public static final Identifier KEYRING_SCREEN_ID = new Identifier(Territorial.MOD_ID, "keyring");
     public static final ScreenHandlerType<KeyringScreenHandler> KEYRING_SCREEN_HANDLER_TYPE
             = ScreenHandlerRegistry.registerExtended(KEYRING_SCREEN_ID, KeyringScreenHandler::new);
 
-    // Collections
-    public static final Item[] PADLOCKS = new Item[] { PADLOCK, PADLOCK_GOLD, PADLOCK_DIAMOND, PADLOCK_NETHERITE, PADLOCK_UNBREAKABLE };
+    // Recipe serializers
+    public static final SpecialRecipeSerializer<LensRecipe> LENS_RECIPE_SERIALIZER = new SpecialRecipeSerializer<>(LensRecipe::new);
+
+    /*static {
+        // Lens
+        for(DyeColor color : DyeColor.values()) {
+            LENSES.put(color, createBlankItem());
+            LENS_RECIPES.put(color, registerRecipeSerializer(""))
+        }
+    }*/
 
     public static void registerAll() {
         registerItems();
         registerBlocks();
-        registerBlockEntities();
         registerCommands();
         registerStatusEffects();
+        registerRecipes();
     }
 
     private static void registerItems() {
@@ -77,6 +96,13 @@ public class TerritorialRegistry {
         // lockpicks
         Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "lockpick"), LOCKPICK);
         Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "ender_amulet"), ENDER_AMULET);
+
+        // Lenses
+        Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "lens"), LENS);
+
+        /*for (Map.Entry<DyeColor, Item> entry : LENSES.entrySet()) {
+            Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID,  entry.getKey().toString() + "_lens"), entry.getValue());
+        }*/
     }
 
     private static void registerBlocks() {
@@ -84,10 +110,12 @@ public class TerritorialRegistry {
 
         Registry.register(Registry.BLOCK, new Identifier(Territorial.MOD_ID, "laser_transmitter"), LASER_TRANSMITTER);
         Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "laser_transmitter"), new BlockItem(LASER_TRANSMITTER, new FabricItemSettings().group(Territorial.BASE_GROUP)));
-    }
 
-    private static void registerBlockEntities() {
-        Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(Territorial.MOD_ID), SAFE_BLOCK_ENTITY);
+        Registry.register(Registry.BLOCK, new Identifier(Territorial.MOD_ID, "laser_receiver"), LASER_RECEIVER);
+        Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "laser_receiver"), new BlockItem(LASER_RECEIVER, new FabricItemSettings().group(Territorial.BASE_GROUP)));
+
+        Registry.register(Registry.BLOCK, new Identifier(Territorial.MOD_ID, "plinth_of_peeking"), PLINTH_OF_PEEKING);
+        Registry.register(Registry.ITEM, new Identifier(Territorial.MOD_ID, "plinth_of_peeking"), new BlockItem(PLINTH_OF_PEEKING, new FabricItemSettings().group(Territorial.BASE_GROUP)));
     }
 
     private static void registerCommands() {
@@ -100,4 +128,17 @@ public class TerritorialRegistry {
         Registry.register(Registry.STATUS_EFFECT, new Identifier(Territorial.MOD_ID, "lock_fatigue"), LOCK_FATIGUE);
     }
 
+    private static void registerRecipes() {
+        Registry.register(Registry.RECIPE_SERIALIZER, new Identifier(Territorial.MOD_ID, "crafting_special_lens"), LENS_RECIPE_SERIALIZER);
+    }
+
+    public static <T extends BlockEntity> BlockEntityType<T> registerBlockEntity(String id, FabricBlockEntityTypeBuilder<T> builder) {
+        BlockEntityType<T> blockEntityType = builder.build(null);
+        Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(Territorial.MOD_ID, id), blockEntityType);
+        return blockEntityType;
+    }
+
+    private static Item createBlankItem() {
+        return new Item(new FabricItemSettings().group(Territorial.BASE_GROUP));
+    }
 }

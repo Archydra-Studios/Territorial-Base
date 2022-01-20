@@ -1,10 +1,11 @@
 package io.github.profjb58.territorial.config;
 
 import io.github.profjb58.territorial.Territorial;
-import me.sargunvohra.mcmods.autoconfig1u.ConfigData;
-import me.sargunvohra.mcmods.autoconfig1u.annotation.Config;
-import me.sargunvohra.mcmods.autoconfig1u.annotation.ConfigEntry;
-import me.sargunvohra.mcmods.autoconfig1u.shadowed.blue.endless.jankson.Comment;
+import me.shedaniel.autoconfig.ConfigData;
+import me.shedaniel.autoconfig.annotation.Config;
+import me.shedaniel.autoconfig.annotation.ConfigEntry;
+import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
+import net.fabricmc.loader.api.FabricLoader;
 
 @SuppressWarnings("unused")
 @Config.Gui.Background("minecraft:textures/block/bedrock.png")
@@ -30,7 +31,7 @@ public class TBConfig implements ConfigData {
 
         // TODO
         @Comment("Shows the lock name in the GUI")
-        private boolean showLockName = true;
+        public boolean showLockName = true;
 
         // TODO
         @ConfigEntry.Gui.Excluded
@@ -63,6 +64,16 @@ public class TBConfig implements ConfigData {
     @Config(name = "traps")
     private static class TrapsModule implements ConfigData {
 
+        @ConfigEntry.Gui.Excluded
+        @Comment("Maximum distance the laser transmitter can reach. Keep between 1 and 60")
+        private int laserTransmitterMaxReach = 48;
+
+        @ConfigEntry.Gui.Excluded
+        @Comment("Whether the laser targets all mobs or just players")
+        private boolean laserTargetsAllMobs = true;
+
+        @Comment("Prevents flashing images, limits the rate at which lasers can update")
+        private boolean laserLimitUpdates = false;
     }
 
     // Cycle through bounded config options to check if they produce a false value
@@ -70,10 +81,11 @@ public class TBConfig implements ConfigData {
         getMinOpLevel();
         getBreakMultiplier();
         getEnderKeyRolls();
+        getLaserTransmitterMaxReach();
         loaded = true;
     }
 
-    private <T> T warnFalseValue(String name, T value, T defaultValue) {
+    private <T> T warn(String name, T value, T defaultValue) {
         if(!loaded || Territorial.DEBUG_MODE) {
             Territorial.logger.warn("Incorrect value for " + name + ": " + value.toString() + " set in the config file, choosing default value: " + defaultValue.toString());
         }
@@ -83,25 +95,34 @@ public class TBConfig implements ConfigData {
     public boolean showLockName() { return locks.showLockName; }
     public boolean masterKeyVanish() { return locks.makeMasterKeyVanish; }
     public boolean enderKeyEnabled() { return locks.enableEnderKey; }
+    public boolean laserTargetsAllMobs() { return traps.laserTargetsAllMobs; }
+    public boolean limitUpdateRate() { return traps.laserLimitUpdates; }
 
     public int getMinOpLevel() {
         if(locks.minOpLevel < 1 || locks.minOpLevel > 4) {
-            return warnFalseValue("minOpLevel", locks.minOpLevel, 3);
+            return warn("minOpLevel", locks.minOpLevel, 3);
         }
         return locks.minOpLevel;
     }
 
     public int getEnderKeyRolls() {
         if(locks.enderKeyRolls < 0 || locks.enderKeyRolls > 100) {
-            return warnFalseValue("enderKeyRolls", locks.enderKeyRolls, 5);
+            return warn("enderKeyRolls", locks.enderKeyRolls, 5);
         }
         return locks.enderKeyRolls;
     }
 
     public double getBreakMultiplier() {
         if(locks.breakMultiplier < 0.001 || locks.breakMultiplier > 1) {
-            return warnFalseValue("breakMultiplier", locks.breakMultiplier,0.02);
+            return warn("breakMultiplier", locks.breakMultiplier,0.02);
         }
         return locks.breakMultiplier;
+    }
+
+    public int getLaserTransmitterMaxReach() {
+        if(traps.laserTransmitterMaxReach < 1 || traps.laserTransmitterMaxReach > 60) {
+            return warn("laserTransmitterMaxReach", traps.laserTransmitterMaxReach, 48);
+        }
+        return traps.laserTransmitterMaxReach;
     }
 }

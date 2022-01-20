@@ -1,18 +1,17 @@
 plugins {
-	id 'fabric-loom' version '0.8-SNAPSHOT'
+	id 'fabric-loom' version '0.10-SNAPSHOT'
 	id 'com.github.johnrengelman.shadow' version '5.2.0'
 	id 'maven-publish'
 }
 
-sourceCompatibility = JavaVersion.VERSION_16
-targetCompatibility = JavaVersion.VERSION_16
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
 repositories {
-	jcenter()
 	maven {
 		name = "CottonMC"
 		url = "https://server.bbkr.space/artifactory/libs-release"
@@ -26,10 +25,11 @@ repositories {
 		url = "https://maven.siphalor.de"
 	}
 	maven { url "https://maven.shedaniel.me/" }
+	maven { url "https://jitpack.io/" }
 }
 
-minecraft {
-	accessWidener =  file("src/main/resources/territorial.accesswidener")
+loom {
+	accessWidenerPath =  file("src/main/resources/territorial.accesswidener")
 }
 
 dependencies {
@@ -42,13 +42,14 @@ dependencies {
 	// modImplementation(include("vazkii.patchouli:Patchouli:${project.patchouli_version}"))
 	modImplementation(include("io.github.cottonmc:LibGui:${project.libgui_version}"))
 	modApi(include("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}"))
-	modImplementation(include("de.siphalor:nbtcrafting-1.17:${project.nbtcrafing_version}"))
-	//modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+	modImplementation(include("de.siphalor:nbtcrafting-1.18:${project.nbtcrafing_version}"))
+	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 
-	//modImplementation "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
+	modImplementation "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
+	modRuntimeOnly("com.github.astei:lazydfu:master-SNAPSHOT")
 
 	// SQLite stuff
-	implementation(include("org.xerial:sqlite-jdbc:${project.jdbc_version}"))
+	//implementation(include("org.xerial:sqlite-jdbc:${project.jdbc_version}"))
 }
 
 processResources {
@@ -65,6 +66,9 @@ tasks.withType(JavaCompile).configureEach {
 	// see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
 	// If Javadoc is generated, this must be specified in that task too.
 	it.options.encoding = "UTF-8"
+
+	// Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
+	it.options.release = 17
 }
 
 shadowJar {
@@ -116,6 +120,6 @@ publishing {
 	}
 
 	repositories {
-		//mavenLocal()
+		mavenLocal()
 	}
 }

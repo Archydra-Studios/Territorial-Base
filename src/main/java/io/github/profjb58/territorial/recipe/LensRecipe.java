@@ -73,7 +73,7 @@ public class LensRecipe extends SpecialCraftingRecipe {
     @Override
     public ItemStack craft(CraftingInventory inventory) {
         ItemStack itemStack = new ItemStack(TerritorialRegistry.LENS);
-        NbtCompound compound = itemStack.getOrCreateSubTag("beam");
+        NbtCompound compound = itemStack.getOrCreateSubNbt("beam");
         int colourId = DyeColor.WHITE.getId();
         int strengthMod = 0;
 

@@ -1,10 +1,15 @@
 package io.github.profjb58.territorial.config;
 
+import me.shedaniel.autoconfig.AutoConfig;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.screen.Screen;
+
 /**
  * Territorial-base mod menu integration
  */
 
-/*
+/**
 @Environment(EnvType.CLIENT)
 public class TBMMIntegration implements ModMenuApi {
 
@@ -13,5 +18,6 @@ public class TBMMIntegration implements ModMenuApi {
         return parent -> (Screen) AutoConfig.getConfigScreen(TBConfig.class, parent).get();
     }
 }
-*/
+ **/
+
 

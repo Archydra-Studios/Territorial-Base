@@ -4,7 +4,7 @@ import io.github.profjb58.territorial.block.LockableBlock;
 import io.github.profjb58.territorial.block.entity.LockableBlockEntity;
 import io.github.profjb58.territorial.event.template.ServerWorldEvents;
 import io.github.profjb58.territorial.mixin.ExplosionAccessor;
-import io.github.profjb58.territorial.util.LockUtils;
+import io.github.profjb58.territorial.util.MathUtils;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.inventory.Inventory;
@@ -15,7 +15,6 @@ import java.util.LinkedList;
 public class DestructionHandlers {
 
     public static void init() {
-
         // Locked block broken by a player that isn't the owner
         PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, entity) -> {
             LockableBlockEntity lbe = new LockableBlockEntity(world, pos);
@@ -31,7 +30,7 @@ public class DestructionHandlers {
                             }
                         }
                         int numSlots = occupiedSlots.size();
-                        int numItemsToDrop = LockUtils.Calculations.calcNumItemsToDrop(numSlots, AttackHandlers.ticksSinceBlockAttack);
+                        int numItemsToDrop = MathUtils.Locks.calcNumItemsToDrop(numSlots, AttackHandlers.ticksSinceBlockAttack);
                         Collections.shuffle(occupiedSlots); // Randomize which item stacks are dropped
 
                         for(int i=0; i < (occupiedSlots.size() - numItemsToDrop); i++) {

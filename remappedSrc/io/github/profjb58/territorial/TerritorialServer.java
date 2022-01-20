@@ -1,6 +1,6 @@
 package io.github.profjb58.territorial;
 
-import io.github.profjb58.territorial.util.debug.ActionLogger;
+import io.github.profjb58.territorial.util.ActionLogger;
 import net.fabricmc.api.DedicatedServerModInitializer;
 
 public class TerritorialServer implements DedicatedServerModInitializer  {

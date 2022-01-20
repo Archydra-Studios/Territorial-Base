@@ -5,7 +5,6 @@ import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.mixin.AnvilChunkStorageAccessor;
 import io.github.profjb58.territorial.util.PosUtils;
 import io.github.profjb58.territorial.util.TickCounter;
-import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
@@ -20,17 +19,21 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.Packet;
+import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 import static net.minecraft.util.math.Direction.UP;
 
-public class  LaserBlockEntity extends BlockEntity implements BlockEntityClientSerializable {
+public class  LaserBlockEntity extends BlockEntity {
 
     public static final float[] SIGNAL_STRENGTH_WIDTHS = { 0.001f, 0.0015f, 0.0030f, 0.0045f, 0.0070f, 0.01f, 0.0135f, 0.02f, 0.025f, 0.035f, 0.06f, 0.1f, 0.16f, 0.25f, 0.38f };
     private static final int MAX_ENTITIES_PER_BEAM_TICK = 30;
@@ -57,7 +60,7 @@ public class  LaserBlockEntity extends BlockEntity implements BlockEntityClientS
     }
 
     public void createFromLens(ItemStack stack) {
-        NbtCompound tag = stack.getSubTag("beam");
+        NbtCompound tag = stack.getSubNbt("beam");
         if(tag != null) {
             setStrength(tag.getByte("strength"));
             setColour(tag.getInt("colour"));
@@ -69,7 +72,6 @@ public class  LaserBlockEntity extends BlockEntity implements BlockEntityClientS
                     "light", tag.getBoolean("light")
             ));
             markDirty();
-            sync();
 
             boolean powered = false;
             if(tag.getBoolean("light")) powered = getCachedState().get(Properties.POWERED);
@@ -78,10 +80,10 @@ public class  LaserBlockEntity extends BlockEntity implements BlockEntityClientS
     }
 
     public ItemStack writeNbtStack(ItemStack stack) {
-        stack.putSubTag("beam", writeNbt(new NbtCompound()));
+        stack.setSubNbt("beam", createNbt());
 
         // Remove block identifying features
-        NbtCompound beamSubTag = stack.getSubTag("beam");
+        NbtCompound beamSubTag = stack.getSubNbt("beam");
         if(beamSubTag != null) {
             beamSubTag.remove("id");
             beamSubTag.remove("x");
@@ -185,7 +187,6 @@ public class  LaserBlockEntity extends BlockEntity implements BlockEntityClientS
             if (be.maxReach != watchDistanceMaxReach) {
                 be.maxReach = Math.min(watchDistanceMaxReach, Territorial.getConfig().getLaserTransmitterMaxReach());
                 be.markDirty();
-                be.sync();
             }
         }
     }
@@ -290,52 +291,47 @@ public class  LaserBlockEntity extends BlockEntity implements BlockEntityClientS
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound tag) {
+    public void writeNbt(NbtCompound tag) {
         super.writeNbt(tag);
-        toSharedTag(tag);
-        if(tag.contains("strength")) tag.putByte("strength", (byte) strength);
-        if(tag.contains("highlight")) tag.putBoolean("highlight", mods.get("highlight"));
-        if(tag.contains("death")) tag.putBoolean("death", mods.get("death"));
-        return super.writeNbt(tag);
-    }
 
-    @Override
-    public void readNbt(NbtCompound tag) {
-        super.readNbt(tag);
-        fromSharedTag(tag);
-        strength = tag.getByte("strength");
-        mods.put("highlight", tag.getBoolean("highlight"));
-        mods.put("death", tag.getBoolean("death"));
-    }
-
-    @Override
-    public NbtCompound toClientTag(NbtCompound tag) {
-        if(tag.contains("strength")) tag.putByte("strength", (byte) 0);
-        if(tag.contains("highlight")) tag.putBoolean("highlight", false);
-        if(tag.contains("death")) tag.putBoolean("death", false);
-        return toSharedTag(tag);
-    }
-
-    @Override
-    public void fromClientTag(NbtCompound tag) {
-        fromSharedTag(tag);
-    }
-
-    private NbtCompound toSharedTag(NbtCompound tag) {
         tag.putInt("colour", colour);
         tag.putInt("max_reach", maxReach);
         if(tag.contains("rainbow")) tag.putBoolean("rainbow", mods.get("rainbow"));
         if(tag.contains("sparkle")) tag.putBoolean("sparkle", mods.get("sparkle"));
         if(tag.contains("light")) tag.putBoolean("light", mods.get("light"));
-        return tag;
+        if(tag.contains("strength")) tag.putByte("strength", (byte) strength);
+        if(tag.contains("highlight")) tag.putBoolean("highlight", mods.get("highlight"));
+        if(tag.contains("death")) tag.putBoolean("death", mods.get("death"));
     }
 
-    private void fromSharedTag(NbtCompound tag) {
+    @Override
+    public void readNbt(NbtCompound tag) {
+        super.readNbt(tag);
         colour = tag.getInt("colour");
         maxReach = tag.getInt("max_reach");
         mods.put("rainbow", tag.getBoolean("rainbow"));
         mods.put("sparkle", tag.getBoolean("sparkle"));
         mods.put("light", tag.getBoolean("light"));
+        strength = tag.getByte("strength");
+        mods.put("highlight", tag.getBoolean("highlight"));
+        mods.put("death", tag.getBoolean("death"));
+    }
+
+    @Nullable
+    public Packet<ClientPlayPacketListener> toUpdatePacket() {
+        return BlockEntityUpdateS2CPacket.create(this);
+    }
+
+    @Override
+    public NbtCompound toInitialChunkDataNbt() {
+        NbtCompound tag = new NbtCompound();
+        writeNbt(tag);
+
+        // Make sure this data is never properly synced to the client
+        if(tag.contains("strength")) tag.remove("strength");
+        if(tag.contains("highlight")) tag.remove("highlight");
+        if(tag.contains("death")) tag.remove("death");
+        return tag;
     }
 
     public void setStrength(int strength) { this.strength = strength; }

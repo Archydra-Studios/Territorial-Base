@@ -1,7 +1,6 @@
 package io.github.profjb58.territorial.block.entity;
 
 import io.github.profjb58.territorial.block.LockableBlock;
-import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
@@ -51,7 +50,6 @@ public class LockableBlockEntity {
 
                 //WorldLockStorage lps = WorldLockStorage.get((ServerWorld) world);
                 //lps.removeLock(lb);
-                ((BlockEntityClientSerializable) getBlockEntity()).sync();
                 return true;
             }
         }
@@ -90,7 +88,7 @@ public class LockableBlockEntity {
     private NbtCompound getNbt(World world, BlockPos blockPos) {
         BlockEntity be = world.getBlockEntity(blockPos);
         if(be != null) {
-            NbtCompound tag = be.writeNbt(new NbtCompound());
+            NbtCompound tag = be.createNbt();
             if(tag.contains("lock_id") && tag.contains("lock_type") && tag.contains("lock_owner_uuid")) { // Is lockable
                 return tag;
             }
