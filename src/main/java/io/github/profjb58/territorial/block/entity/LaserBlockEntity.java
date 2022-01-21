@@ -72,6 +72,7 @@ public class  LaserBlockEntity extends BlockEntity {
                     "light", tag.getBoolean("light")
             ));
             markDirty();
+            ((ServerWorld) world).getChunkManager().markForUpdate(pos);
 
             boolean powered = false;
             if(tag.getBoolean("light")) powered = getCachedState().get(Properties.POWERED);
@@ -296,12 +297,12 @@ public class  LaserBlockEntity extends BlockEntity {
 
         tag.putInt("colour", colour);
         tag.putInt("max_reach", maxReach);
-        if(tag.contains("rainbow")) tag.putBoolean("rainbow", mods.get("rainbow"));
-        if(tag.contains("sparkle")) tag.putBoolean("sparkle", mods.get("sparkle"));
-        if(tag.contains("light")) tag.putBoolean("light", mods.get("light"));
-        if(tag.contains("strength")) tag.putByte("strength", (byte) strength);
-        if(tag.contains("highlight")) tag.putBoolean("highlight", mods.get("highlight"));
-        if(tag.contains("death")) tag.putBoolean("death", mods.get("death"));
+        tag.putBoolean("rainbow", mods.get("rainbow"));
+        tag.putBoolean("sparkle", mods.get("sparkle"));
+        tag.putBoolean("light", mods.get("light"));
+        tag.putByte("strength", (byte) strength);
+        tag.putBoolean("highlight", mods.get("highlight"));
+        tag.putBoolean("death", mods.get("death"));
     }
 
     @Override
