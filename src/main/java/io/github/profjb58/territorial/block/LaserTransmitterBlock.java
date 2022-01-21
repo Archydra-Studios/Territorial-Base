@@ -10,10 +10,16 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.LootTable;
+import net.minecraft.loot.LootTables;
+import net.minecraft.loot.context.LootContext;
+import net.minecraft.loot.context.LootContextParameters;
+import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.BlockSoundGroup;
@@ -25,6 +31,7 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.DyeColor;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
@@ -42,7 +49,7 @@ public class LaserTransmitterBlock extends BlockWithEntity implements BlockEntit
 
     public LaserTransmitterBlock() {
         super(FabricBlockSettings.of(Material.METAL, MapColor.IRON_GRAY).nonOpaque().requiresTool()
-                .strength(4.0F, 1200.0F).sounds(BlockSoundGroup.METAL).breakByTool(FabricToolTags.PICKAXES, 0));
+                .strength(5.0F, 6.0F).sounds(BlockSoundGroup.METAL).breakByTool(FabricToolTags.PICKAXES, 0));
         this.setDefaultState(this.stateManager.getDefaultState()
                 .with(POWERED, false)
                 .with(POWER, 0)
@@ -82,19 +89,18 @@ public class LaserTransmitterBlock extends BlockWithEntity implements BlockEntit
     public void afterBreak(World world, PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity be, ItemStack toolStack) {
         player.incrementStat(Stats.MINED.getOrCreateStat(this));
         player.addExhaustion(0.005F);
-
-        if(!world.isClient) {
-            getDroppedStacks(state, (ServerWorld) world, pos, be, player, toolStack).forEach(droppedStack -> {
-                if(be instanceof LaserBlockEntity lbe) lbe.writeNbtStack(droppedStack);
-                dropStack(world, pos, droppedStack);
-            });
-            onStacksDropped(state, (ServerWorld) world, pos, toolStack);
-        }
+        dropStack(world, pos, getDroppedStacks(state, (ServerWorld) world, pos, be).get(0));
+        onStacksDropped(state, (ServerWorld) world, pos, toolStack);
     }
 
-    // TODO - Maybe replace and consider drops from explosions
     @Override
-    public boolean shouldDropItemsOnExplosion(Explosion explosion) { return false; }
+    public List<ItemStack> getDroppedStacks(BlockState state, LootContext.Builder builder) {
+        ItemStack stackToDrop = asItem().getDefaultStack();
+        return List.of(((LaserBlockEntity) builder.get(LootContextParameters.BLOCK_ENTITY)).writeNbtStack(stackToDrop));
+    }
+
+    @Override
+    public boolean shouldDropItemsOnExplosion(Explosion explosion) { return true; }
 
     @Nullable
     @Override

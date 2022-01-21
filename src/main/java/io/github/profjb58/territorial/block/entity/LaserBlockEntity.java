@@ -328,7 +328,6 @@ public class  LaserBlockEntity extends BlockEntity {
         NbtCompound tag = new NbtCompound();
         writeNbt(tag);
 
-        // Make sure this data is never properly synced to the client
         if(tag.contains("strength")) tag.remove("strength");
         if(tag.contains("highlight")) tag.remove("highlight");
         if(tag.contains("death")) tag.remove("death");
