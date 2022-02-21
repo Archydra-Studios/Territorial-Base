@@ -1,10 +1,8 @@
 package io.github.profjb58.territorial.item;
 
 import io.github.profjb58.territorial.Territorial;
-import io.github.profjb58.territorial.block.LaserTransmitterBlock;
-import io.github.profjb58.territorial.block.entity.LaserBlockEntity;
+import io.github.profjb58.territorial.block.entity.LaserTransmitterBlockEntity;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
-import io.github.profjb58.territorial.util.TextUtils;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.item.TooltipContext;
@@ -14,7 +12,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -68,7 +65,7 @@ public class LensItem extends Item {
         BlockEntity be = ctx.getWorld().getBlockEntity(ctx.getBlockPos());
         World world = ctx.getWorld();
 
-        if (!world.isClient && be instanceof LaserBlockEntity lbe) {
+        if (!world.isClient && be instanceof LaserTransmitterBlockEntity lbe) {
             BlockPos pos = ctx.getBlockPos();
             PlayerEntity player = ctx.getPlayer();
             ItemStack lensStack = TerritorialRegistry.LENS.getDefaultStack();

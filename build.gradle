@@ -1,6 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.10-SNAPSHOT'
-	id 'com.github.johnrengelman.shadow' version '7.0.0'
+	id 'fabric-loom' version '0.11-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -12,6 +11,7 @@ version = project.mod_version
 group = project.maven_group
 
 repositories {
+	mavenCentral()
 	maven {
 		name = "CottonMC"
 		url = "https://server.bbkr.space/artifactory/libs-release"
@@ -25,7 +25,7 @@ repositories {
 		url = "https://maven.siphalor.de"
 	}
 	maven { url "https://maven.shedaniel.me/" }
-	maven { url "https://jitpack.io/" }
+	maven { url 'https://jitpack.io' }
 }
 
 loom {
@@ -48,8 +48,8 @@ dependencies {
 	modImplementation "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
 	modRuntimeOnly("com.github.astei:lazydfu:master-SNAPSHOT")
 
-	// SQLite stuff
-	//implementation(include("org.xerial:sqlite-jdbc:${project.jdbc_version}"))
+	// H2 stuff
+	implementation(include("com.h2database:h2:${project.h2_version}"))
 }
 
 processResources {
@@ -58,6 +58,12 @@ processResources {
 	filesMatching("fabric.mod.json") {
 		expand "version": project.version
 	}
+}
+
+// Open the local H2 database viewer
+task openDBViewer(type: Exec) {
+	workingDir "build/libs/territorial-${project.version}/META-INF/jars"
+	commandLine "java", "-jar", "h2-${project.h2_version}.jar"
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -71,25 +77,8 @@ tasks.withType(JavaCompile).configureEach {
 	it.options.release = 17
 }
 
-shadowJar {
-	configurations = [project.configurations.shadow]
-	classifier = "shadow"
-}
-
 jar {
 	from "LICENSE"
-}
-import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
-
-task relocateShadowJar(type: ConfigureShadowRelocation) {
-	target = tasks.shadowJar
-	prefix = "${project.group}.${project.archivesBaseName}.shadow"
-}
-tasks.shadowJar.dependsOn tasks.relocateShadowJar
-
-remapJar {
-	dependsOn shadowJar
-	input.set shadowJar.archiveFile.get()
 }
 
 java {

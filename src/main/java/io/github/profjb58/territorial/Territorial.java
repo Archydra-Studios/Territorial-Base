@@ -1,7 +1,6 @@
 package io.github.profjb58.territorial;
 
 import io.github.profjb58.territorial.config.TBConfig;
-import io.github.profjb58.territorial.database.DatabaseManager;
 import io.github.profjb58.territorial.event.*;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.networking.C2SPackets;
@@ -27,11 +26,7 @@ public class Territorial implements ModInitializer {
 	// Basic info + loggers
 	public static final String MOD_ID = "territorial";
 	public static final String BASE_GROUP_ID = "territorial_base";
-	public static final Logger logger = LogManager.getLogger();
-
-	// SQLite database
-	public static DatabaseManager dbm;
-	public static Thread dbmThread;
+	public static final Logger LOGGER = LogManager.getLogger();
 
 	public static final ItemGroup BASE_GROUP = FabricItemGroupBuilder.build(
 			new Identifier(MOD_ID, BASE_GROUP_ID),
@@ -39,18 +34,17 @@ public class Territorial implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		// Database managers
-		dbm = DatabaseManager.getInstance();
-
 		AutoConfig.register(TBConfig.class, JanksonConfigSerializer::new);
 		getConfig().checkBounds();
 
 		// Event handlers
 		TerritorialRegistry.registerAll();
+		ServerLifecycleHandlers.init();
 		AttackHandlers.init();
 		ServerTickHandlers.init();
 		UseBlockHandler.init();
 		DestructionHandlers.init();
+		LootTableHandler.init();
 
 		// Packet handlers
 		C2SPackets.init();

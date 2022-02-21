@@ -33,10 +33,11 @@ import java.util.*;
 
 import static net.minecraft.util.math.Direction.UP;
 
-public class  LaserBlockEntity extends BlockEntity {
+public class LaserTransmitterBlockEntity extends BlockEntity {
 
     public static final float[] SIGNAL_STRENGTH_WIDTHS = { 0.001f, 0.0015f, 0.0030f, 0.0045f, 0.0070f, 0.01f, 0.0135f, 0.02f, 0.025f, 0.035f, 0.06f, 0.1f, 0.16f, 0.25f, 0.38f };
     private static final int MAX_ENTITIES_PER_BEAM_TICK = 30;
+    private static final int LIGHT_BLOCK_SPACING = 4;
 
     private int strength, colour, maxReach, prevPower;
     private float sparkleDistance, reach, prevReach;
@@ -47,7 +48,7 @@ public class  LaserBlockEntity extends BlockEntity {
     private BlockPos receiverPos;
     private final TickCounter lightBlocksCounter;
 
-    public LaserBlockEntity(BlockPos pos, BlockState state) {
+    public LaserTransmitterBlockEntity(BlockPos pos, BlockState state) {
         super(TerritorialRegistry.LASER_BLOCK_ENTITY, pos, state);
         prevPower = -1;
         maxReach = Territorial.getConfig().getLaserTransmitterMaxReach();
@@ -95,7 +96,7 @@ public class  LaserBlockEntity extends BlockEntity {
         return stack;
     }
 
-    public static void tick(World world, BlockPos pos, BlockState state, LaserBlockEntity be) {
+    public static void tick(World world, BlockPos pos, BlockState state, LaserTransmitterBlockEntity be) {
         int power = state.get(Properties.POWER);
         Direction facing = state.get(Properties.FACING);
 
@@ -126,7 +127,7 @@ public class  LaserBlockEntity extends BlockEntity {
         beamTick(world, pos, state, be, entities);
     }
 
-    private static void beamTick(World world, BlockPos pos, BlockState state, LaserBlockEntity be, List<Entity> entitiesCollided) {
+    private static void beamTick(World world, BlockPos pos, BlockState state, LaserTransmitterBlockEntity be, List<Entity> entitiesCollided) {
         Direction facing = state.get(Properties.FACING);
         BlockPos posIterator;
         BlockState bs;
@@ -180,9 +181,7 @@ public class  LaserBlockEntity extends BlockEntity {
             if (be.mods.get("light") && be.updateLights) {
                 be.updateLightBlocks(true, facing);
             }
-
-            ServerWorld serverWorld = (ServerWorld) world;
-            int watchDistance = ((AnvilChunkStorageAccessor) serverWorld.getChunkManager().threadedAnvilChunkStorage).getWatchDistance();
+            int watchDistance = ((AnvilChunkStorageAccessor) ((ServerWorld) world).getChunkManager().threadedAnvilChunkStorage).getWatchDistance();
             int watchDistanceMaxReach = (watchDistance < 2) ? 16 : (watchDistance * 16) - 16;
 
             if (be.maxReach != watchDistanceMaxReach) {
@@ -192,7 +191,7 @@ public class  LaserBlockEntity extends BlockEntity {
         }
     }
 
-    private static void applyEffects(List<Entity> entities, Direction facing, LaserBlockEntity be) {
+    private static void applyEffects(List<Entity> entities, Direction facing, LaserTransmitterBlockEntity be) {
         Item armorItem;
         int numArmorPieces;
         boolean hasGoldHelmet;
@@ -259,26 +258,26 @@ public class  LaserBlockEntity extends BlockEntity {
     public void updateLightBlocks(boolean powered, Direction facing) {
         if(lightBlocksCounter.test() || !powered) {
             updateLights = false;
-            BlockPos posIterator;
 
             if(world != null && !world.isClient) {
                 BlockState currentState;
+                BlockPos posIterator = pos.offset(facing, 1);
 
-                for(int i=0; i <= maxReach; i++) {
-                    posIterator = pos.offset(facing, i);
+                for(int i=0; i <= (maxReach/LIGHT_BLOCK_SPACING); i++) {
                     currentState = world.getBlockState(posIterator);
 
                     if(powered) {
-                        if(i <= (int) reach && currentState.isAir()) {
+                        if(i <= (int) reach/LIGHT_BLOCK_SPACING && currentState.isAir()) {
                             world.setBlockState(posIterator, Blocks.LIGHT.getDefaultState());
                         }
-                        else if(i > (int) reach && currentState.equals(Blocks.LIGHT.getDefaultState())) {
+                        else if(i > (int) reach/LIGHT_BLOCK_SPACING && currentState.equals(Blocks.LIGHT.getDefaultState())) {
                             world.setBlockState(posIterator, Blocks.AIR.getDefaultState());
                         }
                     }
                     else if(currentState.equals(Blocks.LIGHT.getDefaultState())){
                         world.setBlockState(posIterator, Blocks.AIR.getDefaultState());
                     }
+                    posIterator = posIterator.offset(facing, LIGHT_BLOCK_SPACING);
                 }
             }
         }
@@ -328,6 +327,7 @@ public class  LaserBlockEntity extends BlockEntity {
         NbtCompound tag = new NbtCompound();
         writeNbt(tag);
 
+        // Prevent hidden nbt data being sent to the client
         if(tag.contains("strength")) tag.remove("strength");
         if(tag.contains("highlight")) tag.remove("highlight");
         if(tag.contains("death")) tag.remove("death");

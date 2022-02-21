@@ -75,7 +75,7 @@ public class KeyItem extends Item {
                     }
                     else {
                         // Really shouldn't happen, but just encase
-                        Territorial.logger.error("Lockpick failed to remove NBT lock data :(. Please report this as an issue");
+                        Territorial.LOGGER.error("Lockpick failed to remove NBT lock data :(. Please report this as an issue");
                     }
                 }
                 if(masterKey) onUseMasterKey(player.getStackInHand(player.getActiveHand()), (ServerPlayerEntity) player, lb);

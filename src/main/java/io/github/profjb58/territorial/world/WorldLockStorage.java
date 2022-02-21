@@ -1,13 +1,30 @@
 package io.github.profjb58.territorial.world;
 
-/**
+
+import dev.architectury.utils.NbtType;
+import io.github.profjb58.territorial.block.LockableBlock;
+import io.github.profjb58.territorial.util.TagUtils;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.PersistentState;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.UUID;
+
 public class WorldLockStorage extends PersistentState {
 
     HashMap<UUID, LinkedList<BlockPos>> locksUUIDMap = new HashMap<>();
 
-    public WorldLockStorage() {
-        super("territorial_world_locks");
-    }
+    public WorldLockStorage() {}
 
     public void addLock(LockableBlock lb) {
         removeLock(lb); // Remove existing lock if one is already there
@@ -55,7 +72,7 @@ public class WorldLockStorage extends PersistentState {
             for(BlockPos lockPos : playerLocks) {
                 BlockEntity be = playerExecutedCmd.getEntityWorld().getBlockEntity(lockPos);
                 if(be != null) {
-                    CompoundTag lockTag = be.toTag(new CompoundTag());
+                    NbtCompound lockTag = be.createNbt();
                     if(lockTag.contains("id") && lockTag.contains("lock_id")) { // Lock exists here
                         Text lockNameText = new TranslatableText(be.getCachedState().getBlock().getTranslationKey());
                         String msg = "# " + lockTag.getString("lock_id") + " - §e[" + lockPos.getX() + ", " + lockPos.getY() + ", " + lockPos.getZ() + "] §r-§7 "
@@ -71,21 +88,21 @@ public class WorldLockStorage extends PersistentState {
     }
 
     public static WorldLockStorage get(ServerWorld world) {
-        return world.getChunkManager().getPersistentStateManager().getOrCreate(WorldLockStorage::new, "territorial_world_locks");
+        return null;
+        // return world.getChunkManager().getPersistentStateManager().getOrCreate(WorldLockStorage::new, "territorial_world_locks");
     }
 
-    @Override
-    public void fromTag(CompoundTag compoundTag) {
-        ListTag worldLocksTags = compoundTag.getList("world_locked_tiles", NbtType.COMPOUND);
+    public void readNbt(NbtCompound NbtCompound) {
+        NbtList worldLocksTags = NbtCompound.getList("world_locked_tiles", NbtType.COMPOUND);
 
-        for (Tag worldLocksTag : worldLocksTags) {
-            CompoundTag playerLocksTag = (CompoundTag) worldLocksTag;
+        for (NbtElement worldLocksTag : worldLocksTags) {
+            NbtCompound playerLocksTag = (NbtCompound) worldLocksTag;
             UUID playerUuid = playerLocksTag.getUuid("uuid");
 
             LinkedList<BlockPos> lockedTilesPos = new LinkedList<>();
-            ListTag lockedTilesPosTags = playerLocksTag.getList("locked_tiles", NbtType.COMPOUND);
-            for (Tag lockedTilesPosTag : lockedTilesPosTags) {
-                CompoundTag lockedTilePos = (CompoundTag) lockedTilesPosTag;
+            NbtList lockedTilesPosTags = playerLocksTag.getList("locked_tiles", NbtType.COMPOUND);
+            for (NbtElement lockedTilesPosTag : lockedTilesPosTags) {
+                NbtCompound lockedTilePos = (NbtCompound) lockedTilesPosTag;
                 lockedTilesPos.add(TagUtils.deserializeBlockPos(lockedTilePos.getIntArray("lock_pos")));
             }
             locksUUIDMap.put(playerUuid, lockedTilesPos);
@@ -93,18 +110,18 @@ public class WorldLockStorage extends PersistentState {
     }
 
     @Override
-    public CompoundTag toTag(CompoundTag compoundTag) {
-        ListTag worldLocksTags = new ListTag();
+    public NbtCompound writeNbt(NbtCompound NbtCompound) {
+        NbtList worldLocksTags = new NbtList();
 
         for (UUID playerUuid : locksUUIDMap.keySet()) { // Cycle through players in the current world
-            CompoundTag playerLocksTag = new CompoundTag();
+            NbtCompound playerLocksTag = new NbtCompound();
             playerLocksTag.putUuid("uuid", playerUuid);
 
-            ListTag lockedTilesPosTags = new ListTag(); // Location of players locked tile-entities
+            NbtList lockedTilesPosTags = new NbtList(); // Location of players locked tile-entities
             LinkedList<BlockPos> lockedTilesPos = locksUUIDMap.get(playerUuid);
 
             for(BlockPos lockedTile : lockedTilesPos) {
-                CompoundTag lockedTileTag = new CompoundTag();
+                NbtCompound lockedTileTag = new NbtCompound();
                 lockedTileTag.putIntArray("lock_pos", TagUtils.serializeBlockPos(lockedTile));
                 lockedTilesPosTags.add(lockedTileTag);
             }
@@ -112,8 +129,8 @@ public class WorldLockStorage extends PersistentState {
 
             worldLocksTags.add(playerLocksTag);
         }
-        compoundTag.put("world_locked_tiles", worldLocksTags);
-        return compoundTag;
+        NbtCompound.put("world_locked_tiles", worldLocksTags);
+        return NbtCompound;
     }
 }
- **/
+ 

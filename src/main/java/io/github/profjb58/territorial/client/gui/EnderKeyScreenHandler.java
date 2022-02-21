@@ -1,5 +1,9 @@
 package io.github.profjb58.territorial.client.gui;
 
+import io.github.profjb58.territorial.Territorial;
+import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
+import io.github.profjb58.territorial.util.TickCounter;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.EnderChestInventory;
@@ -10,14 +14,16 @@ import net.minecraft.item.Items;
 import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static io.github.profjb58.territorial.Territorial.getConfig;
 
@@ -27,8 +33,8 @@ public class EnderKeyScreenHandler extends GenericContainerScreenHandler {
 
     private final EnderChestInventory enderChestInventory;
     private final Queue<Integer> slotDestructionQueue;
-    private Item prevSlotClickItem = Items.RED_STAINED_GLASS_PANE;
     private final ServerPlayerEntity targetPlayer;
+    private final TickCounter tickCounter = new TickCounter(2);
 
     public EnderKeyScreenHandler(int syncId, PlayerInventory playerInventory, Inventory displayInventory,
                                  EnderChestInventory enderChestInventory, ServerPlayerEntity targetPlayer) {
@@ -46,6 +52,12 @@ public class EnderKeyScreenHandler extends GenericContainerScreenHandler {
         createScreen(displayInventory, enderChestInventory);
     }
 
+    @Override
+    public void close(PlayerEntity player) {
+        super.close(player);
+        player.playSound(SoundEvents.BLOCK_ENDER_CHEST_CLOSE, SoundCategory.BLOCKS, 0.5F, player.getWorld().random.nextFloat() * 0.1F + 0.9F);
+    }
+
     private void createScreen(Inventory displayInv, EnderChestInventory enderChestInv) {
 
         // Fill with a random limited assortment of items from the ender chest
@@ -54,25 +66,28 @@ public class EnderKeyScreenHandler extends GenericContainerScreenHandler {
             int randomSlot = random.nextInt(27);
             displayInv.setStack(randomSlot, enderChestInv.getStack(randomSlot));
         }
-        // Fill the rest of the slots with 'blanks' (glass panes)
+        // Fill the rest with 'blanks' (glass panes)
         for(int i= 0; i < 27; i++) {
             ItemStack invItemStack = displayInv.getStack(i);
             if (invItemStack.isEmpty()) {
-                ItemStack blankStack = new ItemStack(Items.LIGHT_GRAY_STAINED_GLASS_PANE)
+                ItemStack blankStack = new ItemStack(TerritorialRegistry.BLANK_SLOT)
                         .setCustomName(new LiteralText("§k" + enderChestInv.getStack(i).getName().getString()));
                 displayInv.setStack(i, blankStack);
             }
         }
     }
 
+
+
     public void tick() {
-        if(!slotDestructionQueue.isEmpty()) {
+        if(tickCounter.test() && !slotDestructionQueue.isEmpty()) {
             destructSlot(slotDestructionQueue.remove());
         }
+        tickCounter.increment();
     }
 
     public void destructSlot(int slotId) {
-        ItemStack destructionStack = new ItemStack(Items.RED_STAINED_GLASS_PANE);
+        ItemStack destructionStack = new ItemStack(TerritorialRegistry.DESTRUCTED_SLOT);
         destructionStack.setCustomName(new LiteralText("§k" + enderChestInventory.getStack(slotId).getName().getString()));
         getInventory().setStack(slotId, destructionStack);
     }
@@ -83,33 +98,11 @@ public class EnderKeyScreenHandler extends GenericContainerScreenHandler {
             ItemStack itemStack = getSlot(slotId).getStack();
             Item item = itemStack.getItem();
 
-            if(actionType == SlotActionType.PICKUP || actionType == SlotActionType.QUICK_MOVE) {
-                if(slotId < INVENTORY_SIZE) {
-                    boolean blankItem = item.equals(Items.LIGHT_GRAY_STAINED_GLASS_PANE)
-                            || item.equals(Items.RED_STAINED_GLASS_PANE);
-                    if(actionType == SlotActionType.PICKUP) {
-                        prevSlotClickItem = itemStack.getItem();
-                        if(blankItem) return;
-                        else warnTargetPlayer();
-                    }
-                    else {
-                        if (blankItem) return;
-                        else warnTargetPlayer();
-                    }
-                }
-                else {
-                    boolean blankItem = prevSlotClickItem.equals(Items.LIGHT_GRAY_STAINED_GLASS_PANE)
-                            || prevSlotClickItem.equals(Items.RED_STAINED_GLASS_PANE);
-                    if(actionType == SlotActionType.PICKUP && blankItem) {
-                        return;
-                    }
-                    else {
-                        return;
-                    }
-                }
-            }
-            else {
-                return;
+            boolean blankItem = item.equals(TerritorialRegistry.BLANK_SLOT)
+                    || item.equals(TerritorialRegistry.DESTRUCTED_SLOT);
+            if(slotId < INVENTORY_SIZE) {
+                if(blankItem) return;
+                else warnTargetPlayer();
             }
         }
         super.onSlotClick(slotId, clickData, actionType, playerEntity);
@@ -117,11 +110,7 @@ public class EnderKeyScreenHandler extends GenericContainerScreenHandler {
 
     private void warnTargetPlayer() {
         if(targetPlayer != null) {
-            String playerName = targetPlayer.getDisplayName().getString();
-            if(new Random().nextBoolean()) {
-                playerName = "§k" + targetPlayer.getDisplayName().getString(); // Obfuscated
-            }
-            targetPlayer.sendMessage(new TranslatableText("message.territorial.enderchest.warn", playerName), false);
+            targetPlayer.sendMessage(new TranslatableText("message.territorial.enderchest.warn"), false);
         }
     }
 

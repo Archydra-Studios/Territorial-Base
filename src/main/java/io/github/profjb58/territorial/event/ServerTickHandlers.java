@@ -14,12 +14,10 @@ import java.util.List;
 public class ServerTickHandlers {
 
     private static final int LOCK_FATIGUE_CHECK_TICK_INTERVAL = 40;
-    private static final int ENDER_KEY_INV_TICK_INTERVAL = 10;
     private static final int LOCK_FATIGUE_CHECK_RADIUS = 8;
 
     // Update counters
     private static int lockTicksCounter = 0;
-    private static int enderKeyScreenCounter = 0;
 
     public static void init() {
         // Start server world ticks
@@ -32,7 +30,6 @@ public class ServerTickHandlers {
             }
             // Increment tick counters
             lockTicksCounter++;
-            enderKeyScreenCounter++;
             AttackHandlers.ticksSinceBlockAttack++;
         });
     }
@@ -52,15 +49,9 @@ public class ServerTickHandlers {
         }
     }
 
-    // TODO - Maybe make this more efficient in the future
     private static void enderKeyScreenTick(ServerPlayerEntity player) {
         if(Territorial.getConfig().enderKeyEnabled()) {
-            if (enderKeyScreenCounter >= ENDER_KEY_INV_TICK_INTERVAL) {
-                if (player.currentScreenHandler instanceof EnderKeyScreenHandler screenHandler) {
-                    screenHandler.tick();
-                }
-                enderKeyScreenCounter = 0;
-            }
+            if (player.currentScreenHandler instanceof EnderKeyScreenHandler screenHandler) screenHandler.tick();
         }
     }
 }

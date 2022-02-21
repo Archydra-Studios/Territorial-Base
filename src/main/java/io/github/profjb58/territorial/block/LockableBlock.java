@@ -1,6 +1,7 @@
 package io.github.profjb58.territorial.block;
 
 import io.github.profjb58.territorial.entity.effect.LockFatigueInstance;
+import io.github.profjb58.territorial.entity.effect.LockFatigueStatusEffect;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.inventory.ItemInventory;
 import io.github.profjb58.territorial.item.KeyringItem;
@@ -157,7 +158,7 @@ public class LockableBlock {
 
     public LockFatigueInstance getLockFatigueInstance() {
         return new LockFatigueInstance(
-                TerritorialRegistry.LOCK_FATIGUE, Integer.MAX_VALUE,
+                (LockFatigueStatusEffect) TerritorialRegistry.LOCK_FATIGUE, Integer.MAX_VALUE,
                 getLockFatigueAmplifier(),
                 false, false);
     }

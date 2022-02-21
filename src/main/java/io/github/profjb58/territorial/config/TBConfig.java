@@ -5,7 +5,6 @@ import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
-import net.fabricmc.loader.api.FabricLoader;
 
 @SuppressWarnings("unused")
 @Config.Gui.Background("minecraft:textures/block/bedrock.png")
@@ -71,9 +70,6 @@ public class TBConfig implements ConfigData {
         @ConfigEntry.Gui.Excluded
         @Comment("Whether the laser targets all mobs or just players")
         private boolean laserTargetsAllMobs = true;
-
-        @Comment("Prevents flashing images, limits the rate at which lasers can update")
-        private boolean laserLimitUpdates = false;
     }
 
     // Cycle through bounded config options to check if they produce a false value
@@ -87,7 +83,7 @@ public class TBConfig implements ConfigData {
 
     private <T> T warn(String name, T value, T defaultValue) {
         if(!loaded || Territorial.DEBUG_MODE) {
-            Territorial.logger.warn("Incorrect value for " + name + ": " + value.toString() + " set in the config file, choosing default value: " + defaultValue.toString());
+            Territorial.LOGGER.warn("Incorrect value for " + name + ": " + value.toString() + " set in the config file, choosing default value: " + defaultValue.toString());
         }
         return defaultValue;
     }
@@ -96,7 +92,6 @@ public class TBConfig implements ConfigData {
     public boolean masterKeyVanish() { return locks.makeMasterKeyVanish; }
     public boolean enderKeyEnabled() { return locks.enableEnderKey; }
     public boolean laserTargetsAllMobs() { return traps.laserTargetsAllMobs; }
-    public boolean limitUpdateRate() { return traps.laserLimitUpdates; }
 
     public int getMinOpLevel() {
         if(locks.minOpLevel < 1 || locks.minOpLevel > 4) {

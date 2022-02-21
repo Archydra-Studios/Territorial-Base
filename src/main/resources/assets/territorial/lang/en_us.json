@@ -8,6 +8,7 @@
   "block.territorial.laser_transmitter": "Laser Transmitter",
   "block.territorial.laser_receiver": "Laser Receiver",
   "block.territorial.plinth_of_peeking": "Plinth of Peeking",
+  "block.territorial.omniscient_obsidian": "Omniscient Obsidian",
 
   "item.territorial.ender_amulet": "Ender Amulet",
   "item.territorial.key":"Key",
@@ -21,6 +22,8 @@
   "item.territorial.lockpick": "Lockpick",
   "item.territorial.keyring": "Keyring",
   "item.territorial.lens": "Lens",
+  "item.territorial.blank_slot": "Blank Slot",
+  "item.territorial.destructed_slot": "Destructed Slot",
 
   "itemGroup.territorial.territorial_base": "Territorial (base)",
 
@@ -44,10 +47,12 @@
 
   "message.territorial.enderchest.unknown_player": "§cCannot find the victim %s",
   "message.territorial.enderchest.key_unnamed": "§eThis key needs the name of a victim",
-  "message.territorial.enderchest.warn": "§a[Territorial] %s§r just stole items from your ender chest",
+  "message.territorial.enderchest.warn": "§a[Territorial] §rA player stole items from your ender chest",
+
+  "message.territorial.stack_dupe_formatted.warn": "§a[Territorial]§r§c Duplicated item: %s §cfound in %s's §cplayer / ender chest inventory",
+  "message.territorial.stack_dupe.warn": "[Territorial] Duplicated item: %s found in %s's player / ender chest inventory",
 
   "title.territorial.config": "Territorial Config",
-
   "effect.territorial.lock_fatigue": "Lock Fatigue",
 
   "advancements.territorial.padlock": "Always Use Protection",
@@ -90,5 +95,7 @@
   "tooltip.territorial.modifier.rainbow": "§7§oRainbow",
   "tooltip.territorial.modifier.light": "§7§oLight",
 
-  "container.territorial.enderchest": "%s's Ender Chest"
+  "container.territorial.enderchest": "%s's Ender Chest",
+
+  "enchantment.territorial.bloodshed_curse": "Bloodshed Curse"
 }

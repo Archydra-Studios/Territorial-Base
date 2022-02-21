@@ -35,7 +35,7 @@ public class ActionLogger {
         try {
             // Add in additional loggers if required here...
             if(logFile.createNewFile()) {
-                Territorial.logger.info("Logger files created");
+                Territorial.LOGGER.info("Logger files created");
             }
         } catch(IOException e) {
             e.printStackTrace();

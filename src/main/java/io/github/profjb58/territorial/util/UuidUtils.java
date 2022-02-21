@@ -3,7 +3,8 @@ package io.github.profjb58.territorial.util;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.github.profjb58.territorial.Territorial;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -13,9 +14,6 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-/**
- * UUID api utility, can grab offline UUID of a player from there player name
- */
 public class UuidUtils {
 
     private static final String MOJANG_UUID_API = "https://api.mojang.com/users/profiles/minecraft/";
@@ -23,14 +21,14 @@ public class UuidUtils {
     @Nullable
     public static UUID findUuid(String playerName) {
         UUID uuid = null;
-        CompletableFuture<UUID> uuidFuture = CompletableFuture.supplyAsync(() -> UuidUtils.getUUIDFromPlayer(playerName));
+        CompletableFuture<UUID> uuidFuture = CompletableFuture.supplyAsync(() -> UuidUtils.getUuidFromPlayer(playerName));
         try {
             uuid = uuidFuture.get();
         } catch (InterruptedException | ExecutionException ignored) { }
         return uuid;
     }
 
-    private static UUID getUUIDFromPlayer(String playerName) {
+    private static UUID getUuidFromPlayer(String playerName) {
         UUID uuid;
 
         try {
@@ -41,7 +39,7 @@ public class UuidUtils {
             int responseCode = connection.getResponseCode();
 
             if(responseCode != 200) {
-                Territorial.logger.warn("Failed to get UUID for the player, Api response code: " + responseCode);
+                Territorial.LOGGER.warn("Failed to get UUID for the player, Api response code: " + responseCode);
             }
 
             StringBuilder inline = new StringBuilder();
@@ -67,5 +65,23 @@ public class UuidUtils {
         }
 
         return uuid;
+    }
+
+    public static class LootStack {
+
+        public static NbtCompound create() {
+            NbtCompound compound = new NbtCompound();
+            compound.putUuid("territorial_stack_id", UUID.randomUUID());
+            return compound;
+        }
+
+        @Nullable
+        public static UUID getUuid(ItemStack itemStack) {
+            NbtCompound compound = itemStack.getNbt();
+            if(compound != null && compound.contains("territorial_stack_id")) {
+                return itemStack.getOrCreateNbt().getUuid("territorial_stack_id");
+            }
+            return null;
+        }
     }
 }
