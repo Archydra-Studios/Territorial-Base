@@ -28,6 +28,9 @@
     ],
     "server": [
       "io.github.profjb58.territorial.TerritorialServer"
+    ],
+    "modmenu": [
+      "io.github.profjb58.territorial.config.TMMIntegration"
     ]
   },
   "mixins": [

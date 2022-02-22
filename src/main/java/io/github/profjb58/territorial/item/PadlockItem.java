@@ -34,26 +34,26 @@ public class PadlockItem extends Item {
     // Shift click functionality
     @Override
     public ActionResult useOnBlock(ItemUsageContext ctx) {
-        PlayerEntity player = ctx.getPlayer();
+        var player = ctx.getPlayer();
         if(player != null) {
             if(player.isSneaking()) {
                 if(ctx.getWorld().isClient) {
                     TerritorialClient.lockableHud.ignoreCycle();
                 }
                 else {
-                    ItemStack lock = player.getStackInHand(player.getActiveHand());
-                    LockableBlock lb = new LockableBlock(
-                            lock.getName().getString(),
+                    var lockStack = player.getStackInHand(player.getActiveHand());
+                    var lb = new LockableBlock(
+                            lockStack.getName().getString(),
                             player.getUuid(),
                             player.getName().getString(),
                             type,
                             ctx.getBlockPos());
 
-                    if(!lb.getLockId().equals("") && lock.hasCustomName()) {
+                    if(!lb.getLockId().equals("") && lockStack.hasCustomName()) {
                         switch (lb.createEntity(ctx.getWorld())) {
                             case SUCCESS -> {
                                 if (!player.isCreative()) {
-                                    lock.decrement(1);
+                                    lockStack.decrement(1);
                                 }
                                 player.sendMessage(new TranslatableText("message.territorial.lock_successful"), true);
                                 lb.playSound(LockableBlock.LockSound.LOCK_ADDED, player.getEntityWorld());

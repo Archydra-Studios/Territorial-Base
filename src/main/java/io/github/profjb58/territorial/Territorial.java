@@ -1,6 +1,6 @@
 package io.github.profjb58.territorial;
 
-import io.github.profjb58.territorial.config.TBConfig;
+import io.github.profjb58.territorial.config.TerritorialConfig;
 import io.github.profjb58.territorial.event.*;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.networking.C2SPackets;
@@ -34,8 +34,7 @@ public class Territorial implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		AutoConfig.register(TBConfig.class, JanksonConfigSerializer::new);
-		getConfig().checkBounds();
+		AutoConfig.register(TerritorialConfig.class, JanksonConfigSerializer::new);
 
 		// Event handlers
 		TerritorialRegistry.registerAll();
@@ -50,8 +49,8 @@ public class Territorial implements ModInitializer {
 		C2SPackets.init();
 	}
 
-	public static TBConfig getConfig() {
-		return AutoConfig.getConfigHolder(TBConfig.class).getConfig();
+	public static TerritorialConfig getConfig() {
+		return AutoConfig.getConfigHolder(TerritorialConfig.class).getConfig();
 	}
 
 	public static boolean isDedicatedServer() {

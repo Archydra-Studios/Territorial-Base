@@ -4,12 +4,13 @@
   "package": "io.github.profjb58.territorial.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "AnvilChunkStorageAccessor",
     "BlockBreakSpeedMixin",
     "BlockEntityMixin",
     "ExplosionAccessor",
+    "RuinedPortalStructurePieceMixin",
     "ServerWorldMixin",
-    "StatusEffectInstanceMixin",
-    "AnvilChunkStorageAccessor"
+    "StatusEffectInstanceMixin"
   ],
   "client": [
     "ClientPlayerInteractionMixin",

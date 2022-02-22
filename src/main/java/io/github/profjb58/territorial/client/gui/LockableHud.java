@@ -26,7 +26,7 @@ public class LockableHud {
             if(lb.exists()) {
                 reset();
 
-                Window window = MinecraftClient.getInstance().getWindow();
+                var window = MinecraftClient.getInstance().getWindow();
                 int hudHeight = window.getScaledHeight();
                 int hudWidth = window.getScaledWidth();
 
@@ -44,14 +44,14 @@ public class LockableHud {
                 LiteralText lockInfoText = new LiteralText(fc + "Id: §f" + lockId + "   " + fc + "Owner: §f" + lockOwner);
                 player.sendMessage(lockInfoText, true);
 
-                Item item = lb.getLockItemStack(1).getItem();
+                var item = lb.getLockItemStack(1).getItem();
                 lockImage = new WTiledSprite(32, 32, new Identifier(Territorial.MOD_ID, "textures/item/" + item.toString() + ".png"));
 
                 CottonHud.add(lockImage, (hudWidth / 2) - 16, hudHeight - 100);
             }
         }
         else {
-            InGameHud inGameHud = MinecraftClient.getInstance().inGameHud;
+            var inGameHud = MinecraftClient.getInstance().inGameHud;
             if(((OverlayRemainingAccessor) inGameHud).getOverlayRemaining() == 0) {
                 ignoreCycle = false;
             }

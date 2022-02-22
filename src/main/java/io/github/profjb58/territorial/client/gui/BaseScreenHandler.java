@@ -20,20 +20,21 @@ public abstract class BaseScreenHandler extends ScreenHandler {
 
     @Override
     public ItemStack transferSlot(PlayerEntity player, int index) {
-        ItemStack itemStack = ItemStack.EMPTY;
-        Slot slot = this.slots.get(index);
+        var itemStack = ItemStack.EMPTY;
+        var slot = this.slots.get(index);
+
         if (slot.hasStack()) {
-            ItemStack toInsert = slot.getStack();
-            itemStack = toInsert.copy();
+            var stackToInsert = slot.getStack();
+            itemStack = stackToInsert.copy();
             if (index < inventorySize) {
-                if (!this.insertItem(toInsert, inventorySize, this.slots.size(), true)) {
+                if (!this.insertItem(stackToInsert, inventorySize, this.slots.size(), true)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (!this.insertItem(toInsert, 0, inventorySize, false)) {
+            } else if (!this.insertItem(stackToInsert, 0, inventorySize, false)) {
                 return ItemStack.EMPTY;
             }
 
-            if (toInsert.isEmpty()) {
+            if (stackToInsert.isEmpty()) {
                 slot.setStack(ItemStack.EMPTY);
             } else {
                 slot.markDirty();

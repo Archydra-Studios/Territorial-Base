@@ -13,7 +13,7 @@ public class AttackHandlers {
     public static void init() {
         // Attack block handler
         AttackBlockCallback.EVENT.register((player, world, hand, blockPos, direction) -> {
-            LockableBlockEntity lbe = new LockableBlockEntity(world, blockPos);
+            var lbe = new LockableBlockEntity(world, blockPos);
 
             if(world.isClient) {
                 if(lbe.exists()) {

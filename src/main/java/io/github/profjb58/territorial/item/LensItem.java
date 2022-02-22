@@ -62,13 +62,13 @@ public class LensItem extends Item {
 
     @Override
     public ActionResult useOnBlock(ItemUsageContext ctx) {
-        BlockEntity be = ctx.getWorld().getBlockEntity(ctx.getBlockPos());
-        World world = ctx.getWorld();
+        var be = ctx.getWorld().getBlockEntity(ctx.getBlockPos());
+        var world = ctx.getWorld();
 
         if (!world.isClient && be instanceof LaserTransmitterBlockEntity lbe) {
-            BlockPos pos = ctx.getBlockPos();
-            PlayerEntity player = ctx.getPlayer();
-            ItemStack lensStack = TerritorialRegistry.LENS.getDefaultStack();
+            var pos = ctx.getBlockPos();
+            var player = ctx.getPlayer();
+            var lensStack = TerritorialRegistry.LENS.getDefaultStack();
 
             if(!Objects.equals(lbe.writeNbtStack(lensStack).getSubNbt("beam"), ctx.getStack().getSubNbt("beam"))) {
                 ItemEntity lensToDrop = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), lbe.writeNbtStack(lensStack));

@@ -13,22 +13,17 @@ import io.github.profjb58.territorial.enchantment.BloodshedCurseEnchantment;
 import io.github.profjb58.territorial.entity.effect.LockFatigueStatusEffect;
 import io.github.profjb58.territorial.item.*;
 import io.github.profjb58.territorial.recipe.LensRecipe;
+import io.github.profjb58.territorial.recipe.ConditionalRecipes;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
-import net.minecraft.block.Block;
-import net.minecraft.block.CryingObsidianBlock;
-import net.minecraft.block.DoorBlock;
-import net.minecraft.block.Material;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.recipe.*;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
@@ -36,8 +31,6 @@ import net.minecraft.util.registry.Registry;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
 
 public class TerritorialRegistry {
 
@@ -63,6 +56,7 @@ public class TerritorialRegistry {
     public static final Block LASER_RECEIVER = new LaserReceiverBlock();
     public static final Block PLINTH_OF_PEEKING = new PlinthOfPeekingBlock();
     public static final Block OMNISCIENT_OBSIDIAN = new OmniscientObsidianBlock();
+    public static final Block ANTI_MAGMA = new MagmaBlock(FabricBlockSettings.copyOf(Blocks.MAGMA_BLOCK));
 
     // Block Entities
     public static final BlockEntityType<LaserTransmitterBlockEntity> LASER_BLOCK_ENTITY
@@ -76,11 +70,14 @@ public class TerritorialRegistry {
             = ScreenHandlerRegistry.registerExtended(new Identifier(Territorial.MOD_ID, "keyring"), KeyringScreenHandler::new);
 
     // Recipe serializers
-    public static final SpecialRecipeSerializer<LensRecipe> LENS_RECIPE_SERIALIZER = new SpecialRecipeSerializer<>(LensRecipe::new);
+    public static final SpecialRecipeSerializer<LensRecipe> LENS_RECIPE_SERIALIZER = new SpecialRecipeSerializer<LensRecipe>(LensRecipe::new);
+    public static final SpecialRecipeSerializer<ConditionalRecipes.OmniscientObsidian> OMNISCIENT_OBSIDIAN_RECIPE_SERIALIZER
+            = new SpecialRecipeSerializer<>(ConditionalRecipes.OmniscientObsidian::new);
 
     public static void registerAll() {
-        LinkedHashMap<String, Block> blocks = new LinkedHashMap<>();
-        LinkedHashMap<String, Item> items = new LinkedHashMap<>();
+        var blocks = new LinkedHashMap<String, Block>();
+        var items = new LinkedHashMap<String, Item>();
+        var recipes = new LinkedHashMap<String, RecipeSerializer<?>>();
 
         // Blocks
         blocks.put("safe", SAFE_BLOCK);
@@ -88,6 +85,7 @@ public class TerritorialRegistry {
         blocks.put("laser_receiver", LASER_RECEIVER);
         blocks.put("plinth_of_peeking", PLINTH_OF_PEEKING);
         blocks.put("omniscient_obsidian", OMNISCIENT_OBSIDIAN);
+        blocks.put("anti_magma", ANTI_MAGMA);
         register(Registry.BLOCK, blocks);
 
         // Items
@@ -111,6 +109,7 @@ public class TerritorialRegistry {
         items.put("laser_receiver", createBlockItem(LASER_RECEIVER));
         items.put("plinth_of_peeking", createBlockItem(PLINTH_OF_PEEKING));
         items.put("omniscient_obsidian", createBlockItem(OMNISCIENT_OBSIDIAN));
+        items.put("anti_magma", createBlockItem(ANTI_MAGMA));
         register(Registry.ITEM, items);
 
         // Status Effects
@@ -119,9 +118,10 @@ public class TerritorialRegistry {
         ));
 
         // Recipes
-        register(Registry.RECIPE_SERIALIZER, Map.of(
-                "crafting_special_lens", LENS_RECIPE_SERIALIZER
-        ));
+        recipes.put("crafting_special_lens", LENS_RECIPE_SERIALIZER);
+        if(Territorial.getConfig().omniscientObsidianRecipe())
+            recipes.put("crafting_omniscient_obsidian", OMNISCIENT_OBSIDIAN_RECIPE_SERIALIZER);
+        register(Registry.RECIPE_SERIALIZER, recipes);
 
         // Enchantments
         register(Registry.ENCHANTMENT, Map.of(
@@ -147,7 +147,7 @@ public class TerritorialRegistry {
     }
 
     public static <T extends BlockEntity> BlockEntityType<T> registerBlockEntity(String id, FabricBlockEntityTypeBuilder<T> builder) {
-        BlockEntityType<T> blockEntityType = builder.build(null);
+        var blockEntityType = builder.build(null);
         Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(Territorial.MOD_ID, id), blockEntityType);
         return blockEntityType;
     }

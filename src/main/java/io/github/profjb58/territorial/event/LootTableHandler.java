@@ -22,7 +22,7 @@ public class LootTableHandler implements LootTableLoadingCallback {
     @Override
     public void onLootTableLoading(ResourceManager resourceManager, LootManager manager, Identifier id, FabricLootSupplierBuilder supplier, LootTableSetter setter) {
         if (END_CITY_TREASURE_ID.equals(id)) {
-            FabricLootPoolBuilder builder = FabricLootPoolBuilder.builder()
+            var builder = FabricLootPoolBuilder.builder()
                     .rolls(ConstantLootNumberProvider.create(1))
                     .withCondition(RandomChanceWithLootingLootCondition.builder(0.35f, 1f).build())
                     .withFunction(SetNbtLootFunction.builder(UuidUtils.LootStack.create()).build())

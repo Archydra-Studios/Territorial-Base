@@ -42,7 +42,7 @@ public class EnderKeyScreenHandler extends GenericContainerScreenHandler {
         this.enderChestInventory = enderChestInventory;
         this.targetPlayer = targetPlayer;
 
-        LinkedList<Integer> slotDestructionList = new LinkedList<>();
+        var slotDestructionList = new LinkedList<Integer>();
         for(int i=0; i < 27; i++) {
             slotDestructionList.add(i);
         }
@@ -61,18 +61,18 @@ public class EnderKeyScreenHandler extends GenericContainerScreenHandler {
     private void createScreen(Inventory displayInv, EnderChestInventory enderChestInv) {
 
         // Fill with a random limited assortment of items from the ender chest
-        Random random = new Random();
+        var random = new Random();
         for (int i = 0; i < getConfig().getEnderKeyRolls(); i++) {
             int randomSlot = random.nextInt(27);
             displayInv.setStack(randomSlot, enderChestInv.getStack(randomSlot));
         }
         // Fill the rest with 'blanks' (glass panes)
         for(int i= 0; i < 27; i++) {
-            ItemStack invItemStack = displayInv.getStack(i);
+            var invItemStack = displayInv.getStack(i);
             if (invItemStack.isEmpty()) {
-                ItemStack blankStack = new ItemStack(TerritorialRegistry.BLANK_SLOT)
+                var blankItemStack = new ItemStack(TerritorialRegistry.BLANK_SLOT)
                         .setCustomName(new LiteralText("§k" + enderChestInv.getStack(i).getName().getString()));
-                displayInv.setStack(i, blankStack);
+                displayInv.setStack(i, blankItemStack);
             }
         }
     }
@@ -87,7 +87,7 @@ public class EnderKeyScreenHandler extends GenericContainerScreenHandler {
     }
 
     public void destructSlot(int slotId) {
-        ItemStack destructionStack = new ItemStack(TerritorialRegistry.DESTRUCTED_SLOT);
+        var destructionStack = new ItemStack(TerritorialRegistry.DESTRUCTED_SLOT);
         destructionStack.setCustomName(new LiteralText("§k" + enderChestInventory.getStack(slotId).getName().getString()));
         getInventory().setStack(slotId, destructionStack);
     }
@@ -95,8 +95,8 @@ public class EnderKeyScreenHandler extends GenericContainerScreenHandler {
     @Override
     public void onSlotClick(int slotId, int clickData, SlotActionType actionType, PlayerEntity playerEntity) {
         if(slotId >= 0) {
-            ItemStack itemStack = getSlot(slotId).getStack();
-            Item item = itemStack.getItem();
+            var itemStack = getSlot(slotId).getStack();
+            var item = itemStack.getItem();
 
             boolean blankItem = item.equals(TerritorialRegistry.BLANK_SLOT)
                     || item.equals(TerritorialRegistry.DESTRUCTED_SLOT);

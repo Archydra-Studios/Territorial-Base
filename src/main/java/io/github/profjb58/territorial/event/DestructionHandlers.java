@@ -17,13 +17,15 @@ public class DestructionHandlers {
     public static void init() {
         // Locked block broken by a player that isn't the owner
         PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, entity) -> {
-            LockableBlockEntity lbe = new LockableBlockEntity(world, pos);
+            var lbe = new LockableBlockEntity(world, pos);
             if(lbe.exists()) {
                 BlockEntity be = lbe.getBlockEntity();
+
                 if(be instanceof Inventory) {
                     Inventory beInv = (Inventory) lbe.getBlockEntity();
                     if(!beInv.isEmpty()) {
-                        LinkedList<Integer> occupiedSlots = new LinkedList<>();
+
+                        var occupiedSlots = new LinkedList<Integer>();
                         for(int i=0; i < beInv.size(); i++) {
                             if (!beInv.getStack(i).isEmpty()) {
                                 occupiedSlots.add(i);
@@ -47,7 +49,7 @@ public class DestructionHandlers {
         ServerWorldEvents.BEFORE_EXPLOSION.register((explosion, world) -> {
             explosion.getAffectedBlocks().removeIf(pos -> {
 
-                LockableBlockEntity lbe = new LockableBlockEntity(world, pos);
+                var lbe = new LockableBlockEntity(world, pos);
                 if(lbe.exists()) {
                     float power = ((ExplosionAccessor) explosion).getPower();
                     return !(power > lbe.getBlock().getBlastResistance());

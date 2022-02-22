@@ -27,7 +27,7 @@ public abstract class BlockBreakSpeedMixin extends LivingEntity {
         Float blockBreakSpeed = cir.getReturnValue();
 
         if (hasStatusEffect(TerritorialRegistry.LOCK_FATIGUE)) {
-            StatusEffectInstance lockFatigue = getStatusEffect(TerritorialRegistry.LOCK_FATIGUE);
+            var lockFatigue = getStatusEffect(TerritorialRegistry.LOCK_FATIGUE);
 
             if(lockFatigue != null) {
                 float multiplier = MathUtils.Locks.getLockFatigueMultiplier(lockFatigue.getAmplifier());

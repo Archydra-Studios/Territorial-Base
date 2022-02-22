@@ -22,7 +22,7 @@ public class LockFatigueInstance extends StatusEffectInstance {
     public static boolean addEffect(PlayerEntity player, BlockPos target) {
         if(player.isCreative()) return false;
 
-        LockableBlockEntity lbe = new LockableBlockEntity(player.getEntityWorld(), target);
+        var lbe = new LockableBlockEntity(player.getEntityWorld(), target);
         if(lbe.exists()) {
             LockableBlock lb = lbe.getBlock();
 

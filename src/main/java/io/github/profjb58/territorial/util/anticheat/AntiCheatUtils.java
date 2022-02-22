@@ -40,9 +40,9 @@ public class AntiCheatUtils {
     }
 
     public static void warnLootStackDuped(ItemStack itemStack, ServerPlayerEntity player) {
-        TranslatableText warningMessageFormatted = new TranslatableText("message.territorial.stack_dupe_formatted.warn", itemStack.getItem().getName(), player.getDisplayName());
+        var warningMessageFormatted = new TranslatableText("message.territorial.stack_dupe_formatted.warn", itemStack.getItem().getName(), player.getDisplayName());
+        var playerManager = player.getServer().getPlayerManager();
 
-        PlayerManager playerManager = player.getServer().getPlayerManager();
         for (PlayerEntity pe : playerManager.getPlayerList()) {
             if (pe.isCreativeLevelTwoOp()) pe.sendMessage(warningMessageFormatted, false);
         }

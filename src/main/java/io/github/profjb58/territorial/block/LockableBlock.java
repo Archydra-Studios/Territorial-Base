@@ -101,7 +101,7 @@ public class LockableBlock {
     }
 
     public Pair<ItemStack, Inventory> findMatchingKey(ServerPlayerEntity player, boolean checkInventory) {
-        ItemStack itemStack = player.getStackInHand(player.getActiveHand());
+        var itemStack = player.getStackInHand(player.getActiveHand());
         String itemStackName = itemStack.getName().getString();
 
         if(player.isHolding(TerritorialRegistry.MASTER_KEY) ||
@@ -127,7 +127,7 @@ public class LockableBlock {
     }
 
     private boolean checkValidKey(ItemStack itemStack) {
-        Item item = itemStack.getItem();
+        var item = itemStack.getItem();
         String itemStackName = itemStack.getName().getString();
         return item == TerritorialRegistry.MASTER_KEY || (item == TerritorialRegistry.KEY && itemStackName.equals(lockId));
     }

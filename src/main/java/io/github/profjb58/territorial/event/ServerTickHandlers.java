@@ -22,7 +22,7 @@ public class ServerTickHandlers {
     public static void init() {
         // Start server world ticks
         ServerTickEvents.START_WORLD_TICK.register(serverWorld -> {
-            List<ServerPlayerEntity> players = serverWorld.getPlayers();
+            var players = serverWorld.getPlayers();
 
             for(ServerPlayerEntity player : players) {
                 lockStatusEffectTick(player);

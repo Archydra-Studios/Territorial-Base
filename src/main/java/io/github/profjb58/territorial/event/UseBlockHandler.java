@@ -28,7 +28,7 @@ public class UseBlockHandler implements UseBlockCallback {
     @Override
     public ActionResult interact(PlayerEntity player, World world, Hand hand, BlockHitResult hitResult) {
         if(!player.isCreative()) {
-            LockableBlockEntity lbe = new LockableBlockEntity(world, hitResult.getBlockPos());
+            var lbe = new LockableBlockEntity(world, hitResult.getBlockPos());
             if (lbe.exists()) {
                 if(world.isClient) { // TODO - Improve this...
                     lockableHud.ignoreCycle();
@@ -41,7 +41,7 @@ public class UseBlockHandler implements UseBlockCallback {
                         }
                     }
                     LockableBlock lb = lbe.getBlock();
-                    Pair<ItemStack, Inventory> keySearchResult = lb.findMatchingKey((ServerPlayerEntity) player, true);
+                    var keySearchResult = lb.findMatchingKey((ServerPlayerEntity) player, true);
                     ItemStack keyItemStack = keySearchResult.getLeft();
                     Inventory keyInventory = keySearchResult.getRight();
 

@@ -30,8 +30,8 @@ public class KeyringScreenHandler extends BaseScreenHandler {
     @Override
     public void onSlotClick(int slotId, int clickData, SlotActionType actionType, PlayerEntity playerEntity) {
         if(slotId >= 0) {
-            ItemStack itemStack = getSlot(slotId).getStack();
-            Item item = itemStack.getItem();
+            var itemStack = getSlot(slotId).getStack();
+            var item = itemStack.getItem();
 
             if(actionType == SlotActionType.QUICK_MOVE) {
                 if(!(item instanceof KeyItem)) return;
@@ -51,7 +51,7 @@ public class KeyringScreenHandler extends BaseScreenHandler {
 
     @Override
     void createScreen(PlayerInventory playerInventory, ItemStack keyringStack) {
-        ItemInventory itemInventory = new ItemInventory(keyringStack, 9);
+        var itemInventory = new ItemInventory(keyringStack, 9);
         itemInventory.loadFromAttachedItemTag();
 
         // Close similarity to the Hopper Screen

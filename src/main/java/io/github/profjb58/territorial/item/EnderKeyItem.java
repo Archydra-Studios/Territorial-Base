@@ -59,18 +59,18 @@ public class EnderKeyItem extends Item {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
         player.setCurrentHand(hand);
-        ItemStack itemStack = player.getStackInHand(hand);
+        var itemStack = player.getStackInHand(hand);
 
         if(getConfig().enderKeyEnabled() && world != null && !world.isClient) {
-            PlayerManager playerManager = ((ServerWorld) world).getServer().getPlayerManager();
+            var playerManager = ((ServerWorld) world).getServer().getPlayerManager();
             String itemStackName = itemStack.getName().getString();
 
             if(!AntiCheatUtils.isLootStackDuped(itemStack, ((ServerPlayerEntity) player))) {
                 if(itemStack.hasCustomName()) {
-                    ServerPlayerEntity target = playerManager.getPlayer(itemStackName);
+                    var target = playerManager.getPlayer(itemStackName);
                     if (target != null && target.isAlive()) {
-                        EnderChestInventory enderChestInv = target.getEnderChestInventory();
-                        Inventory displayInv = new EnderChestInventory();
+                        var enderChestInv = target.getEnderChestInventory();
+                        var displayInv = new EnderChestInventory();
 
                         String targetName = target.getDisplayName().getString();
                         if(targetName.length() > 12) targetName = targetName.substring(0, 9) + "...";

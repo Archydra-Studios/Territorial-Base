@@ -197,13 +197,13 @@ public class LaserTransmitterBlockEntity extends BlockEntity {
         boolean hasGoldHelmet;
         boolean targetAllMobs = Territorial.getConfig().laserTargetsAllMobs();
 
-        for(Entity entity : entities) {
+        for(var entity : entities) {
             if(targetAllMobs || entity.isPlayer()) {
                 numArmorPieces = 0;
                 hasGoldHelmet = false;
 
                 // Gold (reflective) armor resistance
-                for(ItemStack armorStack : entity.getArmorItems()) {
+                for(var armorStack : entity.getArmorItems()) {
                     armorItem = armorStack.getItem();
                     if(entity instanceof HorseEntity && armorItem == Items.GOLDEN_HORSE_ARMOR
                             || (facing == UP && armorItem == Items.GOLDEN_BOOTS)

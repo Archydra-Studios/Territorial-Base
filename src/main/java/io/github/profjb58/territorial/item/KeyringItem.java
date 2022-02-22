@@ -32,7 +32,7 @@ public class KeyringItem extends Item {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
         player.setCurrentHand(hand);
-        ItemStack keyringItemStack = player.getStackInHand(hand);
+        var keyringItemStack = player.getStackInHand(hand);
 
         if(world != null && !world.isClient) {
             player.openHandledScreen(new ExtendedScreenHandlerFactory() {
@@ -59,10 +59,10 @@ public class KeyringItem extends Item {
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         super.appendTooltip(stack, world, tooltip, context);
 
-        ItemInventory itemInventory = new ItemInventory(stack, 9);
+        var itemInventory = new ItemInventory(stack, 9);
         itemInventory.loadFromAttachedItemTag();
 
-        for(ItemStack itemStack : itemInventory.getItems()) {
+        for(var itemStack : itemInventory.getItems()) {
             if (itemStack.getItem() instanceof KeyItem keyItem) {
                 if (keyItem.isMasterKey()) {
                     tooltip.add(new LiteralText("§d" + itemStack.getName().getString()));
