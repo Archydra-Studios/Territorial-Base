@@ -2,13 +2,12 @@ package io.github.profjb58.territorial.client.render.entity;
 
 import io.github.profjb58.territorial.block.entity.LaserTransmitterBlockEntity;
 import io.github.profjb58.territorial.client.render.CustomRenderLayers;
-import io.github.profjb58.territorial.util.PosUtils;
+import io.github.profjb58.territorial.util.MathUtils;
 import io.github.profjb58.territorial.util.RenderUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particle.DustParticleEffect;
@@ -51,7 +50,7 @@ public class LaserBlockEntityRenderer implements BlockEntityRenderer<LaserTransm
                 ClientWorld clientWorld = (ClientWorld) be.getWorld();
                 if(clientWorld != null) {
                     if(be.getSparkleDistance() < be.getReach()) {
-                        Vec3d sparklePos = Vec3d.of(be.getPos()).add(PosUtils.zeroMove(Vec3d.of(facing.getVector()).multiply(be.getSparkleDistance()), 0.5));
+                        Vec3d sparklePos = Vec3d.of(be.getPos()).add(MathUtils.Pos.zeroMove(Vec3d.of(facing.getVector()).multiply(be.getSparkleDistance()), 0.5));
                         clientWorld.addParticle(new DustParticleEffect(new Vec3f(colour[0], colour[1], colour[2]), 1f),
                                 true, sparklePos.getX() , sparklePos.getY(), sparklePos.getZ(),
                                 0.1, 0.1, 0.1);

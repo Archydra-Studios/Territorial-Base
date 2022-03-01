@@ -66,6 +66,10 @@ public class TerritorialConfig implements ConfigData {
 
         @Comment("Whether the laser targets all mobs or just players")
         boolean laserTargetsAllMobs = true;
+
+        @Comment("Eclipse trigger radius")
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 16)
+        int eclipseTriggerRadius = 8;
     }
 
     private double getWithinBounds(String name, double configValue, double defaultValue, double min, double max) {
@@ -95,5 +99,6 @@ public class TerritorialConfig implements ConfigData {
     public int getMinOpLevel() { return (int) getWithinBounds("minOpLevel", protections.minOpLevel, 3, 1, 4); }
     public int getEnderKeyRolls() { return (int) getWithinBounds("enderKeyRolls", enderKeyRolls, 5, 0, 100); }
     public int getLaserTransmitterMaxReach() { return (int) getWithinBounds("laserTransmitterMaxReach", traps.laserTransmitterMaxReach, 48, 1, 60); }
+    public int getEclipseTriggerRadius() { return (int) getWithinBounds("eclipseTriggerRadius", traps.eclipseTriggerRadius, 8, 1, 16); }
     public double getBreakMultiplier() { return getWithinBounds("breakMultiplier", protections.breakMultiplier, 0.02D, 0.001D, 1D); }
 }

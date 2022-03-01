@@ -1,9 +1,13 @@
 package io.github.profjb58.territorial.event;
 
+import io.github.profjb58.territorial.block.EclipseRoseBlock;
 import io.github.profjb58.territorial.client.render.entity.LaserBlockEntityRenderer;
+import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.world.ClientWorld;
 
 @Environment(EnvType.CLIENT)
 public class ClientTickHandlers {
@@ -39,6 +43,12 @@ public class ClientTickHandlers {
             */
             lockableViewCounter++;
             LaserBlockEntityRenderer.rainbowColourTick();
+
+            TerritorialRegistry.ECLIPSE_ROSE.eclipsePhaseTick(clientWorld);
+        });
+
+        ClientTickEvents.START_CLIENT_TICK.register((clientWorld) -> {
+            TerritorialRegistry.ECLIPSE_ROSE.eclipseRadiusCheckTick();
         });
 
         ClientTickEvents.END_CLIENT_TICK.register((clientWorld) -> {

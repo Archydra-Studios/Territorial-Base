@@ -1,9 +1,10 @@
 package io.github.profjb58.territorial.block.entity;
 
 import io.github.profjb58.territorial.Territorial;
+import io.github.profjb58.territorial.block.EclipseRoseBlock;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.mixin.AnvilChunkStorageAccessor;
-import io.github.profjb58.territorial.util.PosUtils;
+import io.github.profjb58.territorial.util.MathUtils;
 import io.github.profjb58.territorial.util.TickCounter;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -30,6 +31,9 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Predicate;
+import java.util.stream.Collector;
 
 import static net.minecraft.util.math.Direction.UP;
 
@@ -109,10 +113,10 @@ public class LaserTransmitterBlockEntity extends BlockEntity {
         else if(be.reach != be.prevReach || power != be.prevPower) {
             if(power != be.prevPower) {
                 be.startPos = Vec3d.ofCenter(pos)
-                        .add(PosUtils.zeroMove(Vec3d.of(facing.getVector()).multiply(0.5), SIGNAL_STRENGTH_WIDTHS[power - 1] / 2));
+                        .add(MathUtils.Pos.zeroMove(Vec3d.of(facing.getVector()).multiply(0.5), SIGNAL_STRENGTH_WIDTHS[power - 1] / 2));
             }
             be.endPos = Vec3d.ofCenter(pos)
-                    .add(PosUtils.zeroMove(Vec3d.of(facing.getVector()).multiply(be.reach + 0.5), -(SIGNAL_STRENGTH_WIDTHS[power - 1] / 2)));
+                    .add(MathUtils.Pos.zeroMove(Vec3d.of(facing.getVector()).multiply(be.reach + 0.5), -(SIGNAL_STRENGTH_WIDTHS[power - 1] / 2)));
             be.updateLights = true;
             be.prevPower = power;
             be.prevReach = be.reach;
@@ -138,7 +142,7 @@ public class LaserTransmitterBlockEntity extends BlockEntity {
             float trackedReach = be.reach;
 
             for (Entity entity : entitiesCollided) {
-                float distance = PosUtils.getDistanceAlongAxis(Vec3d.of(be.getPos()).add(0.5, 0.5, 0.5),
+                float distance = MathUtils.Pos.getDistanceAlongAxis(Vec3d.of(be.getPos()).add(0.5, 0.5, 0.5),
                         entity.getPos(), facing.getAxis());
 
                 if (distance <= (be.maxReach - 1f)) {

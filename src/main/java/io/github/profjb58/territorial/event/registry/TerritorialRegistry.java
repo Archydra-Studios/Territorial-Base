@@ -1,11 +1,8 @@
 package io.github.profjb58.territorial.event.registry;
 
 import io.github.profjb58.territorial.Territorial;
-import io.github.profjb58.territorial.block.LaserReceiverBlock;
-import io.github.profjb58.territorial.block.LaserTransmitterBlock;
+import io.github.profjb58.territorial.block.*;
 import io.github.profjb58.territorial.block.LockableBlock.LockType;
-import io.github.profjb58.territorial.block.OmniscientObsidianBlock;
-import io.github.profjb58.territorial.block.PlinthOfPeekingBlock;
 import io.github.profjb58.territorial.block.entity.LaserTransmitterBlockEntity;
 import io.github.profjb58.territorial.client.gui.KeyringScreenHandler;
 import io.github.profjb58.territorial.command.LockCommands;
@@ -57,6 +54,7 @@ public class TerritorialRegistry {
     public static final Block PLINTH_OF_PEEKING = new PlinthOfPeekingBlock();
     public static final Block OMNISCIENT_OBSIDIAN = new OmniscientObsidianBlock();
     public static final Block ANTI_MAGMA = new MagmaBlock(FabricBlockSettings.copyOf(Blocks.MAGMA_BLOCK));
+    public static final EclipseRoseBlock ECLIPSE_ROSE = new EclipseRoseBlock();
 
     // Block Entities
     public static final BlockEntityType<LaserTransmitterBlockEntity> LASER_BLOCK_ENTITY
@@ -86,6 +84,7 @@ public class TerritorialRegistry {
         blocks.put("plinth_of_peeking", PLINTH_OF_PEEKING);
         blocks.put("omniscient_obsidian", OMNISCIENT_OBSIDIAN);
         blocks.put("anti_magma", ANTI_MAGMA);
+        blocks.put("eclipse_rose", ECLIPSE_ROSE);
         register(Registry.BLOCK, blocks);
 
         // Items
@@ -110,6 +109,7 @@ public class TerritorialRegistry {
         items.put("plinth_of_peeking", createBlockItem(PLINTH_OF_PEEKING));
         items.put("omniscient_obsidian", createBlockItem(OMNISCIENT_OBSIDIAN));
         items.put("anti_magma", createBlockItem(ANTI_MAGMA));
+        items.put("eclipse_rose", createBlockItem(ECLIPSE_ROSE));
         register(Registry.ITEM, items);
 
         // Status Effects

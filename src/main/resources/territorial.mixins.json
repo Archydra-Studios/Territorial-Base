@@ -8,12 +8,14 @@
     "BlockBreakSpeedMixin",
     "BlockEntityMixin",
     "ExplosionAccessor",
+    "LightningEntityMixin",
     "RuinedPortalStructurePieceMixin",
     "ServerWorldMixin",
     "StatusEffectInstanceMixin"
   ],
   "client": [
     "ClientPlayerInteractionMixin",
+    "ClientPlayNetworkHandlerMixin",
     "OverlayRemainingAccessor"
   ],
   "server": [
