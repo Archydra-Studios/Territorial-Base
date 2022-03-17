@@ -1,14 +1,12 @@
 package io.github.profjb58.territorial.block;
 
-import io.github.profjb58.territorial.entity.effect.LockFatigueInstance;
-import io.github.profjb58.territorial.entity.effect.LockFatigueStatusEffect;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.inventory.ItemInventory;
 import io.github.profjb58.territorial.item.KeyringItem;
 import io.github.profjb58.territorial.util.MathUtils;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -156,9 +154,9 @@ public class LockableBlock {
         }
     }
 
-    public LockFatigueInstance getLockFatigueInstance() {
-        return new LockFatigueInstance(
-                (LockFatigueStatusEffect) TerritorialRegistry.LOCK_FATIGUE, Integer.MAX_VALUE,
+    public StatusEffectInstance getLockFatigueInstance() {
+        return new StatusEffectInstance(
+                TerritorialRegistry.LOCK_FATIGUE_EFFECT, Integer.MAX_VALUE,
                 getLockFatigueAmplifier(),
                 false, false);
     }

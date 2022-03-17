@@ -64,7 +64,9 @@
   "message.territorial.stack_dupe.warn": "[Territorial] Duplicated item: %s found in %s's player / ender chest inventory",
 
   "title.territorial.config": "Territorial Config",
+
   "effect.territorial.lock_fatigue": "Lock Fatigue",
+  "effect.territorial.eclipse": "Eclipse",
 
   "advancements.territorial.padlock": "Always Use Protection",
   "advancements.territorial.padlock.desc": "Craft a Padlock",

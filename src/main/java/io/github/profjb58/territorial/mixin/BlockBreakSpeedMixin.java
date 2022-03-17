@@ -5,7 +5,6 @@ import io.github.profjb58.territorial.util.MathUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,8 +25,8 @@ public abstract class BlockBreakSpeedMixin extends LivingEntity {
         // TODO - useful for claims, can check region around the player entity
         Float blockBreakSpeed = cir.getReturnValue();
 
-        if (hasStatusEffect(TerritorialRegistry.LOCK_FATIGUE)) {
-            var lockFatigue = getStatusEffect(TerritorialRegistry.LOCK_FATIGUE);
+        if (hasStatusEffect(TerritorialRegistry.LOCK_FATIGUE_EFFECT)) {
+            var lockFatigue = getStatusEffect(TerritorialRegistry.LOCK_FATIGUE_EFFECT);
 
             if(lockFatigue != null) {
                 float multiplier = MathUtils.Locks.getLockFatigueMultiplier(lockFatigue.getAmplifier());

@@ -38,7 +38,6 @@ public class Territorial implements ModInitializer {
 
 		// Event handlers
 		TerritorialRegistry.registerAll();
-		ServerLifecycleHandlers.init();
 		AttackHandlers.init();
 		ServerTickHandlers.init();
 		UseBlockHandler.init();

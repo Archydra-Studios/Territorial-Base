@@ -10,7 +10,6 @@
     "ExplosionAccessor",
     "LightningEntityMixin",
     "RuinedPortalStructurePieceMixin",
-    "ServerWorldMixin",
     "StatusEffectInstanceMixin"
   ],
   "client": [

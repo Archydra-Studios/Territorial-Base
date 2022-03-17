@@ -1,16 +1,11 @@
 package io.github.profjb58.territorial.networking;
 
 import io.github.profjb58.territorial.Territorial;
-import io.github.profjb58.territorial.block.EclipseRoseBlock;
-import io.github.profjb58.territorial.entity.effect.LockFatigueInstance;
+import io.github.profjb58.territorial.entity.effect.EclipseStatusEffect;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
 
 public class S2CPackets {
 
@@ -22,11 +17,11 @@ public class S2CPackets {
             final BlockPos closestPos = buf.readBlockPos();
 
             client.execute(() -> {
-                TerritorialRegistry.ECLIPSE_ROSE.setLastClosestPosApplied(closestPos);
+                //EclipseStatusEffect.setLastPosApplied(closestPos);
             });
         });
 
         ClientPlayNetworking.registerGlobalReceiver(RESET_ECLIPSE, (client, handler, buf, responseSender) ->
-                client.execute(TerritorialRegistry.ECLIPSE_ROSE::startEclipseCooldown));
+                client.execute(EclipseStatusEffect::startEclipseCooldown));
     }
 }

@@ -1,40 +1,47 @@
 package io.github.profjb58.territorial.event;
 
+import io.github.profjb58.territorial.block.LockableBlock;
 import io.github.profjb58.territorial.block.entity.LockableBlockEntity;
-import io.github.profjb58.territorial.entity.effect.LockFatigueInstance;
+import io.github.profjb58.territorial.entity.effect.LockFatigueStatusEffect;
+import io.github.profjb58.territorial.entity.effect.StatusEffectInstanceAccess;
+import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
+import io.github.profjb58.territorial.util.TickCounter;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.world.World;
 
 public class AttackHandlers {
-
-    static int ticksSinceBlockAttack = 0;
+    static final TickCounter TICKS_SINCE_BLOCK_ATTACK = new TickCounter(Integer.MAX_VALUE);
 
     public static void init() {
-        // Attack block handler
-        AttackBlockCallback.EVENT.register((player, world, hand, blockPos, direction) -> {
-            var lbe = new LockableBlockEntity(world, blockPos);
+        AttackBlockCallback.EVENT.register(AttackHandlers::onAttackBlock);
+        AttackEntityCallback.EVENT.register(AttackHandlers::onAttackEntity);
+    }
 
-            if(world.isClient) {
-                if(lbe.exists()) {
-                    LockFatigueInstance.addEffect(player, blockPos);
-                }
-            }
-            else {
-                if(lbe.exists()) { // Failsafe, fired just in-case client server data isn't synced to the client
-                    LockFatigueInstance.addEffect(player, blockPos);
-                }
-                ticksSinceBlockAttack = 0; // Update ticks since last attack on the dedicated or integrated server
-            }
-            return ActionResult.PASS;
-        });
+    private static ActionResult onAttackBlock(PlayerEntity player, World world, Hand hand, BlockPos pos, Direction direction) {
+        var lbe = new LockableBlockEntity(world, pos);
+        if(world.isClient && lbe.exists()) LockFatigueStatusEffect.addEffect(player, pos);
+        else {
+            // Failsafe, fired just in-case client server data isn't synced to the client
+            if(lbe.exists())  LockFatigueStatusEffect.addEffect(player, pos);
+            TICKS_SINCE_BLOCK_ATTACK.reset(); // Update ticks since last attack on the dedicated or integrated server
+        }
+        return ActionResult.PASS;
+    }
 
-        // Attack entity handler
-        AttackEntityCallback.EVENT.register((player, world, hand, entity, entityHitResult) -> {
-            if(!world.isClient()) {
-                LockFatigueInstance.removeEffect(player);
+    private static ActionResult onAttackEntity(PlayerEntity player, World world, Hand hand, Entity entity, EntityHitResult ehr) {
+        if(!world.isClient()) {
+            if(player.hasStatusEffect(TerritorialRegistry.LOCK_FATIGUE_EFFECT)) {
+                player.removeStatusEffect(TerritorialRegistry.LOCK_FATIGUE_EFFECT);
             }
-            return ActionResult.PASS;
-        });
+        }
+        return ActionResult.PASS;
     }
 }

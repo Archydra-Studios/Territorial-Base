@@ -7,6 +7,7 @@ import io.github.profjb58.territorial.block.entity.LaserTransmitterBlockEntity;
 import io.github.profjb58.territorial.client.gui.KeyringScreenHandler;
 import io.github.profjb58.territorial.command.LockCommands;
 import io.github.profjb58.territorial.enchantment.BloodshedCurseEnchantment;
+import io.github.profjb58.territorial.entity.effect.EclipseStatusEffect;
 import io.github.profjb58.territorial.entity.effect.LockFatigueStatusEffect;
 import io.github.profjb58.territorial.item.*;
 import io.github.profjb58.territorial.recipe.LensRecipe;
@@ -19,6 +20,7 @@ import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.recipe.*;
@@ -61,7 +63,8 @@ public class TerritorialRegistry {
             = registerBlockEntity("laser_be", FabricBlockEntityTypeBuilder.create(LaserTransmitterBlockEntity::new, LASER_TRANSMITTER));
 
     // Status Effects
-    public static final LockFatigueStatusEffect LOCK_FATIGUE = new LockFatigueStatusEffect();
+    public static final LockFatigueStatusEffect LOCK_FATIGUE_EFFECT = new LockFatigueStatusEffect();
+    public static final EclipseStatusEffect ECLIPSE_EFFECT = new EclipseStatusEffect();
 
     // Screen handlers
     public static final ScreenHandlerType<KeyringScreenHandler> KEYRING_SCREEN_HANDLER_TYPE
@@ -114,7 +117,8 @@ public class TerritorialRegistry {
 
         // Status Effects
         register(Registry.STATUS_EFFECT, Map.of(
-                "lock_fatigue", LOCK_FATIGUE
+                "lock_fatigue", LOCK_FATIGUE_EFFECT,
+                "eclipse", ECLIPSE_EFFECT
         ));
 
         // Recipes

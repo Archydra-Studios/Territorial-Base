@@ -77,8 +77,6 @@ public class EnderKeyScreenHandler extends GenericContainerScreenHandler {
         }
     }
 
-
-
     public void tick() {
         if(tickCounter.test() && !slotDestructionQueue.isEmpty()) {
             destructSlot(slotDestructionQueue.remove());
