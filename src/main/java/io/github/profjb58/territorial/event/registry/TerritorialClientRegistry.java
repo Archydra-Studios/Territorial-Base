@@ -28,6 +28,7 @@ public class TerritorialClientRegistry {
         BlockEntityRendererRegistry.register(TerritorialRegistry.LASER_BLOCK_ENTITY, ctx -> new LaserBlockEntityRenderer());
 
         BlockRenderLayerMap.INSTANCE.putBlock(TerritorialRegistry.ECLIPSE_ROSE, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(TerritorialRegistry.ECLIPSE_ROSE_BUSH, RenderLayer.getCutout());
     }
 
     private static void registerItemPredicates() {

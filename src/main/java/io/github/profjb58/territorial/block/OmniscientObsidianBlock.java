@@ -3,7 +3,6 @@ package io.github.profjb58.territorial.block;
 import io.github.profjb58.territorial.util.MovementUtils;
 import io.github.profjb58.territorial.util.TextUtils;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
 import net.minecraft.block.*;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;

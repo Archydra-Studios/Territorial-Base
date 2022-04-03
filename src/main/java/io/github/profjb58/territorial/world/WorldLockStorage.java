@@ -1,9 +1,9 @@
 package io.github.profjb58.territorial.world;
 
 
-import dev.architectury.utils.NbtType;
 import io.github.profjb58.territorial.block.LockableBlock;
 import io.github.profjb58.territorial.util.TagUtils;
+import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;

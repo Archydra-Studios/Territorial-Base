@@ -9,7 +9,7 @@
   "text.autoconfig.territorial.option.protections.breakMultiplier": "Break Multiplier",
   "text.autoconfig.territorial.option.traps.laserTransmitterMaxReach": "Laser Transmitters max reach",
   "text.autoconfig.territorial.option.traps.laserTargetsAllMobs": "Laser targets all mobs",
-  "text.autoconfig.territorial.option.traps.eclipseTriggerRadius": "Eclipse trigger radius",
+  "text.autoconfig.territorial.option.traps.eclipseRoseMaxReach": "Eclipse Rose max reach",
   "text.autoconfig.territorial.option.enableEnderKey": "Enable Ender Key",
   "text.autoconfig.territorial.option.enderKeyRolls": "Ender Key rolls",
   "text.autoconfig.territorial.option.omniscientObsidianRecipe": "Enable Omniscient Obsidian recipe",
@@ -20,6 +20,7 @@
   "block.territorial.omniscient_obsidian": "Omniscient Obsidian",
   "block.territorial.anti_magma": "Anti Magma",
   "block.territorial.eclipse_rose": "Eclipse Rose",
+  "block.territorial.eclipse_rose_bush": "Eclipse Rose Bush",
 
   "item.territorial.ender_amulet": "Ender Amulet",
   "item.territorial.key":"Key",

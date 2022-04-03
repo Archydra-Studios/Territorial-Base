@@ -1,5 +1,7 @@
 package io.github.profjb58.territorial;
 
+import com.google.common.collect.ImmutableList;
+import com.ibm.icu.impl.Pair;
 import io.github.profjb58.territorial.config.TerritorialConfig;
 import io.github.profjb58.territorial.event.*;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
@@ -10,10 +12,21 @@ import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.color.item.ItemColorProvider;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ai.brain.Activity;
+import net.minecraft.entity.ai.brain.task.ConditionalTask;
+import net.minecraft.entity.ai.brain.task.FollowMobTask;
+import net.minecraft.entity.ai.brain.task.TimeLimitedTask;
+import net.minecraft.entity.ai.brain.task.WaitTask;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.intprovider.UniformIntProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -46,6 +59,7 @@ public class Territorial implements ModInitializer {
 
 		// Packet handlers
 		C2SPackets.init();
+		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> 0x3495e, TerritorialRegistry.KEY);
 	}
 
 	public static TerritorialConfig getConfig() {

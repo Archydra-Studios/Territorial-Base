@@ -5,6 +5,7 @@ import io.github.profjb58.territorial.client.gui.EnderKeyScreenHandler;
 import io.github.profjb58.territorial.entity.effect.StatusEffectInstanceAccess;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.util.TickCounter;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -39,6 +40,7 @@ public class ServerTickHandlers {
             }
         }
         LOCK_FATIGUE_TICKER.increment();
+
     }
 
     private static void enderKeyScreenTick(ServerWorld serverWorld) {

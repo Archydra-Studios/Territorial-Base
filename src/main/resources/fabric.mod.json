@@ -15,7 +15,7 @@
     "issues": "https://github.com/profjb58/Territorial-Base/issues"
   },
 
-  "license": "CC BY-NC 3.0",
+  "license": "MIT",
   "icon": "assets/territorial/icon.png",
 
   "environment": "*",

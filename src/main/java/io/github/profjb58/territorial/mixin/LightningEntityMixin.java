@@ -1,10 +1,17 @@
 package io.github.profjb58.territorial.mixin;
 
+import io.github.profjb58.territorial.block.EclipseRoseBushBlock;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.TallFlowerBlock;
 import net.minecraft.block.WitherRoseBlock;
+import net.minecraft.block.enums.BlockHalf;
+import net.minecraft.block.enums.DoubleBlockHalf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LightningEntity;
+import net.minecraft.state.property.Properties;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -27,8 +34,16 @@ public abstract class LightningEntityMixin extends Entity {
         if(ambientTick >= 0) {
             if(!world.isClient) {
                 var blockPos = getBlockPos();
-                if(world.getBlockState(blockPos).getBlock() instanceof WitherRoseBlock) {
-                    world.setBlockState(blockPos, TerritorialRegistry.ECLIPSE_ROSE.getDefaultState());
+                var blockState = world.getBlockState(blockPos);
+                var block = blockState.getBlock();
+
+                if(block == Blocks.ROSE_BUSH) {
+                    var blockHalf = blockState.get(Properties.DOUBLE_BLOCK_HALF);
+                    if(blockHalf == DoubleBlockHalf.UPPER) blockPos = blockPos.down();
+                    EclipseRoseBushBlock.placeAt(world, TerritorialRegistry.ECLIPSE_ROSE_BUSH.getDefaultState(), blockPos, (1 << 1) | (1 << 4));
+                }
+                else if(block == Blocks.WITHER_ROSE) {
+                    world.setBlockState(blockPos, TerritorialRegistry.ECLIPSE_ROSE.getDefaultState(), (1 << 1) | (1 << 4));
                 }
             }
         }

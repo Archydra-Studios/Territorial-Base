@@ -1,6 +1,5 @@
 package io.github.profjb58.territorial.util;
 
-import blue.endless.jankson.annotation.Nullable;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 

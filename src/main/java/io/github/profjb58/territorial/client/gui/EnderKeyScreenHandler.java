@@ -30,6 +30,7 @@ import static io.github.profjb58.territorial.Territorial.getConfig;
 public class EnderKeyScreenHandler extends GenericContainerScreenHandler {
 
     private static final int INVENTORY_SIZE = 27;
+    private static final int ENDER_KEY_ROLLS = 5;
 
     private final EnderChestInventory enderChestInventory;
     private final Queue<Integer> slotDestructionQueue;
@@ -62,7 +63,7 @@ public class EnderKeyScreenHandler extends GenericContainerScreenHandler {
 
         // Fill with a random limited assortment of items from the ender chest
         var random = new Random();
-        for (int i = 0; i < getConfig().getEnderKeyRolls(); i++) {
+        for (int i = 0; i < ENDER_KEY_ROLLS; i++) {
             int randomSlot = random.nextInt(27);
             displayInv.setStack(randomSlot, enderChestInv.getStack(randomSlot));
         }

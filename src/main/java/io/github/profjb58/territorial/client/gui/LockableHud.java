@@ -1,7 +1,5 @@
 package io.github.profjb58.territorial.client.gui;
 
-import io.github.cottonmc.cotton.gui.client.CottonHud;
-import io.github.cottonmc.cotton.gui.widget.WTiledSprite;
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.block.LockableBlock;
 import io.github.profjb58.territorial.mixin.OverlayRemainingAccessor;
@@ -19,7 +17,7 @@ import net.minecraft.util.Identifier;
 public class LockableHud {
 
     private boolean ignoreCycle = false;
-    private WTiledSprite lockImage;
+    //private WTiledSprite lockImage;
 
     public void showLockInfo(LockableBlock lb, ClientPlayerEntity player) {
         if(!ignoreCycle) {
@@ -45,9 +43,9 @@ public class LockableHud {
                 player.sendMessage(lockInfoText, true);
 
                 var item = lb.getLockItemStack(1).getItem();
-                lockImage = new WTiledSprite(32, 32, new Identifier(Territorial.MOD_ID, "textures/item/" + item.toString() + ".png"));
+                //lockImage = new WTiledSprite(32, 32, new Identifier(Territorial.MOD_ID, "textures/item/" + item.toString() + ".png"));
 
-                CottonHud.add(lockImage, (hudWidth / 2) - 16, hudHeight - 100);
+                //CottonHud.add(lockImage, (hudWidth / 2) - 16, hudHeight - 100);
             }
         }
         else {
@@ -59,7 +57,7 @@ public class LockableHud {
     }
 
     public void reset() {
-        CottonHud.remove(lockImage);
+        //CottonHud.remove(lockImage);
         ((OverlayRemainingAccessor) MinecraftClient.getInstance().inGameHud).setOverlayRemaining(0); // Clears the action message
     }
 

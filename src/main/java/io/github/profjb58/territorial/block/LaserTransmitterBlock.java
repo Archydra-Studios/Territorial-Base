@@ -4,7 +4,6 @@ import io.github.profjb58.territorial.block.entity.LaserTransmitterBlockEntity;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.util.TextUtils;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -44,7 +43,7 @@ public class LaserTransmitterBlock extends BlockWithEntity implements BlockEntit
 
     public LaserTransmitterBlock() {
         super(FabricBlockSettings.of(Material.METAL, MapColor.IRON_GRAY).nonOpaque().requiresTool()
-                .strength(5.0F, 6.0F).sounds(BlockSoundGroup.METAL).breakByTool(FabricToolTags.PICKAXES, 0));
+                .strength(5.0F, 6.0F).sounds(BlockSoundGroup.METAL)); //.breakByTool(FabricToolTags.PICKAXES, 0));
         this.setDefaultState(this.stateManager.getDefaultState()
                 .with(POWERED, false)
                 .with(POWER, 0)

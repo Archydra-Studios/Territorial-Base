@@ -40,13 +40,23 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	// modImplementation(include("vazkii.patchouli:Patchouli:${project.patchouli_version}"))
-	modImplementation(include("io.github.cottonmc:LibGui:${project.libgui_version}"))
-	modApi(include("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}"))
-	modImplementation(include("de.siphalor:nbtcrafting-1.18:${project.nbtcrafing_version}"))
-	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+	modImplementation(include("io.github.cottonmc:LibGui:${project.libgui_version}")) {
+		exclude(group: "net.fabricmc.fabric-api")
+	}
+	modApi(include("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}")) {
+		exclude(group: "net.fabricmc.fabric-api")
+	}
+	modImplementation(include("de.siphalor:nbtcrafting-1.18:${project.nbtcrafing_version}")) {
+		exclude(group: "net.fabricmc.fabric-api")
+	}
 
-	modImplementation "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
-	modRuntimeOnly("com.github.astei:lazydfu:master-SNAPSHOT")
+	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}") {
+		exclude(group: "net.fabricmc.fabric-api")
+	}
+
+	modImplementation("me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}") {
+		exclude(group: "net.fabricmc.fabric-api")
+	}
 
 	// H2 stuff
 	implementation(include("com.h2database:h2:${project.h2_version}"))
@@ -73,7 +83,6 @@ tasks.withType(JavaCompile).configureEach {
 	// If Javadoc is generated, this must be specified in that task too.
 	it.options.encoding = "UTF-8"
 
-	// Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
 	it.options.release = 17
 }
 

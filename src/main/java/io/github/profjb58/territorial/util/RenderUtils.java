@@ -1,11 +1,8 @@
 package io.github.profjb58.territorial.util;
 
-import io.github.cottonmc.cotton.gui.widget.data.Color;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3d;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.DyeColor;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.*;
 
@@ -83,4 +80,6 @@ public class RenderUtils {
         Vec3d hitVec = result.getPos();
         return new BlockPos(hitVec.x, hitVec.y, hitVec.z);
     }
+
+
 }

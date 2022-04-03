@@ -20,7 +20,6 @@ import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.recipe.*;
@@ -56,7 +55,9 @@ public class TerritorialRegistry {
     public static final Block PLINTH_OF_PEEKING = new PlinthOfPeekingBlock();
     public static final Block OMNISCIENT_OBSIDIAN = new OmniscientObsidianBlock();
     public static final Block ANTI_MAGMA = new MagmaBlock(FabricBlockSettings.copyOf(Blocks.MAGMA_BLOCK));
-    public static final EclipseRoseBlock ECLIPSE_ROSE = new EclipseRoseBlock();
+    public static final Block ECLIPSE_ROSE = new EclipseWitherRoseBlock();
+    public static final Block ECLIPSE_ROSE_BUSH = new EclipseRoseBushBlock();
+    public static final Block ECLIPSE_TRAP = new Block(FabricBlockSettings.copyOf(Blocks.ROSE_BUSH));
 
     // Block Entities
     public static final BlockEntityType<LaserTransmitterBlockEntity> LASER_BLOCK_ENTITY
@@ -88,6 +89,8 @@ public class TerritorialRegistry {
         blocks.put("omniscient_obsidian", OMNISCIENT_OBSIDIAN);
         blocks.put("anti_magma", ANTI_MAGMA);
         blocks.put("eclipse_rose", ECLIPSE_ROSE);
+        blocks.put("eclipse_rose_bush", ECLIPSE_ROSE_BUSH);
+        blocks.put("eclipse_trap", ECLIPSE_TRAP);
         register(Registry.BLOCK, blocks);
 
         // Items
@@ -113,6 +116,8 @@ public class TerritorialRegistry {
         items.put("omniscient_obsidian", createBlockItem(OMNISCIENT_OBSIDIAN));
         items.put("anti_magma", createBlockItem(ANTI_MAGMA));
         items.put("eclipse_rose", createBlockItem(ECLIPSE_ROSE));
+        items.put("eclipse_rose_bush", createBlockItem(ECLIPSE_ROSE_BUSH));
+        items.put("eclipse_trap", createBlockItem(ECLIPSE_TRAP));
         register(Registry.ITEM, items);
 
         // Status Effects
