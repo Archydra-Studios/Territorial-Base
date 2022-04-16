@@ -1,47 +1,38 @@
 package io.github.profjb58.territorial.block;
 
+import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.util.MovementUtils;
-import io.github.profjb58.territorial.util.TextUtils;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.loot.context.LootContext;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.state.property.Property;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3f;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import net.minecraft.world.explosion.Explosion;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Random;
-
-import static io.github.profjb58.territorial.util.TextUtils.spacer;
 
 public class OmniscientObsidianBlock extends CryingObsidianBlock {
 
-    public static final BooleanProperty PLACED = BooleanProperty.of("placed");
+    private static final int SPREAD_ATTEMPTS = 3;
 
     public OmniscientObsidianBlock() {
-        super(FabricBlockSettings.of(Material.STONE, MapColor.BLACK).requiresTool().strength(50.0F, 1200.0F).luminance((state) -> 10));
-        setDefaultState(getStateManager().getDefaultState().with(PLACED, false));
+        super(FabricBlockSettings.of(Material.STONE, MapColor.BLACK)
+                .requiresTool()
+                .strength(50.0F, 1200.0F)
+                .luminance((state) -> 10)
+                .ticksRandomly()
+        );
     }
 
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
@@ -57,18 +48,20 @@ public class OmniscientObsidianBlock extends CryingObsidianBlock {
 
     @Override
     public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        super.randomTick(state, world, pos, random);
-        if(!world.isClient) {
+        if(Territorial.getConfig().omniscientObsidianSpread() && !world.isClient
+                && random.nextDouble() < 0.0280D) tickSpread(state, world, pos, random);
+    }
 
+    private void tickSpread(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+        BlockPos spreadPos;
+        for(int i=0; i < SPREAD_ATTEMPTS; i++) {
+            spreadPos = pos.add(random.nextInt(3) - 1, random.nextInt(3) - 1, random.nextInt(3) - 1);
+            if(world.getBlockState(spreadPos).getBlock() == Blocks.OBSIDIAN) {
+                world.setBlockState(spreadPos, state, 3);
+                break;
+            }
         }
     }
-
-    @Override
-    public void onStacksDropped(BlockState state, ServerWorld world, BlockPos pos, ItemStack stack) {
-        super.onStacksDropped(state, world, pos, stack);
-        world.setBlockState(pos, state.with(PLACED, false));
-    }
-
     @Override
     public void onBlockBreakStart(BlockState state, World world, BlockPos pos, PlayerEntity player) {
         if(!world.isClient) {
@@ -93,7 +86,6 @@ public class OmniscientObsidianBlock extends CryingObsidianBlock {
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_END_PORTAL_FRAME_FILL, SoundCategory.BLOCKS, 0.5F, 0.2F, true);
-        world.setBlockState(pos, state.with(PLACED, true));
         super.onPlaced(world, pos, state, placer, itemStack);
     }
 
@@ -101,10 +93,5 @@ public class OmniscientObsidianBlock extends CryingObsidianBlock {
     public float calcBlockBreakingDelta(BlockState state, PlayerEntity player, BlockView world, BlockPos pos) {
         if(!player.hasStatusEffect(StatusEffects.INVISIBILITY)) player.damage(DamageSource.MAGIC, 1);
         return super.calcBlockBreakingDelta(state, player, world, pos);
-    }
-
-    @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> stateManager) {
-        stateManager.add(PLACED);
     }
 }

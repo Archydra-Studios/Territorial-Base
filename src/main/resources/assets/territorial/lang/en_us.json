@@ -12,7 +12,8 @@
   "text.autoconfig.territorial.option.traps.eclipseRoseMaxReach": "Eclipse Rose max reach",
   "text.autoconfig.territorial.option.enableEnderKey": "Enable Ender Key",
   "text.autoconfig.territorial.option.enderKeyRolls": "Ender Key rolls",
-  "text.autoconfig.territorial.option.omniscientObsidianRecipe": "Enable Omniscient Obsidian recipe",
+  "text.autoconfig.territorial.option.omniscientObsidianRecipe": "Omniscient Obsidian recipe",
+  "text.autoconfig.territorial.option.omniscientObsidianSpread": "Omniscient Obsidian spread",
 
   "block.territorial.laser_transmitter": "Laser Transmitter",
   "block.territorial.laser_receiver": "Laser Receiver",
@@ -21,6 +22,7 @@
   "block.territorial.anti_magma": "Anti Magma",
   "block.territorial.eclipse_rose": "Eclipse Rose",
   "block.territorial.eclipse_rose_bush": "Eclipse Rose Bush",
+  "block.territorial.boundary_beacon": "Boundary Beacon",
 
   "item.territorial.ender_amulet": "Ender Amulet",
   "item.territorial.key":"Key",

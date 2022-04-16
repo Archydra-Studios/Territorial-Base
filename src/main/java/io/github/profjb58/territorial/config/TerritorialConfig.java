@@ -30,6 +30,9 @@ public class TerritorialConfig implements ConfigData {
 
     boolean omniscientObsidianRecipe = false;
 
+    @Comment("Allow spreading to adjacent Obsidian blocks")
+    boolean omniscientObsidianSpread = true;
+
     @Config(name = "client")
     private static class ClientModule implements ConfigData {
 
@@ -87,6 +90,7 @@ public class TerritorialConfig implements ConfigData {
     public boolean enderKeyEnabled() { return enableEnderKey; }
     public boolean laserTargetsAllMobs() { return traps.laserTargetsAllMobs; }
     public boolean omniscientObsidianRecipe() { return omniscientObsidianRecipe; }
+    public boolean omniscientObsidianSpread() { return omniscientObsidianSpread; }
 
     public int getMinOpLevel() { return (int) getWithinBounds("minOpLevel", protections.minOpLevel, 3, 1, 4); }
     public int getLaserTransmitterMaxReach() { return (int) getWithinBounds("laserTransmitterMaxReach", traps.laserTransmitterMaxReach, 48, 1, 60); }

@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "item": "territorial:ender_key"
+    },
+    "title": "advancements.territorial.title",
+    "description": "advancements.territorial.description",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "minecraft:end/find_end_city",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "territorial:ender_key"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

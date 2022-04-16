@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
 import java.util.Random;
@@ -37,5 +38,12 @@ public class EclipseRoseBushBlock extends TallFlowerBlock implements EclipseBloc
             int maxReach = Territorial.getConfig().getEclipseRoseMaxReach();
             eclipseDisplayTick(state, world, pos, random, DISPLAY_TICKER, 300, maxReach);
         }
+    }
+
+    @Override
+    public boolean isSideInvisible(BlockState state, BlockState stateFrom, Direction direction) {
+
+
+        return super.isSideInvisible(state, stateFrom, direction);
     }
 }

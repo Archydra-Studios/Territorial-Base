@@ -3,7 +3,9 @@ package io.github.profjb58.territorial.event.registry;
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.block.*;
 import io.github.profjb58.territorial.block.LockableBlock.LockType;
+import io.github.profjb58.territorial.block.entity.BoundaryBeaconBlockEntity;
 import io.github.profjb58.territorial.block.entity.LaserTransmitterBlockEntity;
+import io.github.profjb58.territorial.client.gui.BoundaryBeaconScreenHandler;
 import io.github.profjb58.territorial.client.gui.KeyringScreenHandler;
 import io.github.profjb58.territorial.command.LockCommands;
 import io.github.profjb58.territorial.enchantment.BloodshedCurseEnchantment;
@@ -58,10 +60,14 @@ public class TerritorialRegistry {
     public static final Block ECLIPSE_ROSE = new EclipseWitherRoseBlock();
     public static final Block ECLIPSE_ROSE_BUSH = new EclipseRoseBushBlock();
     public static final Block ECLIPSE_TRAP = new Block(FabricBlockSettings.copyOf(Blocks.ROSE_BUSH));
+    public static final Block BOUNDARY_BEACON = new BoundaryBeaconBlock();
 
     // Block Entities
     public static final BlockEntityType<LaserTransmitterBlockEntity> LASER_BLOCK_ENTITY
             = registerBlockEntity("laser_be", FabricBlockEntityTypeBuilder.create(LaserTransmitterBlockEntity::new, LASER_TRANSMITTER));
+
+    public static final BlockEntityType<BoundaryBeaconBlockEntity> BOUNDARY_BEACON_BLOCK_ENTITY
+            = registerBlockEntity("boundary_beacon_be", FabricBlockEntityTypeBuilder.create(BoundaryBeaconBlockEntity::new, BOUNDARY_BEACON));
 
     // Status Effects
     public static final LockFatigueStatusEffect LOCK_FATIGUE_EFFECT = new LockFatigueStatusEffect();
@@ -70,6 +76,9 @@ public class TerritorialRegistry {
     // Screen handlers
     public static final ScreenHandlerType<KeyringScreenHandler> KEYRING_SCREEN_HANDLER_TYPE
             = ScreenHandlerRegistry.registerExtended(new Identifier(Territorial.MOD_ID, "keyring"), KeyringScreenHandler::new);
+
+    public static final ScreenHandlerType<BoundaryBeaconScreenHandler> BOUNDARY_BEACON_SCREEN_HANDLER_TYPE
+            = ScreenHandlerRegistry.registerSimple(new Identifier(Territorial.MOD_ID, "boundary_beacon"), BoundaryBeaconScreenHandler::new);
 
     // Recipe serializers
     public static final SpecialRecipeSerializer<LensRecipe> LENS_RECIPE_SERIALIZER = new SpecialRecipeSerializer<LensRecipe>(LensRecipe::new);
@@ -91,6 +100,7 @@ public class TerritorialRegistry {
         blocks.put("eclipse_rose", ECLIPSE_ROSE);
         blocks.put("eclipse_rose_bush", ECLIPSE_ROSE_BUSH);
         blocks.put("eclipse_trap", ECLIPSE_TRAP);
+        blocks.put("boundary_beacon", BOUNDARY_BEACON);
         register(Registry.BLOCK, blocks);
 
         // Items
@@ -118,6 +128,7 @@ public class TerritorialRegistry {
         items.put("eclipse_rose", createBlockItem(ECLIPSE_ROSE));
         items.put("eclipse_rose_bush", createBlockItem(ECLIPSE_ROSE_BUSH));
         items.put("eclipse_trap", createBlockItem(ECLIPSE_TRAP));
+        items.put("boundary_beacon", createBlockItem(BOUNDARY_BEACON));
         register(Registry.ITEM, items);
 
         // Status Effects

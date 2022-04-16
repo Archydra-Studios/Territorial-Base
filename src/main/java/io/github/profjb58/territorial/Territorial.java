@@ -59,7 +59,6 @@ public class Territorial implements ModInitializer {
 
 		// Packet handlers
 		C2SPackets.init();
-		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> 0x3495e, TerritorialRegistry.KEY);
 	}
 
 	public static TerritorialConfig getConfig() {

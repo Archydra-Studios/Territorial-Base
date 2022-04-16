@@ -9,13 +9,11 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.passive.HorseEntity;
-import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -27,7 +25,6 @@ import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.DyeColor;
-import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -41,6 +38,7 @@ public class LaserTransmitterBlockEntity extends BlockEntity {
     public static final float[] SIGNAL_STRENGTH_WIDTHS = { 0.001f, 0.0015f, 0.0030f, 0.0045f, 0.0070f, 0.01f, 0.0135f, 0.02f, 0.025f, 0.035f, 0.06f, 0.1f, 0.16f, 0.25f, 0.38f };
     private static final int MAX_ENTITIES_PER_BEAM_TICK = 30;
     private static final int LIGHT_BLOCK_SPACING = 4;
+    private final TickCounter LIGHT_BLOCKS_TICKER;
 
     private int strength, colour, maxReach, prevPower;
     private float sparkleDistance, reach, prevReach;
@@ -49,13 +47,12 @@ public class LaserTransmitterBlockEntity extends BlockEntity {
     private Map<String, Boolean> mods = new HashMap<>();
     private Entity trackedEntity;
     private BlockPos receiverPos;
-    private final TickCounter lightBlocksCounter;
 
     public LaserTransmitterBlockEntity(BlockPos pos, BlockState state) {
         super(TerritorialRegistry.LASER_BLOCK_ENTITY, pos, state);
         prevPower = -1;
         maxReach = Territorial.getConfig().getLaserTransmitterMaxReach();
-        lightBlocksCounter = new TickCounter(6);
+        LIGHT_BLOCKS_TICKER = new TickCounter(6);
         mods.put("sparkle", false);
         mods.put("rainbow", false);
         mods.put("highlight", false);
@@ -120,7 +117,7 @@ public class LaserTransmitterBlockEntity extends BlockEntity {
             be.prevPower = power;
             be.prevReach = be.reach;
         }
-        be.lightBlocksCounter.increment();
+        be.LIGHT_BLOCKS_TICKER.increment();
 
         List<Entity> entities = new ArrayList<>(0);
         if(be.startPos != null && be.endPos != null) {
@@ -259,7 +256,7 @@ public class LaserTransmitterBlockEntity extends BlockEntity {
     }
 
     public void updateLightBlocks(boolean powered, Direction facing) {
-        if(lightBlocksCounter.test() || !powered) {
+        if(LIGHT_BLOCKS_TICKER.test() || !powered) {
             updateLights = false;
 
             if(world != null && !world.isClient) {
