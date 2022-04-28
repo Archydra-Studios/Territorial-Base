@@ -12,6 +12,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
@@ -49,8 +50,8 @@ public class PadlockItem extends Item {
                             type,
                             ctx.getBlockPos());
 
-                    if(!lb.getLockId().equals("") && lockStack.hasCustomName()) {
-                        switch (lb.createEntity(ctx.getWorld())) {
+                    if(!lb.lockId().equals("") && lockStack.hasCustomName()) {
+                        switch (lb.createEntity((ServerWorld) ctx.getWorld())) {
                             case SUCCESS -> {
                                 if (!player.isCreative()) {
                                     lockStack.decrement(1);

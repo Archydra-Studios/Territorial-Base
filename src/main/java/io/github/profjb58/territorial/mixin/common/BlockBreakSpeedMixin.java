@@ -1,4 +1,4 @@
-package io.github.profjb58.territorial.mixin;
+package io.github.profjb58.territorial.mixin.common;
 
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.util.MathUtils;

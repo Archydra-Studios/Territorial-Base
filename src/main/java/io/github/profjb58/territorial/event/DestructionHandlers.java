@@ -3,7 +3,8 @@ package io.github.profjb58.territorial.event;
 import io.github.profjb58.territorial.block.LockableBlock;
 import io.github.profjb58.territorial.block.entity.LockableBlockEntity;
 import io.github.profjb58.territorial.event.template.ServerWorldEvents;
-import io.github.profjb58.territorial.mixin.ExplosionAccessor;
+import io.github.profjb58.territorial.mixin.common.ExplosionAccessor;
+import io.github.profjb58.territorial.mixin.common.ExplosionAccessor;
 import io.github.profjb58.territorial.util.MathUtils;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.block.BlockState;
@@ -64,7 +65,7 @@ public class DestructionHandlers {
             var lbe = new LockableBlockEntity(world, pos);
             if(lbe.exists()) {
                 float power = ((ExplosionAccessor) explosion).getPower();
-                return !(power > lbe.getBlock().getBlastResistance());
+                return !(power > lbe.getBlock().blastResistance());
             }
             return false;
         });

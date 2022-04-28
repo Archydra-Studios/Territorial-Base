@@ -14,18 +14,8 @@ import java.time.format.DateTimeFormatter;
 @Environment(EnvType.SERVER)
 public class ActionLogger {
 
-    public enum LogType {
-        INFO,
-        WARNING,
-        ERROR
-    }
-
-    public enum LogModule {
-        LOCKS,
-        CLAIMS,
-        TRAPS,
-        BLANK
-    }
+    public enum LogType { INFO, WARNING, ERROR }
+    public enum LogModule { LOCKS, CLAIMS, TRAPS, BLANK }
 
     static final String LOGS_DIRECTORY = FabricLoader.getInstance().getGameDir() + "/logs/";
 

@@ -1,7 +1,7 @@
 package io.github.profjb58.territorial.item;
 
 import io.github.profjb58.territorial.Territorial;
-import io.github.profjb58.territorial.client.gui.KeyringScreenHandler;
+import io.github.profjb58.territorial.screen.KeyringScreenHandler;
 import io.github.profjb58.territorial.inventory.ItemInventory;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;

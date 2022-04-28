@@ -1,4 +1,4 @@
-package io.github.profjb58.territorial.client.gui;
+package io.github.profjb58.territorial.screen;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;

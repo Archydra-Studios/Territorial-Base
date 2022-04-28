@@ -30,6 +30,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
 import net.minecraft.world.explosion.Explosion;
 import org.jetbrains.annotations.Nullable;
 
@@ -94,6 +95,18 @@ public class LaserTransmitterBlock extends BlockWithEntity implements BlockEntit
     }
 
     @Override
+    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+        if (state.hasBlockEntity() && !state.isOf(newState.getBlock())) {
+            var be = world.getBlockEntity(pos);
+            if(be instanceof LaserTransmitterBlockEntity ltbe) {
+                ltbe.updateLightBlocks(false, state.get(Properties.FACING));
+                ltbe.setReceiverPowered(false);
+            }
+            world.removeBlockEntity(pos);
+        }
+    }
+
+    @Override
     public boolean shouldDropItemsOnExplosion(Explosion explosion) { return true; }
 
     @Nullable
@@ -121,6 +134,8 @@ public class LaserTransmitterBlock extends BlockWithEntity implements BlockEntit
         if(tag != null) {
             // Colour
             DyeColor dyeColour = Optional.of(DyeColor.byId(tag.getInt("colour"))).orElse(DyeColor.WHITE);
+
+            // TODO - Crash when hovering over tooltip in Beacon GUI. Class not found exception :/
             String dyeNameCapitalized = dyeColour.getName().substring(0, 1).toUpperCase() + dyeColour.getName().substring(1);
             tooltip.add(new LiteralText(TextUtils.getTextColourFormatting(dyeColour) + dyeNameCapitalized));
 

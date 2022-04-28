@@ -1,4 +1,4 @@
-package io.github.profjb58.territorial.mixin;
+package io.github.profjb58.territorial.mixin.common;
 
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;

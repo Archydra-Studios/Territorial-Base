@@ -3,7 +3,6 @@ package io.github.profjb58.territorial.event;
 import io.github.profjb58.territorial.block.LockableBlock;
 import io.github.profjb58.territorial.block.entity.LockableBlockEntity;
 import io.github.profjb58.territorial.entity.effect.LockFatigueStatusEffect;
-import io.github.profjb58.territorial.entity.effect.StatusEffectInstanceAccess;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.util.TickCounter;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;

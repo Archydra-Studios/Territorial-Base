@@ -1,12 +1,12 @@
-package io.github.profjb58.territorial.client.gui;
+package io.github.profjb58.territorial.screen;
 
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.*;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.tag.ItemTags;
@@ -14,18 +14,20 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
-public class BoundaryBeaconScreenHandler extends ScreenHandler {
+public class BaseBeaconScreenHandler extends ScreenHandler {
     private final Inventory payment;
-    private final BoundaryBeaconScreenHandler.PaymentSlot paymentSlot;
+    private final BaseBeaconScreenHandler.PaymentSlot paymentSlot;
     private final ScreenHandlerContext context;
     private final PropertyDelegate propertyDelegate;
+    private boolean useAlternateEffects;
 
-    public BoundaryBeaconScreenHandler(int syncId, Inventory inventory) {
+    public BaseBeaconScreenHandler(int syncId, Inventory inventory, PacketByteBuf buf) {
         this(syncId, inventory, new ArrayPropertyDelegate(3), ScreenHandlerContext.EMPTY);
+        useAlternateEffects = buf.readBoolean();
     }
 
-    public BoundaryBeaconScreenHandler(int syncId, Inventory inventory, PropertyDelegate propertyDelegate, ScreenHandlerContext context) {
-        super(TerritorialRegistry.BOUNDARY_BEACON_SCREEN_HANDLER_TYPE, syncId);
+    public BaseBeaconScreenHandler(int syncId, Inventory inventory, PropertyDelegate propertyDelegate, ScreenHandlerContext context) {
+        super(TerritorialRegistry.BASE_BEACON_SCREEN_HANDLER_TYPE, syncId);
         this.payment = new SimpleInventory(1) {
             public boolean isValid(int slot, ItemStack stack) {
                 return stack.isIn(ItemTags.BEACON_PAYMENT_ITEMS);
@@ -38,19 +40,22 @@ public class BoundaryBeaconScreenHandler extends ScreenHandler {
         checkDataCount(propertyDelegate, 3);
         this.propertyDelegate = propertyDelegate;
         this.context = context;
-        this.paymentSlot = new BoundaryBeaconScreenHandler.PaymentSlot(this.payment, 0, 136, 110);
+        this.paymentSlot = new BaseBeaconScreenHandler.PaymentSlot(this.payment, 0, 136 + 80, 110);
+        useAlternateEffects = false;
         this.addSlot(this.paymentSlot);
         this.addProperties(propertyDelegate);
+
+        enableSyncing();
 
         int k;
         for(k = 0; k < 3; ++k) {
             for(int l = 0; l < 9; ++l) {
-                this.addSlot(new Slot(inventory, l + k * 9 + 9, 36 + l * 18, 137 + k * 18));
+                this.addSlot(new Slot(inventory, l + k * 9 + 9, (36 + 80) + l * 18, 137 + k * 18));
             }
         }
 
         for(k = 0; k < 9; ++k) {
-            this.addSlot(new Slot(inventory, k, 36 + k * 18, 195));
+            this.addSlot(new Slot(inventory, k, (36 + 80) + k * 18, 195));
         }
 
     }
@@ -139,12 +144,13 @@ public class BoundaryBeaconScreenHandler extends ScreenHandler {
             this.paymentSlot.takeStack(1);
             this.context.run(World::markDirty);
         }
-
     }
 
     public boolean hasPayment() {
         return !this.payment.getStack(0).isEmpty();
     }
+
+    public boolean useAlternateEffects() { return this.useAlternateEffects; }
 
     private class PaymentSlot extends Slot {
         public PaymentSlot(Inventory inventory, int index, int x, int y) {

@@ -2,7 +2,7 @@ package io.github.profjb58.territorial.world;
 
 
 import io.github.profjb58.territorial.block.LockableBlock;
-import io.github.profjb58.territorial.util.TagUtils;
+import io.github.profjb58.territorial.util.NbtUtils;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -29,8 +29,8 @@ public class WorldLockStorage extends PersistentState {
     public void addLock(LockableBlock lb) {
         removeLock(lb); // Remove existing lock if one is already there
 
-        UUID lockOwner = lb.getLockOwnerUuid();
-        BlockPos pos = lb.getBlockPos();
+        UUID lockOwner = lb.lockOwnerUuid();
+        BlockPos pos = lb.blockPos();
 
         LinkedList<BlockPos> playerLocks;
         if(locksUUIDMap.get(lockOwner) == null) {
@@ -46,14 +46,14 @@ public class WorldLockStorage extends PersistentState {
     }
 
     public void removeLock(LockableBlock lb) {
-        UUID lockOwner = lb.getLockOwnerUuid();
-        BlockPos pos = lb.getBlockPos();
+        UUID lockOwner = lb.lockOwnerUuid();
+        BlockPos pos = lb.blockPos();
 
         if(locksUUIDMap.get(lockOwner) != null) {
             locksUUIDMap.get(lockOwner).remove(pos);
         }
 
-        if (locksUUIDMap.get(lb.getLockOwnerUuid()) != null) {
+        if (locksUUIDMap.get(lb.lockOwnerUuid()) != null) {
             locksUUIDMap.get(lockOwner).remove(pos);
         }
     }
@@ -103,7 +103,7 @@ public class WorldLockStorage extends PersistentState {
             NbtList lockedTilesPosTags = playerLocksTag.getList("locked_tiles", NbtType.COMPOUND);
             for (NbtElement lockedTilesPosTag : lockedTilesPosTags) {
                 NbtCompound lockedTilePos = (NbtCompound) lockedTilesPosTag;
-                lockedTilesPos.add(TagUtils.deserializeBlockPos(lockedTilePos.getIntArray("lock_pos")));
+                lockedTilesPos.add(NbtUtils.deserializeBlockPos(lockedTilePos.getIntArray("lock_pos")));
             }
             locksUUIDMap.put(playerUuid, lockedTilesPos);
         }
@@ -122,7 +122,7 @@ public class WorldLockStorage extends PersistentState {
 
             for(BlockPos lockedTile : lockedTilesPos) {
                 NbtCompound lockedTileTag = new NbtCompound();
-                lockedTileTag.putIntArray("lock_pos", TagUtils.serializeBlockPos(lockedTile));
+                lockedTileTag.putIntArray("lock_pos", NbtUtils.serializeBlockPos(lockedTile));
                 lockedTilesPosTags.add(lockedTileTag);
             }
             playerLocksTag.put("locked_tiles", lockedTilesPosTags);

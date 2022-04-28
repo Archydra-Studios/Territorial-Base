@@ -1,7 +1,7 @@
 package io.github.profjb58.territorial.item;
 
 import io.github.profjb58.territorial.Territorial;
-import io.github.profjb58.territorial.client.gui.EnderKeyScreenHandler;
+import io.github.profjb58.territorial.screen.EnderKeyScreenHandler;
 import io.github.profjb58.territorial.util.anticheat.AntiCheatUtils;
 import io.github.profjb58.territorial.util.TextUtils;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;

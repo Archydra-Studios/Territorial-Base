@@ -1,14 +1,15 @@
 package io.github.profjb58.territorial.event;
 
 import io.github.profjb58.territorial.Territorial;
-import io.github.profjb58.territorial.client.gui.EnderKeyScreenHandler;
-import io.github.profjb58.territorial.entity.effect.StatusEffectInstanceAccess;
+import io.github.profjb58.territorial.screen.EnderKeyScreenHandler;
+import io.github.profjb58.territorial.misc.access.StatusEffectInstanceAccess;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.util.TickCounter;
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 
@@ -30,7 +31,7 @@ public class ServerTickHandlers {
             if(LOCK_FATIGUE_TICKER.test()) {
                 StatusEffectInstance sei = player.getStatusEffect(TerritorialRegistry.LOCK_FATIGUE_EFFECT);
                 if (sei != null) {
-                    BlockPos lastPosApplied = ((StatusEffectInstanceAccess) sei).getLastPosApplied();
+                    BlockPos lastPosApplied = ((StatusEffectInstanceAccess) sei).territorial$getLastPosApplied();
                     if (lastPosApplied != null) {
                         if (!lastPosApplied.isWithinDistance(player.getBlockPos(), LOCK_FATIGUE_CHECK_RADIUS)) {
                             player.removeStatusEffect(TerritorialRegistry.LOCK_FATIGUE_EFFECT);
@@ -40,7 +41,6 @@ public class ServerTickHandlers {
             }
         }
         LOCK_FATIGUE_TICKER.increment();
-
     }
 
     private static void enderKeyScreenTick(ServerWorld serverWorld) {

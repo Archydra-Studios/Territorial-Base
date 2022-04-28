@@ -2,7 +2,7 @@ package io.github.profjb58.territorial.block.entity;
 
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
-import io.github.profjb58.territorial.mixin.AnvilChunkStorageAccessor;
+import io.github.profjb58.territorial.mixin.common.AnvilChunkStorageAccessor;
 import io.github.profjb58.territorial.util.MathUtils;
 import io.github.profjb58.territorial.util.TickCounter;
 import net.minecraft.block.BlockState;
@@ -87,10 +87,12 @@ public class LaserTransmitterBlockEntity extends BlockEntity {
         // Remove block identifying features
         NbtCompound beamSubTag = stack.getSubNbt("beam");
         if(beamSubTag != null) {
+            // TODO - Switch to NbtUtils.removeBlockFeatures() soon
             beamSubTag.remove("id");
             beamSubTag.remove("x");
             beamSubTag.remove("y");
             beamSubTag.remove("z");
+
             beamSubTag.remove("max_reach");
         }
         return stack;
@@ -242,7 +244,7 @@ public class LaserTransmitterBlockEntity extends BlockEntity {
         }
     }
 
-    private void setReceiverPowered(boolean powered) {
+    public void setReceiverPowered(boolean powered) {
         if(receiverPos != null && world != null) {
             BlockState receiverState = world.getBlockState(receiverPos);
             if(receiverState.getBlock().equals(TerritorialRegistry.LASER_RECEIVER)) {
@@ -271,23 +273,16 @@ public class LaserTransmitterBlockEntity extends BlockEntity {
                             world.setBlockState(posIterator, Blocks.LIGHT.getDefaultState());
                         }
                         else if(i > (int) reach/LIGHT_BLOCK_SPACING && currentState.equals(Blocks.LIGHT.getDefaultState())) {
-                            world.setBlockState(posIterator, Blocks.AIR.getDefaultState());
+                            world.setBlockState(posIterator, Blocks.AIR.getDefaultState(), (1 << 1) | (1 << 4));
                         }
                     }
                     else if(currentState.equals(Blocks.LIGHT.getDefaultState())){
-                        world.setBlockState(posIterator, Blocks.AIR.getDefaultState());
+                        world.setBlockState(posIterator, Blocks.AIR.getDefaultState(), (1 << 1) | (1 << 4));
                     }
                     posIterator = posIterator.offset(facing, LIGHT_BLOCK_SPACING);
                 }
             }
         }
-    }
-
-    @Override
-    public void markRemoved() {
-        updateLightBlocks(false, getCachedState().get(Properties.FACING));
-        setReceiverPowered(false);
-        super.markRemoved();
     }
 
     @Override

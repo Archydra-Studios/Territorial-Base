@@ -1,4 +1,4 @@
-package io.github.profjb58.territorial.mixin;
+package io.github.profjb58.territorial.mixin.client;
 
 import io.github.profjb58.territorial.networking.C2SPackets;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;

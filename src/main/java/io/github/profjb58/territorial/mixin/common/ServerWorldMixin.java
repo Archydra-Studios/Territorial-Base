@@ -1,4 +1,4 @@
-package io.github.profjb58.territorial.mixin;
+package io.github.profjb58.territorial.mixin.common;
 
 import io.github.profjb58.territorial.event.template.ServerWorldEvents;
 import net.fabricmc.fabric.api.server.PlayerStream;

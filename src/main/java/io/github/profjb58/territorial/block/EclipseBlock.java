@@ -1,6 +1,7 @@
 package io.github.profjb58.territorial.block;
 
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
+import io.github.profjb58.territorial.networking.AddEclipseEffectPacket;
 import io.github.profjb58.territorial.networking.C2SPackets;
 import io.github.profjb58.territorial.util.TickCounter;
 import net.fabricmc.api.EnvType;
@@ -15,7 +16,10 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
@@ -47,11 +51,8 @@ public interface EclipseBlock {
             var player = MinecraftClient.getInstance().player;
             if(duration < totalDuration * 0.9D) { // Prevent packet spam
                 if(!player.isCreative() && !player.isSpectator() && player.world.getDimension().hasSkyLight()) {
-                    if(player.getBlockPos().getSquaredDistance(pos) <= maxReach * maxReach) {
-                        var packetByteBuf = PacketByteBufs.create();
-                        packetByteBuf.writeInt(totalDuration);
-                        ClientPlayNetworking.send(C2SPackets.ADD_ECLIPSE_EFFECT, packetByteBuf);
-                    }
+                    if(player.getBlockPos().getSquaredDistance(pos) <= maxReach * maxReach)
+                        new AddEclipseEffectPacket(totalDuration).send();
                 }
             }
             world.playSound(player, pos, SoundEvents.BLOCK_CANDLE_EXTINGUISH, SoundCategory.BLOCKS, 0.3F, 0.05F);

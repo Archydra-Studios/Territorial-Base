@@ -3,10 +3,22 @@
   "pools": [
     {
       "rolls": 1,
-      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:copy_name",
+              "source": "block_entity"
+            },
+            {
+              "function": "minecraft:copy_state",
+              "block": "territorial:boundary_beacon",
+              "properties": [
+                "dye_colour"
+              ]
+            }
+          ],
           "name": "territorial:boundary_beacon"
         }
       ],

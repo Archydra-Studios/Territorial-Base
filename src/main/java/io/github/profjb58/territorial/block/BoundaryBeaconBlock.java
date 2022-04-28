@@ -5,14 +5,12 @@ import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.block.BeaconBlock;
-import net.minecraft.block.entity.BeaconBlockEntity;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.block.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.BannerItem;
 import net.minecraft.stat.Stats;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.EnumProperty;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Hand;
@@ -21,17 +19,23 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class BoundaryBeaconBlock extends BlockWithEntity implements Stainable {
+public class BoundaryBeaconBlock extends BeaconBlock {
+
+    public static final EnumProperty<DyeColor> DYE_COLOUR = EnumProperty.of("dye_colour", DyeColor.class);
+
     public BoundaryBeaconBlock() {
         super(FabricBlockSettings.copyOf(Blocks.BEACON));
-    }
+        setDefaultState(getStateManager().getDefaultState().with(DYE_COLOUR, DyeColor.WHITE));
 
-    public DyeColor getColor() {
-        return DyeColor.WHITE;
     }
 
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return new BoundaryBeaconBlockEntity(pos, state);
+    }
+
+    @Override
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+        builder.add(DYE_COLOUR);
     }
 
     @Nullable
@@ -43,25 +47,21 @@ public class BoundaryBeaconBlock extends BlockWithEntity implements Stainable {
         if (world.isClient) {
             return ActionResult.SUCCESS;
         } else {
-            BlockEntity blockEntity = world.getBlockEntity(pos);
-            player.openHandledScreen((BoundaryBeaconBlockEntity)blockEntity);
-            player.incrementStat(Stats.INTERACT_WITH_BEACON);
+            var blockEntity = world.getBlockEntity(pos);
+            if(blockEntity instanceof BoundaryBeaconBlockEntity boundaryBeaconBE) {
 
+                // TODO - Replace this with a better "Teams" implementation
+                player.setCurrentHand(hand);
+                var itemStack = player.getStackInHand(hand);
+                if(itemStack.getItem() instanceof BannerItem bannerItem) {
+                    world.setBlockState(pos, state.with(DYE_COLOUR, bannerItem.getColor()));
+
+                }
+
+                player.openHandledScreen((BoundaryBeaconBlockEntity)blockEntity);
+                player.incrementStat(Stats.INTERACT_WITH_BEACON);
+            }
             return ActionResult.CONSUME;
         }
-    }
-
-    public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.MODEL;
-    }
-
-    public void onPlaced(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
-        if (itemStack.hasCustomName()) {
-            BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof BoundaryBeaconBlockEntity) {
-                ((BoundaryBeaconBlockEntity)blockEntity).setCustomName(itemStack.getName());
-            }
-        }
-
     }
 }

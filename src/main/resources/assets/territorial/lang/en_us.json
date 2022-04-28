@@ -1,9 +1,10 @@
 {
   "text.autoconfig.territorial.title": "Territorial Config",
-  "text.autoconfig.territorial.category.default": "        Common        ",
-  "text.autoconfig.territorial.category.protections": "      Protections      ",
-  "text.autoconfig.territorial.category.traps": "       Traps       ",
-  "text.autoconfig.territorial.category.client": "        Client        ",
+  "text.autoconfig.territorial.category.default": "   Common   ",
+  "text.autoconfig.territorial.category.protections": "   Protections   ",
+  "text.autoconfig.territorial.category.traps": "   Traps   ",
+  "text.autoconfig.territorial.category.client": "   Client   ",
+  "text.autoconfig.territorial.category.teams": "   Teams   ",
   "text.autoconfig.territorial.option.client.showLockName": "Display locks name",
   "text.autoconfig.territorial.option.protections.minOpLevel": "Minimum operator level",
   "text.autoconfig.territorial.option.protections.breakMultiplier": "Break Multiplier",
@@ -14,6 +15,16 @@
   "text.autoconfig.territorial.option.enderKeyRolls": "Ender Key rolls",
   "text.autoconfig.territorial.option.omniscientObsidianRecipe": "Omniscient Obsidian recipe",
   "text.autoconfig.territorial.option.omniscientObsidianSpread": "Omniscient Obsidian spread",
+  "text.autoconfig.territorial.option.teams.playStyle": "Play style",
+  "text.autoconfig.territorial.option.teams.limits": "Limits",
+  "text.autoconfig.territorial.option.teams.limits.maxWaypointsPerTeam": "Max Waypoints per Team",
+  "text.autoconfig.territorial.option.teams.limits.maxTeamsPerPlayer": "Max Teams per Player",
+  "text.autoconfig.territorial.option.teams.limits.maxTeamsPerServer": "Max Teams per Server",
+  "text.autoconfig.territorial.option.teams.limits.maxNumOfChunkClaims": "Max number of Chunk claims",
+  "text.autoconfig.territorial.option.teams.advanced": "Advanced",
+  "text.autoconfig.territorial.option.teams.advanced.purgeTeams": "Enable Team purge",
+  "text.autoconfig.territorial.option.teams.advanced.numOfDaysBeforePurge": "Number of days before Purge",
+  "text.autoconfig.territorial.option.teams.advanced.numOfDaysBeforeInactive": "Number of days before Inactive",
 
   "block.territorial.laser_transmitter": "Laser Transmitter",
   "block.territorial.laser_receiver": "Laser Receiver",
@@ -113,5 +124,12 @@
 
   "container.territorial.enderchest": "%s's Ender Chest",
 
-  "enchantment.territorial.bloodshed_curse": "Bloodshed Curse"
+  "enchantment.territorial.bloodshed_curse": "Bloodshed Curse",
+
+  "gui.territorial.beacon.mode": "Mode",
+  "gui.territorial.beacon.team": "Team",
+  "gui.territorial.beacon.range": "Range",
+
+  "team.territorial.creation.failed": "",
+  "team.territorial.creation.successful": ""
 }

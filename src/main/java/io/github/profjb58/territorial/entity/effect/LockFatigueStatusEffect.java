@@ -1,16 +1,8 @@
 package io.github.profjb58.territorial.entity.effect;
 
-import io.github.profjb58.territorial.Territorial;
+import io.github.profjb58.territorial.misc.access.StatusEffectInstanceAccess;
 import io.github.profjb58.territorial.block.LockableBlock;
 import io.github.profjb58.territorial.block.entity.LockableBlockEntity;
-import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
-import io.github.profjb58.territorial.networking.C2SPackets;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.minecraft.block.Block;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
@@ -47,7 +39,7 @@ public class LockFatigueStatusEffect extends StatusEffect {
                 LockableBlock lb = lbe.getBlock();
 
                 // Notify the lock fatigue effect with the last position the effect was applied from
-                ((StatusEffectInstanceAccess) lb.getLockFatigueInstance()).setLastPosApplied(target);
+                ((StatusEffectInstanceAccess) lb.getLockFatigueInstance()).territorial$setLastPosApplied(target);
                 player.addStatusEffect(lb.getLockFatigueInstance());
                 return true;
             }

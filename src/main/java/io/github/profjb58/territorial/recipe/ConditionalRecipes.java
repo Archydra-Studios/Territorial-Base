@@ -1,6 +1,7 @@
 package io.github.profjb58.territorial.recipe;
 
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;

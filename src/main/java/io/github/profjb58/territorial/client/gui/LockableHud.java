@@ -2,7 +2,7 @@ package io.github.profjb58.territorial.client.gui;
 
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.block.LockableBlock;
-import io.github.profjb58.territorial.mixin.OverlayRemainingAccessor;
+import io.github.profjb58.territorial.mixin.client.OverlayRemainingAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -29,16 +29,16 @@ public class LockableHud {
                 int hudWidth = window.getScaledWidth();
 
                 String lockId, lockOwner;
-                if(lb.getLockOwnerUuid().equals(player.getUuid())) {
-                    lockId = lb.getLockId();
-                    lockOwner = lb.getLockOwnerName();
+                if(lb.lockOwnerUuid().equals(player.getUuid())) {
+                    lockId = lb.lockId();
+                    lockOwner = lb.lockOwnerName();
                 }
                 else {
-                    lockId = "§k" + lb.getLockId();
-                    lockOwner = "§k" + lb.getLockOwnerName();
+                    lockId = "§k" + lb.lockId();
+                    lockOwner = "§k" + lb.lockOwnerName();
                 }
 
-                String fc = getLockableFormattingColour(lb.getLockType());
+                String fc = getLockableFormattingColour(lb.lockType());
                 LiteralText lockInfoText = new LiteralText(fc + "Id: §f" + lockId + "   " + fc + "Owner: §f" + lockOwner);
                 player.sendMessage(lockInfoText, true);
 

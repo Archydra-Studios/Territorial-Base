@@ -1,4 +1,4 @@
-package io.github.profjb58.territorial.client.gui;
+package io.github.profjb58.territorial.screen;
 
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.inventory.ItemInventory;

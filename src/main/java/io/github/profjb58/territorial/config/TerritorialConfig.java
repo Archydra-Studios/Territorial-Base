@@ -22,6 +22,10 @@ public class TerritorialConfig implements ConfigData {
     @ConfigEntry.Gui.TransitiveObject
     ProtectionsModule protections = new ProtectionsModule();
 
+    @ConfigEntry.Category("teams")
+    @ConfigEntry.Gui.TransitiveObject
+    TeamsModule teams = new TeamsModule();
+
     @ConfigEntry.Category("traps")
     @ConfigEntry.Gui.TransitiveObject
     TrapsModule traps = new TrapsModule();
@@ -48,11 +52,36 @@ public class TerritorialConfig implements ConfigData {
         int minOpLevel = 3;
 
         @Comment("""
-                Indicates how hard it is to break locked blocks. \s
-                Increasing makes locked blocks easier to break. \s
+                Indicates how hard it is to break locked blocks.
+                Increasing makes locked blocks easier to break.
                 Keep between 1 and 0.001""")
         @ConfigEntry.Gui.RequiresRestart
         double breakMultiplier = 0.02D;
+    }
+
+    @Config(name = "teams")
+    private static class TeamsModule implements ConfigData {
+
+        @ConfigEntry.Gui.CollapsibleObject
+        Limits limits = new Limits();
+
+        @ConfigEntry.Gui.CollapsibleObject
+        Advanced advanced = new Advanced();
+
+        static class Limits {
+            int maxWaypointsPerTeam = 0;
+            int maxTeamsPerPlayer = 1;
+            int maxTeamsPerServer = 100;
+            int maxNumOfChunkClaims = 9999;
+        }
+
+        static class Advanced {
+            @Comment("Purge (remove) teams if they become inactive")
+            boolean purgeTeams = false;
+
+            int numOfDaysBeforeInactive = 14;
+            int numOfDaysBeforePurge = 30;
+        }
     }
 
     @Config(name = "traps")
@@ -91,9 +120,12 @@ public class TerritorialConfig implements ConfigData {
     public boolean laserTargetsAllMobs() { return traps.laserTargetsAllMobs; }
     public boolean omniscientObsidianRecipe() { return omniscientObsidianRecipe; }
     public boolean omniscientObsidianSpread() { return omniscientObsidianSpread; }
+    public boolean purgeTeams() { return teams.advanced.purgeTeams; }
 
     public int getMinOpLevel() { return (int) getWithinBounds("minOpLevel", protections.minOpLevel, 3, 1, 4); }
     public int getLaserTransmitterMaxReach() { return (int) getWithinBounds("laserTransmitterMaxReach", traps.laserTransmitterMaxReach, 48, 1, 60); }
     public int getEclipseRoseMaxReach() { return (int) getWithinBounds("eclipseTriggerRadius", traps.eclipseRoseMaxReach, 8, 1, 16); }
     public double getBreakMultiplier() { return getWithinBounds("breakMultiplier", protections.breakMultiplier, 0.02D, 0.001D, 1D); }
+    public int getNumDaysBeforeInactive() { return teams.advanced.numOfDaysBeforeInactive; }
+    public int getNumDaysBeforePurge() { return teams.advanced.numOfDaysBeforePurge; }
 }

@@ -116,7 +116,7 @@ public class KeyItem extends Item {
 
         if(Territorial.isDedicatedServer()) {
             TerritorialServer.actionLogger.write(ActionLogger.LogType.INFO, ActionLogger.LogModule.LOCKS,
-                    "Player " + player.getName().getString() + " used a master key at location " + lb.getBlockPos());
+                    "Player " + player.getName().getString() + " used a master key at location " + lb.blockPos());
         }
     }
 

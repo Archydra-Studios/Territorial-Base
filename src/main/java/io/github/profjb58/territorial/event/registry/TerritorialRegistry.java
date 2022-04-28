@@ -3,10 +3,12 @@ package io.github.profjb58.territorial.event.registry;
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.block.*;
 import io.github.profjb58.territorial.block.LockableBlock.LockType;
+import io.github.profjb58.territorial.block.entity.BaseBeaconBlockEntity;
 import io.github.profjb58.territorial.block.entity.BoundaryBeaconBlockEntity;
 import io.github.profjb58.territorial.block.entity.LaserTransmitterBlockEntity;
-import io.github.profjb58.territorial.client.gui.BoundaryBeaconScreenHandler;
-import io.github.profjb58.territorial.client.gui.KeyringScreenHandler;
+import io.github.profjb58.territorial.screen.BaseBeaconScreenHandler;
+import io.github.profjb58.territorial.screen.BoundaryBeaconScreenHandler;
+import io.github.profjb58.territorial.screen.KeyringScreenHandler;
 import io.github.profjb58.territorial.command.LockCommands;
 import io.github.profjb58.territorial.enchantment.BloodshedCurseEnchantment;
 import io.github.profjb58.territorial.entity.effect.EclipseStatusEffect;
@@ -19,6 +21,7 @@ import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
@@ -66,6 +69,9 @@ public class TerritorialRegistry {
     public static final BlockEntityType<LaserTransmitterBlockEntity> LASER_BLOCK_ENTITY
             = registerBlockEntity("laser_be", FabricBlockEntityTypeBuilder.create(LaserTransmitterBlockEntity::new, LASER_TRANSMITTER));
 
+    public static final BlockEntityType<BaseBeaconBlockEntity> BASE_BEACON_BLOCK_ENTITY
+            = registerBlockEntity("base_beacon_be", FabricBlockEntityTypeBuilder.create(BaseBeaconBlockEntity::new, Blocks.BEACON));
+
     public static final BlockEntityType<BoundaryBeaconBlockEntity> BOUNDARY_BEACON_BLOCK_ENTITY
             = registerBlockEntity("boundary_beacon_be", FabricBlockEntityTypeBuilder.create(BoundaryBeaconBlockEntity::new, BOUNDARY_BEACON));
 
@@ -78,7 +84,10 @@ public class TerritorialRegistry {
             = ScreenHandlerRegistry.registerExtended(new Identifier(Territorial.MOD_ID, "keyring"), KeyringScreenHandler::new);
 
     public static final ScreenHandlerType<BoundaryBeaconScreenHandler> BOUNDARY_BEACON_SCREEN_HANDLER_TYPE
-            = ScreenHandlerRegistry.registerSimple(new Identifier(Territorial.MOD_ID, "boundary_beacon"), BoundaryBeaconScreenHandler::new);
+            = ScreenHandlerRegistry.registerExtended(new Identifier(Territorial.MOD_ID, "boundary_beacon"), BoundaryBeaconScreenHandler::new);
+
+    public static final ScreenHandlerType<BaseBeaconScreenHandler> BASE_BEACON_SCREEN_HANDLER_TYPE
+            = ScreenHandlerRegistry.registerExtended(new Identifier(Territorial.MOD_ID, "base_beacon"), BaseBeaconScreenHandler::new);
 
     // Recipe serializers
     public static final SpecialRecipeSerializer<LensRecipe> LENS_RECIPE_SERIALIZER = new SpecialRecipeSerializer<LensRecipe>(LensRecipe::new);
@@ -130,6 +139,8 @@ public class TerritorialRegistry {
         items.put("eclipse_trap", createBlockItem(ECLIPSE_TRAP));
         items.put("boundary_beacon", createBlockItem(BOUNDARY_BEACON));
         register(Registry.ITEM, items);
+
+        FabricLoader.getInstance().isModLoaded("example mod");
 
         // Status Effects
         register(Registry.STATUS_EFFECT, Map.of(

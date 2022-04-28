@@ -15,12 +15,7 @@ import java.util.stream.Stream;
 public class MathUtils {
 
     private static final float TICKS_PER_SECOND = 60;
-
-    public enum Shape {
-        SPHERE,
-        CUBE,
-        CYLINDER
-    }
+    public enum Shape { SPHERE, CUBE, CYLINDER }
 
     public static class Locks {
         public static float getLockFatigueMultiplier(float amplifier) {

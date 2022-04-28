@@ -46,7 +46,7 @@ public class UseBlockHandler implements UseBlockCallback {
                     Inventory keyInventory = keySearchResult.getRight();
 
                     if(keyItemStack == null) {
-                        if (!lb.getLockOwnerUuid().equals(player.getUuid())) { // No matching key found
+                        if (!lb.lockOwnerUuid().equals(player.getUuid())) { // No matching key found
                             player.sendMessage(new TranslatableText("message.territorial.locked"), true);
                         }
                         else { // Owns the lock but no matching key was found

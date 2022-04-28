@@ -4,8 +4,8 @@
     "particle": "block/glass",
     "glass": "block/glass",
     "obsidian": "block/obsidian",
-    "beacon_top": "territorial:block/boundary_beacon",
-    "beacon_side": "block/beacon"
+    "beacon_top": "territorial:block/boundary_beacon_top",
+    "beacon_side": "territorial:block/boundary_beacon_side"
   },
   "elements": [
     {   "__comment": "Glass shell",

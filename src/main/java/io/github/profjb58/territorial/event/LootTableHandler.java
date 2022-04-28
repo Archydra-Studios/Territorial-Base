@@ -1,5 +1,6 @@
 package io.github.profjb58.territorial.event;
 
+import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.util.UuidUtils;
 import net.fabricmc.fabric.api.loot.v1.FabricLootPoolBuilder;
@@ -16,8 +17,9 @@ import net.minecraft.util.Identifier;
 public class LootTableHandler implements LootTableLoadingCallback {
 
     private static final Identifier END_CITY_TREASURE_ID = new Identifier("chests/end_city_treasure");
+    private static final Identifier BOUNDARY_BEACON_LOOT_TABLE_ID = new Identifier(Territorial.MOD_ID, "blocks/boundary_beacon");
 
-    public static void init() { LootTableLoadingCallback.EVENT.register(new LootTableHandler());}
+    public static void init() { LootTableLoadingCallback.EVENT.register(new LootTableHandler()); }
 
     @Override
     public void onLootTableLoading(ResourceManager resourceManager, LootManager manager, Identifier id, FabricLootSupplierBuilder supplier, LootTableSetter setter) {

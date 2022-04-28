@@ -39,11 +39,4 @@ public class EclipseRoseBushBlock extends TallFlowerBlock implements EclipseBloc
             eclipseDisplayTick(state, world, pos, random, DISPLAY_TICKER, 300, maxReach);
         }
     }
-
-    @Override
-    public boolean isSideInvisible(BlockState state, BlockState stateFrom, Direction direction) {
-
-
-        return super.isSideInvisible(state, stateFrom, direction);
-    }
 }
