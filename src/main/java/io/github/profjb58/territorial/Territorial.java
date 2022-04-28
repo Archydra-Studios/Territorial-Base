@@ -4,7 +4,6 @@ import io.github.profjb58.territorial.config.TerritorialConfig;
 import io.github.profjb58.territorial.event.*;
 import io.github.profjb58.territorial.event.registry.TerritorialNetworkRegistry;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
-import io.github.profjb58.territorial.networking.C2SPackets;
 import io.github.profjb58.territorial.util.debug.DebugTimer;
 import io.github.profjb58.territorial.world.team.ServerTeamsHandler;
 import me.shedaniel.autoconfig.AutoConfig;

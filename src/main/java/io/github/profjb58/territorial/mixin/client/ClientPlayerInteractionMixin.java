@@ -1,8 +1,6 @@
 package io.github.profjb58.territorial.mixin.client;
 
-import io.github.profjb58.territorial.networking.C2SPackets;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import io.github.profjb58.territorial.networking.StartBreakingBlockPacket;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -23,10 +21,6 @@ public abstract class ClientPlayerInteractionMixin {
     {
         /*  Fixes MC issue: https://bugs.mojang.com/browse/MC-69865
             (breakingBlock = false) check is to make sure packets are not repeatedly sent when it's clear that a block is broken */
-        if(!breakingBlock) {
-            var packetByteBuf = PacketByteBufs.create();
-            packetByteBuf.writeBlockPos(blockPos);
-            ClientPlayNetworking.send(C2SPackets.BREAKING_BLOCK, packetByteBuf);
-        }
+        if(!breakingBlock) new StartBreakingBlockPacket(blockPos).send();
     }
 }

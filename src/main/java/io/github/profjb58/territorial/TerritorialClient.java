@@ -4,7 +4,6 @@ import io.github.profjb58.territorial.event.ClientTickHandlers;
 import io.github.profjb58.territorial.event.registry.TerritorialClientRegistry;
 import io.github.profjb58.territorial.client.gui.LockableHud;
 import io.github.profjb58.territorial.event.registry.TerritorialNetworkRegistry;
-import io.github.profjb58.territorial.networking.C2SPackets;
 import io.github.profjb58.territorial.world.team.ClientTeamsHandler;
 import net.fabricmc.api.ClientModInitializer;
 
