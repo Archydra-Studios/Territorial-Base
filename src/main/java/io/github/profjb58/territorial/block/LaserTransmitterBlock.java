@@ -1,10 +1,9 @@
 package io.github.profjb58.territorial.block;
 
-import io.github.profjb58.territorial.block.entity.LaserBlockEntity;
+import io.github.profjb58.territorial.block.entity.LaserTransmitterBlockEntity;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.util.TextUtils;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -14,6 +13,8 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.context.LootContext;
+import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.BlockSoundGroup;
@@ -29,6 +30,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
 import net.minecraft.world.explosion.Explosion;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,7 +44,7 @@ public class LaserTransmitterBlock extends BlockWithEntity implements BlockEntit
 
     public LaserTransmitterBlock() {
         super(FabricBlockSettings.of(Material.METAL, MapColor.IRON_GRAY).nonOpaque().requiresTool()
-                .strength(4.0F, 1200.0F).sounds(BlockSoundGroup.METAL).breakByTool(FabricToolTags.PICKAXES, 0));
+                .strength(5.0F, 6.0F).sounds(BlockSoundGroup.METAL)); //.breakByTool(FabricToolTags.PICKAXES, 0));
         this.setDefaultState(this.stateManager.getDefaultState()
                 .with(POWERED, false)
                 .with(POWER, 0)
@@ -73,7 +75,7 @@ public class LaserTransmitterBlock extends BlockWithEntity implements BlockEntit
         world.setBlockState(pos, state.with(POWER, world.getReceivedRedstonePower(pos))
                 .with(POWERED, world.isReceivingRedstonePower(pos)), 3);
         BlockEntity be = world.getBlockEntity(pos);
-        if (!world.isClient && be instanceof LaserBlockEntity lbe) {
+        if (!world.isClient && be instanceof LaserTransmitterBlockEntity lbe) {
             lbe.createFromLens(stack);
         }
     }
@@ -82,24 +84,35 @@ public class LaserTransmitterBlock extends BlockWithEntity implements BlockEntit
     public void afterBreak(World world, PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity be, ItemStack toolStack) {
         player.incrementStat(Stats.MINED.getOrCreateStat(this));
         player.addExhaustion(0.005F);
+        dropStack(world, pos, getDroppedStacks(state, (ServerWorld) world, pos, be).get(0));
+        onStacksDropped(state, (ServerWorld) world, pos, toolStack);
+    }
 
-        if(!world.isClient) {
-            getDroppedStacks(state, (ServerWorld) world, pos, be, player, toolStack).forEach(droppedStack -> {
-                if(be instanceof LaserBlockEntity lbe) lbe.writeNbtStack(droppedStack);
-                dropStack(world, pos, droppedStack);
-            });
-            onStacksDropped(state, (ServerWorld) world, pos, toolStack);
+    @Override
+    public List<ItemStack> getDroppedStacks(BlockState state, LootContext.Builder builder) {
+        ItemStack stackToDrop = asItem().getDefaultStack();
+        return List.of(((LaserTransmitterBlockEntity) builder.get(LootContextParameters.BLOCK_ENTITY)).writeNbtStack(stackToDrop));
+    }
+
+    @Override
+    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+        if (state.hasBlockEntity() && !state.isOf(newState.getBlock())) {
+            var be = world.getBlockEntity(pos);
+            if(be instanceof LaserTransmitterBlockEntity ltbe) {
+                ltbe.updateLightBlocks(false, state.get(Properties.FACING));
+                ltbe.setReceiverPowered(false);
+            }
+            world.removeBlockEntity(pos);
         }
     }
 
-    // TODO - Maybe replace and consider drops from explosions
     @Override
-    public boolean shouldDropItemsOnExplosion(Explosion explosion) { return false; }
+    public boolean shouldDropItemsOnExplosion(Explosion explosion) { return true; }
 
     @Nullable
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new LaserBlockEntity(pos, state);
+        return new LaserTransmitterBlockEntity(pos, state);
     }
 
     @Override
@@ -110,17 +123,19 @@ public class LaserTransmitterBlock extends BlockWithEntity implements BlockEntit
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(type, TerritorialRegistry.LASER_BLOCK_ENTITY, LaserBlockEntity::tick);
+        return checkType(type, TerritorialRegistry.LASER_BLOCK_ENTITY, LaserTransmitterBlockEntity::tick);
     }
 
     @Override
     public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options) {
         super.appendTooltip(stack, world, tooltip, options);
 
-        NbtCompound tag = stack.getSubTag("beam");
+        NbtCompound tag = stack.getSubNbt("beam");
         if(tag != null) {
             // Colour
             DyeColor dyeColour = Optional.of(DyeColor.byId(tag.getInt("colour"))).orElse(DyeColor.WHITE);
+
+            // TODO - Crash when hovering over tooltip in Beacon GUI. Class not found exception :/
             String dyeNameCapitalized = dyeColour.getName().substring(0, 1).toUpperCase() + dyeColour.getName().substring(1);
             tooltip.add(new LiteralText(TextUtils.getTextColourFormatting(dyeColour) + dyeNameCapitalized));
 

@@ -1,11 +1,8 @@
 package io.github.profjb58.territorial.util;
 
-import io.github.cottonmc.cotton.gui.widget.data.Color;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3d;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.DyeColor;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.*;
 
@@ -24,7 +21,7 @@ public class RenderUtils {
      */
     public static void drawQuadLine(MatrixStack matrices, VertexConsumer consumer, Direction facing, float w, float l, float[] colour, float a) {
         // Get the transformation matrix and translate to the center
-        Matrix4f transMatrix = matrices.peek().getModel();
+        Matrix4f transMatrix = matrices.peek().getPositionMatrix();
         matrices.translate(0.5, 0.5, 0.5);
 
         float r = colour[0];
@@ -83,4 +80,6 @@ public class RenderUtils {
         Vec3d hitVec = result.getPos();
         return new BlockPos(hitVec.x, hitVec.y, hitVec.z);
     }
+
+
 }

@@ -14,18 +14,8 @@ import java.time.format.DateTimeFormatter;
 @Environment(EnvType.SERVER)
 public class ActionLogger {
 
-    public enum LogType {
-        INFO,
-        WARNING,
-        ERROR
-    }
-
-    public enum LogModule {
-        LOCKS,
-        CLAIMS,
-        TRAPS,
-        BLANK
-    }
+    public enum LogType { INFO, WARNING, ERROR }
+    public enum LogModule { TEAMS, LOCKS, CLAIMS, TRAPS, BLANK }
 
     static final String LOGS_DIRECTORY = FabricLoader.getInstance().getGameDir() + "/logs/";
 
@@ -35,7 +25,7 @@ public class ActionLogger {
         try {
             // Add in additional loggers if required here...
             if(logFile.createNewFile()) {
-                Territorial.logger.info("Logger files created");
+                Territorial.LOGGER.info("Logger files created");
             }
         } catch(IOException e) {
             e.printStackTrace();
@@ -62,6 +52,7 @@ public class ActionLogger {
             };
 
             moduleSpecifier = switch (module) {
+                case TEAMS -> "(teams) - ";
                 case CLAIMS -> "(claims) - ";
                 case LOCKS -> "(locks) - ";
                 case TRAPS -> "(traps) - ";

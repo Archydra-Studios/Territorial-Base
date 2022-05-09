@@ -27,7 +27,7 @@ public class LaserReceiverBlock extends FacingBlock {
     public static final DirectionProperty FACING;
 
     public LaserReceiverBlock() {
-        super(FabricBlockSettings.of(Material.METAL).strength(4.0f).nonOpaque());
+        super(FabricBlockSettings.of(Material.METAL).strength(5.0f, 6.0F).nonOpaque());
         this.setDefaultState(this.stateManager.getDefaultState()
                 .with(POWERED, false)
                 .with(POWER, 0)

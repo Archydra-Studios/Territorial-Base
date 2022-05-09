@@ -15,7 +15,7 @@
     "issues": "https://github.com/profjb58/Territorial-Base/issues"
   },
 
-  "license": "CC BY-NC 3.0",
+  "license": "MIT",
   "icon": "assets/territorial/icon.png",
 
   "environment": "*",
@@ -28,6 +28,9 @@
     ],
     "server": [
       "io.github.profjb58.territorial.TerritorialServer"
+    ],
+    "modmenu": [
+      "io.github.profjb58.territorial.config.TMMIntegration"
     ]
   },
   "mixins": [
@@ -37,8 +40,8 @@
   "depends": {
     "fabricloader": ">=0.11.3",
     "fabric": "*",
-    "minecraft": "1.17.x",
-    "java": ">=16"
+    "minecraft": "1.18.x",
+    "java": ">=17"
   },
   "suggests": {
     "another-mod": "*"

@@ -1,17 +1,16 @@
 package io.github.profjb58.territorial.block;
 
-import io.github.profjb58.territorial.entity.effect.LockFatigueInstance;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.inventory.ItemInventory;
 import io.github.profjb58.territorial.item.KeyringItem;
 import io.github.profjb58.territorial.util.MathUtils;
-import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
@@ -20,93 +19,58 @@ import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class LockableBlock {
+import static io.github.profjb58.territorial.block.LockableBlock.LockType.*;
 
-    private final String lockId;
-    private final UUID lockOwnerUuid;
-    private final String lockOwnerName;
-    private final LockType lockType;
-    private final BlockPos blockPos;
-    private float blastResistance, fatigueMultiplier;
+public record LockableBlock(String lockId, UUID lockOwnerUuid, String lockOwnerName, LockType lockType, BlockPos blockPos) {
 
-    public enum LockType {
-        UNBREAKABLE,
-        IRON,
-        GOLD,
-        DIAMOND,
-        NETHERITE
-    }
-
-    public enum LockSound {
-        DENIED_ENTRY,
-        LOCK_ADDED,
-        LOCK_DESTROYED
-    }
-
-    public enum LockEntityResult {
-        NO_ENTITY_EXISTS,
-        FAIL,
-        SUCCESS
-    }
-
-    public LockableBlock(String lockId, UUID lockOwnerUuid, String lockOwnerName, LockType lockType, BlockPos blockPos) {
-        this.lockId = lockId;
-        this.lockOwnerUuid = lockOwnerUuid;
-        this.lockOwnerName = lockOwnerName;
-        this.lockType = lockType;
-        this.blockPos = blockPos;
-
-        if(lockType != null) {
-            this.blastResistance = getBlastResistance(lockType);
-            this.fatigueMultiplier = MathUtils.Locks.getLockFatigueMultiplier(getLockFatigueAmplifier());
-        }
-    }
+    public enum LockType { UNBREAKABLE, IRON, GOLD, DIAMOND, NETHERITE }
+    public enum LockSound { DENIED_ENTRY, LOCK_ADDED, LOCK_DESTROYED }
+    public enum LockEntityResult { NO_ENTITY_EXISTS, FAIL, SUCCESS }
 
     public boolean exists() {
         return lockOwnerUuid != null && lockType != null && blockPos != null;
     }
 
-    public LockEntityResult createEntity(World world) {
-        if(!world.isClient) {
-            BlockEntity be = world.getBlockEntity(blockPos);
-            if(be != null) {
-                NbtCompound tag = be.writeNbt(new NbtCompound());
-                if(!tag.contains("lock_id")) { // No lock has been assigned to the block entity
-                    tag.putString("lock_id", lockId);
-                    tag.putUuid("lock_owner_uuid", lockOwnerUuid);
-                    tag.putString("lock_owner_name", lockOwnerName);
-                    tag.putInt("lock_type", getLockTypeInt());
+    public LockEntityResult createEntity(ServerWorld world) {
+        BlockEntity be = world.getBlockEntity(blockPos);
+        if(be != null) {
+            NbtCompound nbt = be.createNbt();
+            if(!nbt.contains("lock_id")) { // No lock has been assigned to the block entity
+                nbt.putString("lock_id", lockId);
+                nbt.putUuid("lock_owner_uuid", lockOwnerUuid);
+                nbt.putString("lock_owner_name", lockOwnerName);
+                nbt.putInt("lock_type", lockTypeInt());
 
-                    // Store locks position in persitent storage
-                    //WorldLockStorage lps = WorldLockStorage.get((ServerWorld) world);
-                    //lps.addLock(this);
-                    try {
-                        be.readNbt(tag);
-                    } catch (Exception ignored) {}
+                // Store locks position in persitent storage
+                //WorldLockStorage lps = WorldLockStorage.get((ServerWorld) world);
+                //lps.addLock(this);
+                try {
+                    be.readNbt(nbt);
+                } catch (Exception ignored) {}
 
-                    // Sync data to the client
-                    ((BlockEntityClientSerializable) be).sync();
-                    return LockEntityResult.SUCCESS;
-                }
-                else {
-                    return LockEntityResult.FAIL;
-                }
+                // Sync data to the client
+                world.getChunkManager().markForUpdate(be.getPos());
+                return LockEntityResult.SUCCESS;
+            }
+            else {
+                return LockEntityResult.FAIL;
             }
         }
         return LockEntityResult.NO_ENTITY_EXISTS;
     }
 
     public Pair<ItemStack, Inventory> findMatchingKey(ServerPlayerEntity player, boolean checkInventory) {
-        ItemStack itemStack = player.getStackInHand(player.getActiveHand());
+        var itemStack = player.getStackInHand(player.getActiveHand());
         String itemStackName = itemStack.getName().getString();
 
         if(player.isHolding(TerritorialRegistry.MASTER_KEY) ||
                 (player.isHolding(TerritorialRegistry.KEY) && itemStackName.equals(lockId))) {
             return new Pair<>(itemStack, player.getInventory());
         }
-        else if(checkInventory){
+        else if(checkInventory) {
             // Cycle through the players items to check if they contain a matching key
             for(ItemStack invItemStack : player.getInventory().main) {
                 if(checkValidKey(invItemStack)) {
@@ -125,7 +89,7 @@ public class LockableBlock {
     }
 
     private boolean checkValidKey(ItemStack itemStack) {
-        Item item = itemStack.getItem();
+        var item = itemStack.getItem();
         String itemStackName = itemStack.getName().getString();
         return item == TerritorialRegistry.MASTER_KEY || (item == TerritorialRegistry.KEY && itemStackName.equals(lockId));
     }
@@ -154,11 +118,9 @@ public class LockableBlock {
         }
     }
 
-    public LockFatigueInstance getLockFatigueInstance() {
-        return new LockFatigueInstance(
-                TerritorialRegistry.LOCK_FATIGUE, Integer.MAX_VALUE,
-                getLockFatigueAmplifier(),
-                false, false);
+    public StatusEffectInstance getLockFatigueInstance() {
+        return new StatusEffectInstance(TerritorialRegistry.LOCK_FATIGUE_EFFECT, Integer.MAX_VALUE,
+                lockFatigueAmplifier(), false, false);
     }
 
     public ItemStack getLockItemStack(int amount) {
@@ -173,18 +135,7 @@ public class LockableBlock {
         return padlock;
     }
 
-    public int getLockFatigueAmplifier() {
-        return switch (lockType) {
-            case UNBREAKABLE -> // Shouldn't be modified
-                    Integer.MAX_VALUE;
-            case NETHERITE -> 3;
-            case DIAMOND -> 2;
-            case IRON -> 1;
-            default -> 0;
-        };
-    }
-
-    public int getLockTypeInt() {
+    public int lockTypeInt() {
         return switch (lockType) {
             case UNBREAKABLE -> -1;
             case IRON -> 1;
@@ -194,18 +145,18 @@ public class LockableBlock {
         };
     }
 
-    public static LockType getLockType(int lockType) {
+    public LockType lockType(int lockType) {
         return switch (lockType) {
-            case -1 -> LockType.UNBREAKABLE;
+            case -1 -> UNBREAKABLE;
             case 1 -> LockType.IRON;
             case 2 -> LockType.GOLD;
-            case 3 -> LockType.DIAMOND;
-            case 4 -> LockType.NETHERITE;
+            case 3 -> DIAMOND;
+            case 4 -> NETHERITE;
             default -> null;
         };
     }
 
-    private float getBlastResistance(LockType lockType) {
+    private float blastResistance(LockType lockType) {
         return switch (lockType) {
             case UNBREAKABLE -> Float.POSITIVE_INFINITY; // Impossible to break
             case NETHERITE -> 8; // Wither
@@ -215,11 +166,16 @@ public class LockableBlock {
         };
     }
 
-    public UUID getLockOwnerUuid() { return lockOwnerUuid; }
-    public String getLockOwnerName() { return lockOwnerName; }
-    public String getLockId() { return lockId; }
-    public LockType getLockType() { return lockType; }
-    public BlockPos getBlockPos() { return blockPos; }
-    public float getBlastResistance() { return blastResistance; }
-    public float getFatigueMultiplier() { return fatigueMultiplier; }
+    public int lockFatigueAmplifier() {
+        return switch (lockType) {
+            case UNBREAKABLE -> Integer.MAX_VALUE; // Shouldn't be modified
+            case NETHERITE -> 3;
+            case DIAMOND -> 2;
+            case IRON -> 1;
+            default -> 0;
+        };
+    }
+
+    public float blastResistance() { return (lockType != null) ? blastResistance(lockType) : 0; }
+    public float fatigueMultiplier() { return (lockType != null) ? MathUtils.Locks.getLockFatigueMultiplier(lockFatigueAmplifier()) : 0; }
 }

@@ -1,9 +1,9 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "IID",
+    "IIB",
     "GRL",
-    "IID"
+    "IIB"
   ],
   "key": {
     "L": {
@@ -12,8 +12,8 @@
     "I": {
       "item": "minecraft:iron_block"
     },
-    "D": {
-      "item": "minecraft:deepslate"
+    "B": {
+      "item": "minecraft:blackstone"
     },
     "G": {
       "item": "minecraft:glowstone"

@@ -1,11 +1,12 @@
 package io.github.profjb58.territorial.block.entity;
 
 import io.github.profjb58.territorial.block.LockableBlock;
-import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import java.util.concurrent.locks.Lock;
 
 /**
  * Lockable block entity. Will only full initialize all values if a lockable block entity is present at the current
@@ -24,24 +25,17 @@ public class LockableBlockEntity {
             this.lb = new LockableBlock(tag.getString("lock_id"),
                     tag.getUuid("lock_owner_uuid"),
                     tag.getString("lock_owner_name"),
-                    LockableBlock.getLockType(tag.getInt("lock_type")),
+                    lb.lockType(tag.getInt("lock_type")),
                     blockPos);
             this.world = world;
         }
     }
 
-    public boolean exists() {
-        if(lb != null) {
-            return lb.exists() && world != null;
-        }
-        else {
-            return false;
-        }
-    }
+    public boolean exists() { return lb != null && (lb.exists() && world != null); }
 
     public boolean remove() {
         if(exists() && !world.isClient) {
-            NbtCompound tag = getNbt(world, lb.getBlockPos());
+            NbtCompound tag = getNbt(world, lb.blockPos());
             if(tag != null) {
                 tag.remove("lock_id");
                 tag.remove("lock_owner_uuid");
@@ -51,7 +45,6 @@ public class LockableBlockEntity {
 
                 //WorldLockStorage lps = WorldLockStorage.get((ServerWorld) world);
                 //lps.removeLock(lb);
-                ((BlockEntityClientSerializable) getBlockEntity()).sync();
                 return true;
             }
         }
@@ -60,12 +53,12 @@ public class LockableBlockEntity {
 
     public boolean update() {
         if(exists() && !world.isClient) {
-            NbtCompound tag = getNbt(world, lb.getBlockPos());
+            NbtCompound tag = getNbt(world, lb.blockPos());
             if(tag != null) {
-                tag.putString("lock_id", lb.getLockId());
-                tag.putUuid("lock_owner_uuid", lb.getLockOwnerUuid());
-                tag.putString("lock_owner_name", lb.getLockOwnerName());
-                tag.putInt("lock_type", lb.getLockTypeInt());
+                tag.putString("lock_id", lb.lockId());
+                tag.putUuid("lock_owner_uuid", lb.lockOwnerUuid());
+                tag.putString("lock_owner_name", lb.lockOwnerName());
+                tag.putInt("lock_type", lb.lockTypeInt());
                 updateNbtFromTag(tag);
 
                 //WorldLockStorage lps = WorldLockStorage.get((ServerWorld) world);
@@ -77,7 +70,7 @@ public class LockableBlockEntity {
     }
 
     private boolean updateNbtFromTag(NbtCompound tag) {
-        BlockEntity be = world.getBlockEntity(lb.getBlockPos());
+        BlockEntity be = world.getBlockEntity(lb.blockPos());
         if(be != null) {
             try {
                 be.readNbt(tag);
@@ -90,7 +83,7 @@ public class LockableBlockEntity {
     private NbtCompound getNbt(World world, BlockPos blockPos) {
         BlockEntity be = world.getBlockEntity(blockPos);
         if(be != null) {
-            NbtCompound tag = be.writeNbt(new NbtCompound());
+            NbtCompound tag = be.createNbt();
             if(tag.contains("lock_id") && tag.contains("lock_type") && tag.contains("lock_owner_uuid")) { // Is lockable
                 return tag;
             }
@@ -99,5 +92,5 @@ public class LockableBlockEntity {
     }
 
     public LockableBlock getBlock() { return lb; };
-    public BlockEntity getBlockEntity() { return world.getBlockEntity(lb.getBlockPos()); }
+    public BlockEntity getBlockEntity() { return world.getBlockEntity(lb.blockPos());}
 }

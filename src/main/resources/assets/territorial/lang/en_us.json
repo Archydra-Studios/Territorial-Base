@@ -1,13 +1,39 @@
 {
   "text.autoconfig.territorial.title": "Territorial Config",
-  "text.autoconfig.territorial.option.locks.showLockName": "Show lock name",
-  "text.autoconfig.territorial.category.locks": "        Locks        ",
-  "text.autoconfig.territorial.category.claims": "        Claims        ",
-  "text.autoconfig.territorial.category.traps": "        Traps        ",
+  "text.autoconfig.territorial.category.default": "   Common   ",
+  "text.autoconfig.territorial.category.protections": "   Protections   ",
+  "text.autoconfig.territorial.category.traps": "   Traps   ",
+  "text.autoconfig.territorial.category.client": "   Client   ",
+  "text.autoconfig.territorial.category.teams": "   Teams   ",
+  "text.autoconfig.territorial.option.client.showLockName": "Display locks name",
+  "text.autoconfig.territorial.option.protections.minOpLevel": "Minimum operator level",
+  "text.autoconfig.territorial.option.protections.breakMultiplier": "Break Multiplier",
+  "text.autoconfig.territorial.option.traps.laserTransmitterMaxReach": "Laser Transmitters max reach",
+  "text.autoconfig.territorial.option.traps.laserTargetsAllMobs": "Laser targets all mobs",
+  "text.autoconfig.territorial.option.traps.eclipseRoseMaxReach": "Eclipse Rose max reach",
+  "text.autoconfig.territorial.option.enableEnderKey": "Enable Ender Key",
+  "text.autoconfig.territorial.option.enderKeyRolls": "Ender Key rolls",
+  "text.autoconfig.territorial.option.omniscientObsidianRecipe": "Omniscient Obsidian recipe",
+  "text.autoconfig.territorial.option.omniscientObsidianSpread": "Omniscient Obsidian spread",
+  "text.autoconfig.territorial.option.teams.playStyle": "Play style",
+  "text.autoconfig.territorial.option.teams.limits": "Limits",
+  "text.autoconfig.territorial.option.teams.limits.maxWaypointsPerTeam": "Max Waypoints per Team",
+  "text.autoconfig.territorial.option.teams.limits.maxTeamsPerPlayer": "Max Teams per Player",
+  "text.autoconfig.territorial.option.teams.limits.maxTeamsPerServer": "Max Teams per Server",
+  "text.autoconfig.territorial.option.teams.limits.maxNumOfChunkClaims": "Max number of Chunk claims",
+  "text.autoconfig.territorial.option.teams.advanced": "Advanced",
+  "text.autoconfig.territorial.option.teams.advanced.purgeTeams": "Enable Team purge",
+  "text.autoconfig.territorial.option.teams.advanced.numOfDaysBeforePurge": "Number of days before Purge",
+  "text.autoconfig.territorial.option.teams.advanced.numOfDaysBeforeInactive": "Number of days before Inactive",
 
   "block.territorial.laser_transmitter": "Laser Transmitter",
   "block.territorial.laser_receiver": "Laser Receiver",
   "block.territorial.plinth_of_peeking": "Plinth of Peeking",
+  "block.territorial.omniscient_obsidian": "Omniscient Obsidian",
+  "block.territorial.anti_magma": "Anti Magma",
+  "block.territorial.eclipse_rose": "Eclipse Rose",
+  "block.territorial.eclipse_rose_bush": "Eclipse Rose Bush",
+  "block.territorial.boundary_beacon": "Boundary Beacon",
 
   "item.territorial.ender_amulet": "Ender Amulet",
   "item.territorial.key":"Key",
@@ -21,6 +47,8 @@
   "item.territorial.lockpick": "Lockpick",
   "item.territorial.keyring": "Keyring",
   "item.territorial.lens": "Lens",
+  "item.territorial.blank_slot": "Blank Slot",
+  "item.territorial.destructed_slot": "Destructed Slot",
 
   "itemGroup.territorial.territorial_base": "Territorial (base)",
 
@@ -44,11 +72,15 @@
 
   "message.territorial.enderchest.unknown_player": "§cCannot find the victim %s",
   "message.territorial.enderchest.key_unnamed": "§eThis key needs the name of a victim",
-  "message.territorial.enderchest.warn": "§a[Territorial] %s§r just stole items from your ender chest",
+  "message.territorial.enderchest.warn": "§a[Territorial] §rA player stole items from your ender chest",
+
+  "message.territorial.stack_dupe_formatted.warn": "§a[Territorial]§r§c Duplicated item: %s §cfound in %s's §cplayer / ender chest inventory",
+  "message.territorial.stack_dupe.warn": "[Territorial] Duplicated item: %s found in %s's player / ender chest inventory",
 
   "title.territorial.config": "Territorial Config",
 
   "effect.territorial.lock_fatigue": "Lock Fatigue",
+  "effect.territorial.eclipse": "Eclipse",
 
   "advancements.territorial.padlock": "Always Use Protection",
   "advancements.territorial.padlock.desc": "Craft a Padlock",
@@ -90,5 +122,18 @@
   "tooltip.territorial.modifier.rainbow": "§7§oRainbow",
   "tooltip.territorial.modifier.light": "§7§oLight",
 
-  "container.territorial.enderchest": "%s's Ender Chest"
+  "container.territorial.enderchest": "%s's Ender Chest",
+
+  "enchantment.territorial.bloodshed_curse": "Bloodshed Curse",
+
+  "gui.territorial.beacon.mode": "Mode",
+  "gui.territorial.beacon.team": "Team",
+  "gui.territorial.beacon.range": "Range",
+
+  "team.territorial.creation.failed": "§a[Territorial]§r§c Failed to create team %s§c. Already exists",
+  "team.territorial.creation.successful": "§a[Territorial]§r Team %s created successfully!",
+  "team.territorial.removal.reason.admin": "removed by an Admin",
+  "team.territorial.removal.reason.team_owner": "removed by a Team Owner",
+  "team.territorial.removal.reason.purged": "purged for being in-active",
+  "team.territorial.removal.failed": "§a[Territorial]§r§c Failed to remove team %s§c. Team does not exist"
 }

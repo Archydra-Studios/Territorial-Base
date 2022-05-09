@@ -2,18 +2,23 @@
   "required": true,
   "minVersion": "0.8",
   "package": "io.github.profjb58.territorial.mixin",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "BlockBreakSpeedMixin",
-    "BlockEntityMixin",
-    "ExplosionAccessor",
-    "ServerWorldMixin",
-    "StatusEffectInstanceMixin",
-    "AnvilChunkStorageAccessor"
+    "common.AnvilChunkStorageAccessor",
+    "common.BeaconBlockMixin",
+    "common.BlockBreakSpeedMixin",
+    "common.BlockEntityMixin",
+    "common.BlockMixin",
+    "common.ExplosionAccessor",
+    "common.LightningEntityMixin",
+    "common.RuinedPortalStructurePieceMixin",
+    "common.ServerPlayNetworkHandlerMixin",
+    "common.StatusEffectInstanceMixin"
   ],
   "client": [
-    "ClientPlayerInteractionMixin",
-    "OverlayRemainingAccessor"
+    "client.ClientPlayerInteractionMixin",
+    "client.ClientPlayNetworkHandlerMixin",
+    "client.OverlayRemainingAccessor"
   ],
   "server": [
   ],

@@ -1,8 +1,10 @@
 package io.github.profjb58.territorial.util;
 
 public class TickCounter {
+
     private final int TICK_THRESHOLD;
     private final int MAX_VALUE;
+
     private int counter = 0;
 
     public TickCounter(int tickThreshold) {
@@ -30,4 +32,6 @@ public class TickCounter {
     public void reset() {
         counter = 0;
     }
+
+    public int value() { return this.counter; }
 }

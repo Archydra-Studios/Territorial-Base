@@ -1,18 +1,17 @@
 plugins {
-	id 'fabric-loom' version '0.8-SNAPSHOT'
-	id 'com.github.johnrengelman.shadow' version '5.2.0'
+	id 'fabric-loom' version '0.11-SNAPSHOT'
 	id 'maven-publish'
 }
 
-sourceCompatibility = JavaVersion.VERSION_16
-targetCompatibility = JavaVersion.VERSION_16
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
 repositories {
-	jcenter()
+	mavenCentral()
 	maven {
 		name = "CottonMC"
 		url = "https://server.bbkr.space/artifactory/libs-release"
@@ -25,11 +24,13 @@ repositories {
 		name ="Siphalor"
 		url = "https://maven.siphalor.de"
 	}
+	maven { url 'https://maven.blamejared.com' }
 	maven { url "https://maven.shedaniel.me/" }
+	maven { url 'https://jitpack.io' }
 }
 
-minecraft {
-	accessWidener =  file("src/main/resources/territorial.accesswidener")
+loom {
+	accessWidenerPath =  file("src/main/resources/territorial.accesswidener")
 }
 
 dependencies {
@@ -40,15 +41,28 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	// modImplementation(include("vazkii.patchouli:Patchouli:${project.patchouli_version}"))
-	modImplementation(include("io.github.cottonmc:LibGui:${project.libgui_version}"))
-	modApi(include("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}"))
-	modImplementation(include("de.siphalor:nbtcrafting-1.17:${project.nbtcrafing_version}"))
-	//modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+	modImplementation(include("io.github.cottonmc:LibGui:${project.libgui_version}")) {
+		exclude(group: "net.fabricmc.fabric-api")
+	}
+	modApi(include("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}")) {
+		exclude(group: "net.fabricmc.fabric-api")
+	}
+	modImplementation(include("de.siphalor:nbtcrafting-1.18:${project.nbtcrafing_version}")) {
+		exclude(group: "net.fabricmc.fabric-api")
+	}
 
-	//modImplementation "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
+	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}") {
+		exclude(group: "net.fabricmc.fabric-api")
+	}
 
-	// SQLite stuff
-	implementation(include("org.xerial:sqlite-jdbc:${project.jdbc_version}"))
+	modImplementation("me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}") {
+		exclude(group: "net.fabricmc.fabric-api")
+	}
+
+	modImplementation "vazkii.patchouli:Patchouli:${project.patchouli_version}"
+
+	// H2 stuff
+	implementation(include("com.h2database:h2:${project.h2_version}"))
 }
 
 processResources {
@@ -59,33 +73,24 @@ processResources {
 	}
 }
 
+// Open the local H2 database viewer
+task openDBViewer(type: Exec) {
+	workingDir "build/libs/territorial-${project.version}/META-INF/jars"
+	commandLine "java", "-jar", "h2-${project.h2_version}.jar"
+}
+
 tasks.withType(JavaCompile).configureEach {
 	// ensure that the encoding is set to UTF-8, no matter what the system default is
 	// this fixes some edge cases with special characters not displaying correctly
 	// see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
 	// If Javadoc is generated, this must be specified in that task too.
 	it.options.encoding = "UTF-8"
-}
 
-shadowJar {
-	configurations = [project.configurations.shadow]
-	classifier = "shadow"
+	it.options.release = 17
 }
 
 jar {
 	from "LICENSE"
-}
-import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
-
-task relocateShadowJar(type: ConfigureShadowRelocation) {
-	target = tasks.shadowJar
-	prefix = "${project.group}.${project.archivesBaseName}.shadow"
-}
-tasks.shadowJar.dependsOn tasks.relocateShadowJar
-
-remapJar {
-	dependsOn shadowJar
-	input.set shadowJar.archiveFile.get()
 }
 
 java {
@@ -116,6 +121,6 @@ publishing {
 	}
 
 	repositories {
-		//mavenLocal()
+		mavenLocal()
 	}
 }

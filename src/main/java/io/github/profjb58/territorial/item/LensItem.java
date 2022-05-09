@@ -1,10 +1,8 @@
 package io.github.profjb58.territorial.item;
 
 import io.github.profjb58.territorial.Territorial;
-import io.github.profjb58.territorial.block.LaserTransmitterBlock;
-import io.github.profjb58.territorial.block.entity.LaserBlockEntity;
+import io.github.profjb58.territorial.block.entity.LaserTransmitterBlockEntity;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
-import io.github.profjb58.territorial.util.TextUtils;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.item.TooltipContext;
@@ -14,7 +12,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -37,7 +34,7 @@ public class LensItem extends Item {
     @Override
     public Text getName(ItemStack stack) {
         Text translationText = new TranslatableText(this.getTranslationKey());
-        NbtCompound tag = stack.getSubTag("beam");
+        NbtCompound tag = stack.getSubNbt("beam");
 
         if (tag != null) {
             DyeColor dyeColour = Optional.of(DyeColor.byId(tag.getInt("colour"))).orElse(DyeColor.WHITE);
@@ -50,7 +47,7 @@ public class LensItem extends Item {
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext ctx) {
         super.appendTooltip(stack, world, tooltip, ctx);
-        NbtCompound tag = stack.getSubTag("beam");
+        NbtCompound tag = stack.getSubNbt("beam");
         if (tag != null) {
             int strengthMod = tag.getByte("strength");
             tooltip.add(new TranslatableText("tooltip.territorial.lens_strength_" + strengthMod));
@@ -65,15 +62,15 @@ public class LensItem extends Item {
 
     @Override
     public ActionResult useOnBlock(ItemUsageContext ctx) {
-        BlockEntity be = ctx.getWorld().getBlockEntity(ctx.getBlockPos());
-        World world = ctx.getWorld();
+        var be = ctx.getWorld().getBlockEntity(ctx.getBlockPos());
+        var world = ctx.getWorld();
 
-        if (!world.isClient && be instanceof LaserBlockEntity lbe) {
-            BlockPos pos = ctx.getBlockPos();
-            PlayerEntity player = ctx.getPlayer();
-            ItemStack lensStack = TerritorialRegistry.LENS.getDefaultStack();
+        if (!world.isClient && be instanceof LaserTransmitterBlockEntity lbe) {
+            var pos = ctx.getBlockPos();
+            var player = ctx.getPlayer();
+            var lensStack = TerritorialRegistry.LENS.getDefaultStack();
 
-            if(!Objects.equals(lbe.writeNbtStack(lensStack).getSubTag("beam"), ctx.getStack().getSubTag("beam"))) {
+            if(!Objects.equals(lbe.writeNbtStack(lensStack).getSubNbt("beam"), ctx.getStack().getSubNbt("beam"))) {
                 ItemEntity lensToDrop = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), lbe.writeNbtStack(lensStack));
                 lbe.createFromLens(ctx.getStack());
                 if(player != null && !player.isCreative()) {

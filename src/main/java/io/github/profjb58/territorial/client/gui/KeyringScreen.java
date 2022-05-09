@@ -2,6 +2,7 @@ package io.github.profjb58.territorial.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.profjb58.territorial.Territorial;
+import io.github.profjb58.territorial.screen.KeyringScreenHandler;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;

@@ -63,11 +63,11 @@ public class KeyItem extends Item {
     // Shift click functionality
     @Override
     public ActionResult useOnBlock(ItemUsageContext ctx) {
-        PlayerEntity player = ctx.getPlayer();
+        var player = ctx.getPlayer();
         if (player != null && !ctx.getWorld().isClient && player.isSneaking()) {
-            LockableBlockEntity lbe = new LockableBlockEntity(ctx.getWorld(), ctx.getBlockPos());
+            var lbe = new LockableBlockEntity(ctx.getWorld(), ctx.getBlockPos());
             if(lbe.exists()) {
-                LockableBlock lb = lbe.getBlock();
+                var lb = lbe.getBlock();
                 if(lb.findMatchingKey((ServerPlayerEntity) player, false) != null) {
                     if(lbe.remove()) {
                         onRemoveLock(ctx, lb); // Remove the lock
@@ -75,7 +75,7 @@ public class KeyItem extends Item {
                     }
                     else {
                         // Really shouldn't happen, but just encase
-                        Territorial.logger.error("Lockpick failed to remove NBT lock data :(. Please report this as an issue");
+                        Territorial.LOGGER.error("Lockpick failed to remove NBT lock data :(. Please report this as an issue");
                     }
                 }
                 if(masterKey) onUseMasterKey(player.getStackInHand(player.getActiveHand()), (ServerPlayerEntity) player, lb);
@@ -111,19 +111,17 @@ public class KeyItem extends Item {
     }
 
     public void onUseMasterKey(ItemStack masterKeyStack, ServerPlayerEntity player, LockableBlock lb) {
-        if(Territorial.getConfig().masterKeyVanish()) { // Check if the master key should vanish after a single use
-            masterKeyStack.decrement(1);
-            player.sendMessage(new TranslatableText("message.territorial.master_key_vanished"), false);
+        masterKeyStack.decrement(1);
+        player.sendMessage(new TranslatableText("message.territorial.master_key_vanished"), false);
 
-            if(Territorial.isDedicatedServer()) {
-                TerritorialServer.actionLogger.write(ActionLogger.LogType.INFO, ActionLogger.LogModule.LOCKS,
-                        "Player " + player.getName().getString() + " used a master key at location " + lb.getBlockPos());
-            }
+        if(Territorial.isDedicatedServer()) {
+            TerritorialServer.actionLogger.write(ActionLogger.LogType.INFO, ActionLogger.LogModule.LOCKS,
+                    "Player " + player.getName().getString() + " used a master key at location " + lb.blockPos());
         }
     }
 
     void onRemoveLock(ItemUsageContext ctx, LockableBlock lb) {
-        ServerPlayerEntity player = (ServerPlayerEntity) ctx.getPlayer();
+        var player = (ServerPlayerEntity) ctx.getPlayer();
         if (player != null) {
             ItemStack padlockStack = lb.getLockItemStack(1);
             BlockPos pos = ctx.getBlockPos();

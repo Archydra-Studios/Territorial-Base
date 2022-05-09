@@ -1,10 +1,8 @@
 package io.github.profjb58.territorial.client.gui;
 
-import io.github.cottonmc.cotton.gui.client.CottonHud;
-import io.github.cottonmc.cotton.gui.widget.WTiledSprite;
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.block.LockableBlock;
-import io.github.profjb58.territorial.mixin.OverlayRemainingAccessor;
+import io.github.profjb58.territorial.mixin.client.OverlayRemainingAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -19,39 +17,39 @@ import net.minecraft.util.Identifier;
 public class LockableHud {
 
     private boolean ignoreCycle = false;
-    private WTiledSprite lockImage;
+    //private WTiledSprite lockImage;
 
     public void showLockInfo(LockableBlock lb, ClientPlayerEntity player) {
         if(!ignoreCycle) {
             if(lb.exists()) {
                 reset();
 
-                Window window = MinecraftClient.getInstance().getWindow();
+                var window = MinecraftClient.getInstance().getWindow();
                 int hudHeight = window.getScaledHeight();
                 int hudWidth = window.getScaledWidth();
 
                 String lockId, lockOwner;
-                if(lb.getLockOwnerUuid().equals(player.getUuid())) {
-                    lockId = lb.getLockId();
-                    lockOwner = lb.getLockOwnerName();
+                if(lb.lockOwnerUuid().equals(player.getUuid())) {
+                    lockId = lb.lockId();
+                    lockOwner = lb.lockOwnerName();
                 }
                 else {
-                    lockId = "§k" + lb.getLockId();
-                    lockOwner = "§k" + lb.getLockOwnerName();
+                    lockId = "§k" + lb.lockId();
+                    lockOwner = "§k" + lb.lockOwnerName();
                 }
 
-                String fc = getLockableFormattingColour(lb.getLockType());
+                String fc = getLockableFormattingColour(lb.lockType());
                 LiteralText lockInfoText = new LiteralText(fc + "Id: §f" + lockId + "   " + fc + "Owner: §f" + lockOwner);
                 player.sendMessage(lockInfoText, true);
 
-                Item item = lb.getLockItemStack(1).getItem();
-                lockImage = new WTiledSprite(32, 32, new Identifier(Territorial.MOD_ID, "textures/item/" + item.toString() + ".png"));
+                var item = lb.getLockItemStack(1).getItem();
+                //lockImage = new WTiledSprite(32, 32, new Identifier(Territorial.MOD_ID, "textures/item/" + item.toString() + ".png"));
 
-                CottonHud.add(lockImage, (hudWidth / 2) - 16, hudHeight - 100);
+                //CottonHud.add(lockImage, (hudWidth / 2) - 16, hudHeight - 100);
             }
         }
         else {
-            InGameHud inGameHud = MinecraftClient.getInstance().inGameHud;
+            var inGameHud = MinecraftClient.getInstance().inGameHud;
             if(((OverlayRemainingAccessor) inGameHud).getOverlayRemaining() == 0) {
                 ignoreCycle = false;
             }
@@ -59,7 +57,7 @@ public class LockableHud {
     }
 
     public void reset() {
-        CottonHud.remove(lockImage);
+        //CottonHud.remove(lockImage);
         ((OverlayRemainingAccessor) MinecraftClient.getInstance().inGameHud).setOverlayRemaining(0); // Clears the action message
     }
 

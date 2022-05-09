@@ -1,31 +1,24 @@
 package io.github.profjb58.territorial.client.render.entity;
 
-import io.github.profjb58.territorial.block.entity.LaserBlockEntity;
+import io.github.profjb58.territorial.block.entity.LaserTransmitterBlockEntity;
 import io.github.profjb58.territorial.client.render.CustomRenderLayers;
-import io.github.profjb58.territorial.util.PosUtils;
+import io.github.profjb58.territorial.util.MathUtils;
 import io.github.profjb58.territorial.util.RenderUtils;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.state.property.Properties;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3f;
 
 import java.util.Arrays;
 
-public class LaserBlockEntityRenderer implements BlockEntityRenderer<LaserBlockEntity> {
+public class LaserBlockEntityRenderer implements BlockEntityRenderer<LaserTransmitterBlockEntity> {
 
     private static final float[][] RAINBOW_COLOURS = new float[][]{
             {176, 46, 38},  // Red
@@ -39,10 +32,10 @@ public class LaserBlockEntityRenderer implements BlockEntityRenderer<LaserBlockE
     private static final float[] rainbowColour = new float[]{0, 0, 0};
     private static int rainbowTargetIndex = 0;
 
-    public LaserBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {}
+    public LaserBlockEntityRenderer() {}
 
     @Override
-    public void render(LaserBlockEntity be, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
+    public void render(LaserTransmitterBlockEntity be, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         Direction facing = be.getCachedState().get(Properties.FACING);
         int power = be.getCachedState().get(Properties.POWER);
         boolean isRainbow = be.getMods().get("rainbow");
@@ -57,7 +50,7 @@ public class LaserBlockEntityRenderer implements BlockEntityRenderer<LaserBlockE
                 ClientWorld clientWorld = (ClientWorld) be.getWorld();
                 if(clientWorld != null) {
                     if(be.getSparkleDistance() < be.getReach()) {
-                        Vec3d sparklePos = Vec3d.of(be.getPos()).add(PosUtils.zeroMove(Vec3d.of(facing.getVector()).multiply(be.getSparkleDistance()), 0.5));
+                        Vec3d sparklePos = Vec3d.of(be.getPos()).add(MathUtils.Pos.zeroMove(Vec3d.of(facing.getVector()).multiply(be.getSparkleDistance()), 0.5));
                         clientWorld.addParticle(new DustParticleEffect(new Vec3f(colour[0], colour[1], colour[2]), 1f),
                                 true, sparklePos.getX() , sparklePos.getY(), sparklePos.getZ(),
                                 0.1, 0.1, 0.1);
@@ -69,7 +62,7 @@ public class LaserBlockEntityRenderer implements BlockEntityRenderer<LaserBlockE
                 }
             }
             else {
-                float w = LaserBlockEntity.SIGNAL_STRENGTH_WIDTHS[power - 1];
+                float w = LaserTransmitterBlockEntity.SIGNAL_STRENGTH_WIDTHS[power - 1];
                 float l = be.getPrevReach() + ((be.getReach() - be.getPrevReach()) * tickDelta);
 
                 // Opaque beam
@@ -84,7 +77,6 @@ public class LaserBlockEntityRenderer implements BlockEntityRenderer<LaserBlockE
                     matrices.pop();
                 }
             }
-
         }
         // Lens
         matrices.push();
@@ -93,7 +85,7 @@ public class LaserBlockEntityRenderer implements BlockEntityRenderer<LaserBlockE
     }
 
     @Override
-    public boolean rendersOutsideBoundingBox(LaserBlockEntity blockEntity) {
+    public boolean rendersOutsideBoundingBox(LaserTransmitterBlockEntity blockEntity) {
         return true;
     }
 
