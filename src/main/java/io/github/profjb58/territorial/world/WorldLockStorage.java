@@ -92,8 +92,8 @@ public class WorldLockStorage extends PersistentState {
         // return world.getChunkManager().getPersistentStateManager().getOrCreate(WorldLockStorage::new, "territorial_world_locks");
     }
 
-    public void readNbt(NbtCompound NbtCompound) {
-        NbtList worldLocksTags = NbtCompound.getList("world_locked_tiles", NbtType.COMPOUND);
+    public void readNbt(NbtCompound nbtCompound) {
+        NbtList worldLocksTags = nbtCompound.getList("world_locked_tiles", NbtType.COMPOUND);
 
         for (NbtElement worldLocksTag : worldLocksTags) {
             NbtCompound playerLocksTag = (NbtCompound) worldLocksTag;
@@ -110,7 +110,7 @@ public class WorldLockStorage extends PersistentState {
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound NbtCompound) {
+    public NbtCompound writeNbt(NbtCompound nbtCompound) {
         NbtList worldLocksTags = new NbtList();
 
         for (UUID playerUuid : locksUUIDMap.keySet()) { // Cycle through players in the current world
@@ -129,8 +129,8 @@ public class WorldLockStorage extends PersistentState {
 
             worldLocksTags.add(playerLocksTag);
         }
-        NbtCompound.put("world_locked_tiles", worldLocksTags);
-        return NbtCompound;
+        nbtCompound.put("world_locked_tiles", worldLocksTags);
+        return nbtCompound;
     }
 }
  

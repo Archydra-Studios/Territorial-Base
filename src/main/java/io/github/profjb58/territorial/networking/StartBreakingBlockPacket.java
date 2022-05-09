@@ -11,7 +11,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
-public class StartBreakingBlockPacket implements C2SPacket {
+public class StartBreakingBlockPacket extends C2SPacket {
 
     private BlockPos targetPos;
 

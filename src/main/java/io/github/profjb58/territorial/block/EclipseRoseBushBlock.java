@@ -29,7 +29,6 @@ public class EclipseRoseBushBlock extends TallFlowerBlock implements EclipseBloc
     @Override
     public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
         applyBlindnessEffect(world, entity, 100);
-
     }
 
     @Override

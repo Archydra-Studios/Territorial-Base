@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import io.github.profjb58.territorial.block.BoundaryBeaconBlock;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.screen.BoundaryBeaconScreenHandler;
+import io.github.profjb58.territorial.world.team.Team;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BannerBlockEntity;
 import net.minecraft.block.entity.BannerPattern;
@@ -11,6 +12,7 @@ import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.screen.ScreenHandler;
@@ -28,6 +30,7 @@ public class BoundaryBeaconBlockEntity extends BaseBeaconBlockEntity {
 
     @Nullable
     private List<Pair<BannerPattern, DyeColor>> bannerPatterns;
+
     @Nullable
     private NbtList bannerPatternNbt;
 
@@ -48,14 +51,16 @@ public class BoundaryBeaconBlockEntity extends BaseBeaconBlockEntity {
         BaseBeaconBlockEntity.tick(world, pos, state, blockEntity);
     }
 
-    public void setBannerPatterns(@Nullable List<Pair<BannerPattern, DyeColor>> bannerPatterns) { this.bannerPatterns = bannerPatterns; }
+    public void setBanner(ItemStack bannerStack) {
+        bannerPatternNbt = BannerBlockEntity.getPatternListNbt(bannerStack);
+        bannerPatterns = null;
+    }
 
     @Nullable
     public List<Pair<BannerPattern, DyeColor>> getBannerPatterns() {
-        if(bannerPatterns == null)
-            return BannerBlockEntity.getPatternsFromNbt(getCachedState().get(BoundaryBeaconBlock.DYE_COLOUR), bannerPatternNbt);
-        else
-            return bannerPatterns;
+        if (bannerPatterns == null)
+            this.bannerPatterns = BannerBlockEntity.getPatternsFromNbt(getCachedState().get(BoundaryBeaconBlock.DYE_COLOUR), bannerPatternNbt);
+        return this.bannerPatterns;
     }
 
     @Override

@@ -10,7 +10,7 @@ import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
-public class AddEclipseEffectPacket implements C2SPacket {
+public class AddEclipseEffectPacket extends C2SPacket {
 
     private int effectDuration;
 

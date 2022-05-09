@@ -2,129 +2,97 @@ package io.github.profjb58.territorial.world.team;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.block.entity.BannerPattern;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.DyeColor;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
-import java.time.Instant;
+import java.io.Serializable;
 import java.util.*;
 
-public class Team {
+public class Team implements Serializable {
 
     private final UUID id;
     private String name;
     private Banner banner;
-    protected Date lastLoginDate;
-    protected int numChunkClaims;
-    protected boolean isInactive;
+    private final Members members;
 
-    private Members members;
-    private Map<RegistryKey<World>, HashSet<BlockPos>> beaconPositions;
-
-    protected Team(UUID id, String name, Banner banner, Date lastLoginDate, int numChunkClaims, boolean isInactive, Members members, @Nullable Map<RegistryKey<World>, HashSet<BlockPos>> beaconPositions) {
+    protected Team(UUID id, String name, Banner banner, Members members) {
         this.id = id;
         this.name = name;
         this.banner = banner;
-        this.lastLoginDate = lastLoginDate;
-        this.numChunkClaims = numChunkClaims;
-        this.isInactive = isInactive;
         this.members = members;
-        this.beaconPositions = beaconPositions;
     }
 
-    // New Team
-    protected Team(String name, Banner banner, PlayerEntity owner) {
+    protected Team(String name, Banner banner, ServerPlayerEntity owner) {
         id = UUID.randomUUID();
         this.name = name;
         this.banner = banner;
-        this.members.add(Members.Role.OWNER, owner.getUuid());
-    }
-
-    protected void updateLastLogin() { lastLoginDate = Date.from(Instant.EPOCH); }
-
-    public void addBeaconPos(World world, BlockPos pos, int tier) {
-        var worldKey = world.getRegistryKey();
-        HashSet<BlockPos> beaconPosSet = new HashSet<>();
-
-        if(beaconPositions.containsKey(worldKey)) {
-            beaconPosSet = beaconPositions.get(worldKey);
-            beaconPosSet.add(pos);
-        }
-        else {
-            beaconPosSet.add(pos);
-            beaconPositions.put(worldKey, beaconPosSet);
-        }
-    }
-
-    public void removeBeaconPos(World world, BlockPos pos) {
-        var worldKey = world.getRegistryKey();
-
-        if(beaconPositions.containsKey(worldKey)) {
-            HashSet<BlockPos> beaconPosSet = beaconPositions.get(worldKey);
-            if(beaconPosSet.size() == 1)
-                beaconPositions.remove(worldKey);
-            else
-                beaconPosSet.remove(pos);
-        }
+        this.members = new Members(Map.of(Members.Role.OWNER, Set.of(owner.getUuid())));
     }
 
     public UUID getId() { return id; }
-    public void setName(String name) { this.name = name; }
     public String getName() { return name; }
-    public void assignBanner(Banner banner) { this.banner = banner; }
-    public Banner getBanner() { return banner; }
-    public Members members() { return members; }
+    public Team.Banner getBanner() { return banner; }
+    public Team.Members members() { return members; }
 
-    @Override
-    public String toString() {
-        var builder = new StringBuilder();
-        for (var worldKey : beaconPositions.keySet()) {
-            builder.append("[").append(worldKey.getValue().toString()).append("]= ");
-            for(var beaconPos : beaconPositions.get(worldKey)) {
-                builder.append(beaconPos.toShortString()).append("\n");
-            }
-        }
-        return "AbstractTeam{" +
-                "\n\t name= " + name +
-                "\n\t bannerPatterns= " + Arrays.toString(banner.patterns.toArray()) +
-                "\n\t beaconPositions="  + builder +
-                "}";
+    public void setIdentifyingData(String name, Banner banner) {
+        this.name = name;
+        this.banner = banner;
     }
 
-    public record Members(EnumMap<Role, HashSet<UUID>> members) {
-        public enum Role { OWNER, DEFAULT }
+    public record Banner(ItemStack stack, DyeColor baseColour) {}
 
-        public void add(Role role, UUID playerUuid) {
-            var membersSet = members.get(role);
-            membersSet.add(playerUuid);
+    public record Members(Map<Role, Set<UUID>> roleMap) {
+        public enum Role {
+            // Rank goes from 0 (minimum) to 9 (maximum)
+            OWNER("owner", 9), DEFAULT("member", 0);
+
+            private final int rank;
+            private final String key;
+
+            Role(String key, int rank) {
+                this.key = key;
+                this.rank = rank;
+            }
+
+            public int getRank() { return this.rank; }
+            public String getKey() { return this.key; }
         }
 
-        public boolean remove(UUID playerUuid) {
-            boolean memberFound = false;
-            for (HashSet<UUID> membersSet : members.values())
-                memberFound = membersSet.remove(playerUuid);
-            return memberFound;
+        boolean add(Role role, UUID playerUuid) {
+            return roleMap.get(role).add(playerUuid);
+        }
+
+        boolean remove(UUID playerUuid) {
+            for(Set<UUID> membersSet : roleMap.values())
+                return membersSet.remove(playerUuid);
+            return false;
         }
 
         int size() {
             int size = 0;
-            for (HashSet<UUID> membersSet : members.values())
+            for (Set<UUID> membersSet : roleMap.values())
                 size += membersSet.size();
             return size;
         }
 
         @Nullable
         public Role getRole(UUID playerUuid) {
-            for (Map.Entry<Role, HashSet<UUID>> membersSet : members.entrySet()) {
+            for (Map.Entry<Role, Set<UUID>> membersSet : roleMap.entrySet()) {
                 Role key = membersSet.getKey();
-                HashSet<UUID> value = membersSet.getValue();
+                Set<UUID> value = membersSet.getValue();
                 if (value.contains(playerUuid)) return key;
             }
             return null;
         }
+
+        public List<UUID> asList() {
+            List<UUID> memberList = new LinkedList<>();
+            for(Set<UUID> membersSet : roleMap.values()) {
+                memberList.addAll(membersSet);
+            }
+            return memberList;
+        }
     }
-    public record Banner(List<Pair<BannerPattern, DyeColor>> patterns, DyeColor baseColour) {}
 }

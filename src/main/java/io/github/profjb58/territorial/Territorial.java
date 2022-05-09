@@ -48,9 +48,6 @@ public class Territorial implements ModInitializer {
 		DestructionHandlers.init();
 		LootTableHandler.init();
 		ServerConnectionHandlers.init();
-
-		// Packet handlers
-		C2SPackets.init();
 	}
 
 	public static TerritorialConfig getConfig() {

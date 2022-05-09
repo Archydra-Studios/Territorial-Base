@@ -14,5 +14,6 @@ public class ServerConnectionHandlers {
 
     private static void onPlayerConnect(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server) {
         Territorial.TEAMS_HANDLER.updateLastLogin(handler.getPlayer());
+        Territorial.TEAMS_HANDLER.checkInactive();
     }
 }

@@ -3,7 +3,6 @@ package io.github.profjb58.territorial.client.gui;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.profjb58.territorial.block.entity.BaseBeaconBlockEntity;
-import io.github.profjb58.territorial.networking.CreateTeamPacket;
 import io.github.profjb58.territorial.screen.BaseBeaconScreenHandler;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -49,9 +48,6 @@ public class BaseBeaconScreen extends HandledScreen<BaseBeaconScreenHandler> {
         super(handler, inventory, title);
         this.backgroundWidth = 309;
         this.backgroundHeight = 219;
-
-        // TODO - REMOVE THIS!
-        new CreateTeamPacket("testName", Items.BLACK_BANNER.getDefaultStack(), 2).send();
 
         handler.addListener(new ScreenHandlerListener() {
             public void onSlotUpdate(ScreenHandler handler, int slotId, ItemStack stack) {

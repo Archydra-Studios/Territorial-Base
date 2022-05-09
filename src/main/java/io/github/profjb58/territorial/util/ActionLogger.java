@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter;
 public class ActionLogger {
 
     public enum LogType { INFO, WARNING, ERROR }
-    public enum LogModule { LOCKS, CLAIMS, TRAPS, BLANK }
+    public enum LogModule { TEAMS, LOCKS, CLAIMS, TRAPS, BLANK }
 
     static final String LOGS_DIRECTORY = FabricLoader.getInstance().getGameDir() + "/logs/";
 
@@ -52,6 +52,7 @@ public class ActionLogger {
             };
 
             moduleSpecifier = switch (module) {
+                case TEAMS -> "(teams) - ";
                 case CLAIMS -> "(claims) - ";
                 case LOCKS -> "(locks) - ";
                 case TRAPS -> "(traps) - ";

@@ -2,9 +2,9 @@ package io.github.profjb58.territorial.networking;
 
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.event.registry.TerritorialNetworkRegistry;
+import io.github.profjb58.territorial.util.NbtUtils;
 import io.github.profjb58.territorial.world.team.Team;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.minecraft.block.entity.BannerBlockEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
@@ -13,7 +13,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 
-public class CreateTeamPacket implements C2SPacket  {
+public class CreateTeamPacket extends C2SPacket  {
+
     private String teamName;
     private ItemStack bannerStack;
     private int bannerBaseColourId;
@@ -31,6 +32,7 @@ public class CreateTeamPacket implements C2SPacket  {
         buf.writeString(teamName);
         buf.writeItemStack(bannerStack);
         buf.writeInt(bannerBaseColourId);
+
     }
 
     @Override
@@ -46,10 +48,6 @@ public class CreateTeamPacket implements C2SPacket  {
     }
 
     public void execute(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
-        var patternListNbt = BannerBlockEntity.getPatternListNbt(bannerStack);
-        var baseDyeColour = DyeColor.byId(bannerBaseColourId);
-        var patterns = BannerBlockEntity.getPatternsFromNbt(baseDyeColour, patternListNbt);
-        var banner = new Team.Banner(patterns, baseDyeColour);
-        Territorial.TEAMS_HANDLER.createTeam(teamName, banner, player);
+        Territorial.TEAMS_HANDLER.createTeam(teamName, new Team.Banner(bannerStack, DyeColor.byId(bannerBaseColourId)), player);
     }
 }

@@ -130,6 +130,10 @@
   "gui.territorial.beacon.team": "Team",
   "gui.territorial.beacon.range": "Range",
 
-  "team.territorial.creation.failed": "",
-  "team.territorial.creation.successful": ""
+  "team.territorial.creation.failed": "§a[Territorial]§r§c Failed to create team %s§c. Already exists",
+  "team.territorial.creation.successful": "§a[Territorial]§r Team %s created successfully!",
+  "team.territorial.removal.reason.admin": "removed by an Admin",
+  "team.territorial.removal.reason.team_owner": "removed by a Team Owner",
+  "team.territorial.removal.reason.purged": "purged for being in-active",
+  "team.territorial.removal.failed": "§a[Territorial]§r§c Failed to remove team %s§c. Team does not exist"
 }
