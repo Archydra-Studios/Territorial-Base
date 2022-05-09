@@ -10,6 +10,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -27,23 +28,21 @@ public class UseBlockHandler implements UseBlockCallback {
 
     @Override
     public ActionResult interact(PlayerEntity player, World world, Hand hand, BlockHitResult hitResult) {
-        if(!player.isCreative()) {
-            var lbe = new LockableBlockEntity(world, hitResult.getBlockPos());
-            if (lbe.exists()) {
-                if(world.isClient) { // TODO - Improve this...
-                    lockableHud.ignoreCycle();
-                }
-                else {
-                    Item heldItem = player.getStackInHand(player.getActiveHand()).getItem();
-                    if(player.isSneaking()) { // Pass shift-click functionality to the corresponding item classes
-                        if(heldItem instanceof PadlockItem || heldItem instanceof KeyItem) {
-                            return ActionResult.PASS;
-                        }
-                    }
-                    LockableBlock lb = lbe.getBlock();
+        if(!world.isClient) {
+            var heldItem = player.getStackInHand(player.getActiveHand()).getItem();
+
+            if(heldItem instanceof PadlockItem padlockItem)
+                return padlockItem.useOnBlock(player, (ServerWorld) world, hitResult);
+            else if(heldItem instanceof KeyItem keyItem)
+                return keyItem.useOnBlock((ServerPlayerEntity) player, (ServerWorld) world, hitResult);
+
+            if(!player.isCreative()) {
+                var lbe = new LockableBlockEntity(world, hitResult.getBlockPos());
+                if (lbe.exists()) {
+                    var lb = lbe.getBlock();
                     var keySearchResult = lb.findMatchingKey((ServerPlayerEntity) player, true);
-                    ItemStack keyItemStack = keySearchResult.getLeft();
-                    Inventory keyInventory = keySearchResult.getRight();
+                    var keyItemStack = keySearchResult.getLeft();
+                    var keyInventory = keySearchResult.getRight();
 
                     if(keyItemStack == null) {
                         if (!lb.lockOwnerUuid().equals(player.getUuid())) { // No matching key found
@@ -56,7 +55,7 @@ public class UseBlockHandler implements UseBlockCallback {
                         return ActionResult.FAIL;
                     }
                     else {
-                        KeyItem keyItem = (KeyItem) keyItemStack.getItem();
+                        var keyItem = (KeyItem) keyItemStack.getItem();
                         if(keyItem.isMasterKey()) {
                             keyItem.onUseMasterKey(keyItemStack, (ServerPlayerEntity) player, lb);
                             keyInventory.markDirty(); // Make sure the container the master key is stored in is updated

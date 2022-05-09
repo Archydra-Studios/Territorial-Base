@@ -25,7 +25,7 @@ public class LockableBlockEntity {
             this.lb = new LockableBlock(tag.getString("lock_id"),
                     tag.getUuid("lock_owner_uuid"),
                     tag.getString("lock_owner_name"),
-                    lb.lockType(tag.getInt("lock_type")),
+                    LockableBlock.lockType(tag.getInt("lock_type")),
                     blockPos);
             this.world = world;
         }

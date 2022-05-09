@@ -8,6 +8,7 @@ import io.github.profjb58.territorial.block.LockableBlock.LockType;
 import io.github.profjb58.territorial.util.ActionLogger;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -16,6 +17,9 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,55 +36,42 @@ public class PadlockItem extends Item {
         this.type = type;
     }
 
-    // Shift click functionality
     @Override
-    public ActionResult useOnBlock(ItemUsageContext ctx) {
-        var player = ctx.getPlayer();
-        if(player != null) {
-            if(player.isSneaking()) {
-                if(ctx.getWorld().isClient) {
-                    TerritorialClient.lockableHud.ignoreCycle();
-                }
-                else {
-                    var lockStack = player.getStackInHand(player.getActiveHand());
-                    var lb = new LockableBlock(
-                            lockStack.getName().getString(),
-                            player.getUuid(),
-                            player.getName().getString(),
-                            type,
-                            ctx.getBlockPos());
+    public ActionResult useOnBlock(ItemUsageContext context) {
+        return ActionResult.FAIL; // Transfer logic to UseBlockHandler event class
+    }
 
-                    if(!lb.lockId().equals("") && lockStack.hasCustomName()) {
-                        switch (lb.createEntity((ServerWorld) ctx.getWorld())) {
-                            case SUCCESS -> {
-                                if (!player.isCreative()) {
-                                    lockStack.decrement(1);
-                                }
-                                player.sendMessage(new TranslatableText("message.territorial.lock_successful"), true);
-                                lb.playSound(LockableBlock.LockSound.LOCK_ADDED, player.getEntityWorld());
-                                if (Territorial.isDedicatedServer()) {
-                                    TerritorialServer.actionLogger.write(ActionLogger.LogType.INFO,
-                                            ActionLogger.LogModule.LOCKS,
-                                            player.getName().getString() + " claimed block entity at: " + ctx.getBlockPos());
-                                }
-                            }
-                            case FAIL -> {
-                                player.sendMessage(new TranslatableText("message.territorial.lock_failed"), true);
-                                lb.playSound(LockableBlock.LockSound.DENIED_ENTRY, player.getEntityWorld());
-                                return ActionResult.FAIL;
-                            }
-                            case NO_ENTITY_EXISTS -> player.sendMessage(new TranslatableText("message.territorial.lock_not_lockable"), true);
-                        }
+    public ActionResult useOnBlock(PlayerEntity player, ServerWorld world, BlockHitResult hitResult) {
+        if(player != null && !world.isClient) {
+            var lockStack = player.getStackInHand(player.getActiveHand());
+            var lb = new LockableBlock(
+                    lockStack.getName().getString(),
+                    player.getUuid(),
+                    player.getName().getString(),
+                    type,
+                    hitResult.getBlockPos());
+
+            if (!lb.lockId().equals("") && lockStack.hasCustomName()) {
+                switch (lb.createEntity(world)) {
+                    case SUCCESS -> {
+                        if (!player.isCreative()) lockStack.decrement(1);
+                        player.sendMessage(new TranslatableText("message.territorial.lock_successful"), true);
+                        lb.playSound(LockableBlock.LockSound.LOCK_ADDED, player.getEntityWorld());
                     }
-                    else {
-                        player.sendMessage(new TranslatableText("message.territorial.lock_unnamed"), true);
+                    case FAIL -> {
+                        player.sendMessage(new TranslatableText("message.territorial.lock_failed"), true);
                         lb.playSound(LockableBlock.LockSound.DENIED_ENTRY, player.getEntityWorld());
                         return ActionResult.FAIL;
                     }
+                    case NO_ENTITY_EXISTS -> player.sendMessage(new TranslatableText("message.territorial.lock_not_lockable"), true);
                 }
+            } else {
+                player.sendMessage(new TranslatableText("message.territorial.lock_unnamed"), true);
+                lb.playSound(LockableBlock.LockSound.DENIED_ENTRY, player.getEntityWorld());
+                return ActionResult.FAIL;
             }
         }
-        return ActionResult.PASS;
+        return ActionResult.CONSUME;
     }
 
     @Override

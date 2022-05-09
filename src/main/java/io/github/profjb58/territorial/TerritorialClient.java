@@ -14,7 +14,6 @@ public class TerritorialClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        C2SPackets.init();
         ClientTickHandlers.init();
         TerritorialClientRegistry.registerAll();
         TerritorialNetworkRegistry.registerClientPackets();

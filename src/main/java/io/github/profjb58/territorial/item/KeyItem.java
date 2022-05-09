@@ -11,13 +11,18 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.Pair;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -60,29 +65,26 @@ public class KeyItem extends Item {
         return ActionResult.PASS;
     }*/
 
-    // Shift click functionality
     @Override
-    public ActionResult useOnBlock(ItemUsageContext ctx) {
-        var player = ctx.getPlayer();
-        if (player != null && !ctx.getWorld().isClient && player.isSneaking()) {
-            var lbe = new LockableBlockEntity(ctx.getWorld(), ctx.getBlockPos());
+    public ActionResult useOnBlock(ItemUsageContext context) {
+        return ActionResult.FAIL; // Transfer logic to UseBlockHandler event class
+    }
+
+    public ActionResult useOnBlock(ServerPlayerEntity player, ServerWorld world, BlockHitResult hitResult) {
+        var lbe = new LockableBlockEntity(world, hitResult.getBlockPos());
+        if(player.isSneaking()) {
             if(lbe.exists()) {
                 var lb = lbe.getBlock();
-                if(lb.findMatchingKey((ServerPlayerEntity) player, false) != null) {
+                if(lb.findMatchingKey(player, false).getLeft() != null) {
                     if(lbe.remove()) {
-                        onRemoveLock(ctx, lb); // Remove the lock
+                        onRemoveLock(player, world, hitResult.getBlockPos(), lb); // Remove the lock
                         //WorldLockStorage.get((ServerWorld) ctx.getWorld()).removeLock(lb); // Remove from persistent storage
                     }
-                    else {
-                        // Really shouldn't happen, but just encase
-                        Territorial.LOGGER.error("Lockpick failed to remove NBT lock data :(. Please report this as an issue");
-                    }
+                    else Territorial.LOGGER.error("Lockpick failed to remove NBT lock data :(. Please report this as an issue");
                 }
-                if(masterKey) onUseMasterKey(player.getStackInHand(player.getActiveHand()), (ServerPlayerEntity) player, lb);
+                if(masterKey) onUseMasterKey(player.getStackInHand(player.getActiveHand()), player, lb);
             }
-            else {
-                ctx.getPlayer().sendMessage(new TranslatableText("message.territorial.no_lock"), true);
-            }
+            else player.sendMessage(new TranslatableText("message.territorial.no_lock"), true);
         }
         return ActionResult.PASS;
     }
@@ -90,13 +92,11 @@ public class KeyItem extends Item {
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         super.appendTooltip(stack, world, tooltip, context);
-        if(masterKey) {
+        if(masterKey)
             tooltip.add(new TranslatableText("tooltip.territorial.master_key"));
-        }
         else {
             if(stack.hasCustomName()) {
                 tooltip.add(new TranslatableText("tooltip.territorial.shift"));
-
                 if(Screen.hasShiftDown()) {
                     tooltip.add(spacer());
                     TextUtils.ToolTip.addMultilineText(tooltip, "tooltip.territorial.key_shift", 4);
@@ -104,9 +104,7 @@ public class KeyItem extends Item {
                     TextUtils.ToolTip.addMultilineText(tooltip, "tooltip.territorial.key_shift", 2, 4);
                 }
             }
-            else {
-                tooltip.add(new TranslatableText("tooltip.territorial.key_unnamed"));
-            }
+            else tooltip.add(new TranslatableText("tooltip.territorial.key_unnamed"));
         }
     }
 
@@ -120,14 +118,10 @@ public class KeyItem extends Item {
         }
     }
 
-    void onRemoveLock(ItemUsageContext ctx, LockableBlock lb) {
-        var player = (ServerPlayerEntity) ctx.getPlayer();
-        if (player != null) {
-            ItemStack padlockStack = lb.getLockItemStack(1);
-            BlockPos pos = ctx.getBlockPos();
-            ctx.getWorld().spawnEntity(new ItemEntity(ctx.getWorld(), pos.getX(), pos.getY(), pos.getZ(), padlockStack));
-            ctx.getPlayer().sendMessage(new TranslatableText("message.territorial.lock_removed"), true);
-        }
+    void onRemoveLock(ServerPlayerEntity player, ServerWorld world, BlockPos pos, LockableBlock lb) {
+        var padlockStack = lb.getLockItemStack(1);
+        world.spawnEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), padlockStack));
+        player.sendMessage(new TranslatableText("message.territorial.lock_removed"), true);
     }
 
     public boolean isMasterKey() { return masterKey; }

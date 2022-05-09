@@ -4,8 +4,8 @@
     "layer0": "territorial:item/keyrings/keyring"
   },
   "overrides": [
-    { "predicate": { "stage": 0.25 }, "model": "territorial:item/keyring_0" },
-    { "predicate": { "stage": 0.5 }, "model": "territorial:item/keyring_1" },
+    { "predicate": { "stage": 0.1 }, "model": "territorial:item/keyring_0" },
+    { "predicate": { "stage": 0.4 }, "model": "territorial:item/keyring_1" },
     { "predicate": { "stage": 0.75 }, "model": "territorial:item/keyring_2" }
   ]
 }

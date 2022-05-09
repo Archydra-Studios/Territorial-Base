@@ -100,8 +100,9 @@
   "tooltip.territorial.key_shift_5": "§7Shift right click with a key in hand",
   "tooltip.territorial.key_unnamed": "§7This key needs a name",
   "tooltip.territorial.master_key": "§dUnlocks all",
+  "tooltip.territorial.blank_key": "§7Blank Key",
 
-  "tooltip.territorial.padlock_shift": "§7Shift right click to lock a block",
+  "tooltip.territorial.padlock_shift": "§7Right click to lock a block",
   "tooltip.territorial.padlock_unnamed": "§7This lock needs a name",
   "tooltip.territorial.item_disabled": "§cItem is disabled",
 

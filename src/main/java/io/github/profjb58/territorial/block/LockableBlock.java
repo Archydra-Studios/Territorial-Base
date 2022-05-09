@@ -145,7 +145,7 @@ public record LockableBlock(String lockId, UUID lockOwnerUuid, String lockOwnerN
         };
     }
 
-    public LockType lockType(int lockType) {
+    public static LockType lockType(int lockType) {
         return switch (lockType) {
             case -1 -> UNBREAKABLE;
             case 1 -> LockType.IRON;

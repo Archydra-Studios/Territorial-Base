@@ -66,7 +66,11 @@ public class KeyringItem extends Item {
             if (itemStack.getItem() instanceof KeyItem keyItem) {
                 if (keyItem.isMasterKey()) {
                     tooltip.add(new LiteralText("§d" + itemStack.getName().getString()));
-                } else {
+                }
+                else if(!stack.hasCustomName()) {
+                    tooltip.add(new TranslatableText("tooltip.territorial.blank_key"));
+                }
+                else {
                     tooltip.add(new LiteralText("§7" + itemStack.getName().getString()));
                 }
             }
