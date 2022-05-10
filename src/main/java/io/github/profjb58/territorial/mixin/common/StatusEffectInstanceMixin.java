@@ -14,22 +14,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(StatusEffectInstance.class)
 public abstract class StatusEffectInstanceMixin implements StatusEffectInstanceAccess {
 
-    private static BlockPos territorial_lastPosApplied;
+    private static BlockPos territorial$lastPosApplied;
 
-    public void territorial$setLastPosApplied(BlockPos pos) { territorial_lastPosApplied = pos;}
-    public BlockPos territorial$getLastPosApplied() { return territorial_lastPosApplied; }
+    public void territorial$setLastPosApplied(BlockPos pos) { territorial$lastPosApplied = pos;}
+    public BlockPos territorial$getLastPosApplied() { return territorial$lastPosApplied; }
 
     @Inject(at = @At("HEAD"), method = "writeNbt")
     public void writeNbt(NbtCompound tag, CallbackInfoReturnable<NbtCompound> cir) {
-        if(territorial_lastPosApplied != null) {
-            tag.putIntArray("last_pos_applied", NbtUtils.serializeBlockPos(territorial_lastPosApplied));
+        if(territorial$lastPosApplied != null) {
+            tag.putIntArray("last_pos_applied", NbtUtils.serializeBlockPos(territorial$lastPosApplied));
         }
     }
 
     @Inject(at = @At("HEAD"), method = "fromNbt(Lnet/minecraft/entity/effect/StatusEffect;Lnet/minecraft/nbt/NbtCompound;)Lnet/minecraft/entity/effect/StatusEffectInstance;")
     private static void fromNbt(StatusEffect statusEffect, NbtCompound tag, CallbackInfoReturnable<StatusEffectInstance> ci) {
         if (tag.contains("last_pos_applied")) {
-            territorial_lastPosApplied = NbtUtils.deserializeBlockPos(tag.getIntArray("last_pos_applied"));
+            territorial$lastPosApplied = NbtUtils.deserializeBlockPos(tag.getIntArray("last_pos_applied"));
         }
     }
 }

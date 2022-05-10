@@ -1,4 +1,4 @@
-package io.github.profjb58.territorial.networking;
+package io.github.profjb58.territorial.networking.s2c;
 
 import io.github.profjb58.territorial.event.registry.TerritorialNetworkRegistry;
 import io.github.profjb58.territorial.util.NbtUtils;
@@ -10,9 +10,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
-import org.h2.tools.Server;
-
-import io.github.profjb58.territorial.world.team.Team.Members.Role;
 
 import java.util.*;
 

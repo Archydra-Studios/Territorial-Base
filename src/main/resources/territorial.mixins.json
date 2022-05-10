@@ -16,6 +16,7 @@
     "common.StatusEffectInstanceMixin"
   ],
   "client": [
+    "client.InGameHudMixin",
     "client.ClientPlayerInteractionMixin",
     "client.ClientPlayNetworkHandlerMixin",
     "client.OverlayRemainingAccessor"

@@ -1,5 +1,6 @@
-package io.github.profjb58.territorial.networking;
+package io.github.profjb58.territorial.networking.s2c;
 
+import io.github.profjb58.territorial.networking.Packet;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;

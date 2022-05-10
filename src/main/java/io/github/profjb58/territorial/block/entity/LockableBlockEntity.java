@@ -6,6 +6,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.concurrent.locks.Lock;
 
 /**
@@ -20,12 +21,12 @@ public class LockableBlockEntity {
     private World world;
 
     public LockableBlockEntity(World world, BlockPos blockPos) {
-        NbtCompound tag = getNbt(world, blockPos);
-        if (tag != null) {
-            this.lb = new LockableBlock(tag.getString("lock_id"),
-                    tag.getUuid("lock_owner_uuid"),
-                    tag.getString("lock_owner_name"),
-                    LockableBlock.lockType(tag.getInt("lock_type")),
+        var nbt = getNbt(world, blockPos);
+        if (nbt != null) {
+            this.lb = new LockableBlock(nbt.getString("lock_id"),
+                    nbt.getUuid("lock_owner_uuid"),
+                    nbt.getString("lock_owner_name"),
+                    LockableBlock.lockType(nbt.getInt("lock_type")),
                     blockPos);
             this.world = world;
         }
@@ -35,13 +36,13 @@ public class LockableBlockEntity {
 
     public boolean remove() {
         if(exists() && !world.isClient) {
-            NbtCompound tag = getNbt(world, lb.blockPos());
-            if(tag != null) {
-                tag.remove("lock_id");
-                tag.remove("lock_owner_uuid");
-                tag.remove("lock_owner_name");
-                tag.remove("lock_type");
-                updateNbtFromTag(tag);
+            var nbt = getNbt();
+            if(nbt != null) {
+                nbt.remove("lock_id");
+                nbt.remove("lock_owner_uuid");
+                nbt.remove("lock_owner_name");
+                nbt.remove("lock_type");
+                updateNbtFromTag(nbt);
 
                 //WorldLockStorage lps = WorldLockStorage.get((ServerWorld) world);
                 //lps.removeLock(lb);
@@ -53,13 +54,13 @@ public class LockableBlockEntity {
 
     public boolean update() {
         if(exists() && !world.isClient) {
-            NbtCompound tag = getNbt(world, lb.blockPos());
-            if(tag != null) {
-                tag.putString("lock_id", lb.lockId());
-                tag.putUuid("lock_owner_uuid", lb.lockOwnerUuid());
-                tag.putString("lock_owner_name", lb.lockOwnerName());
-                tag.putInt("lock_type", lb.lockTypeInt());
-                updateNbtFromTag(tag);
+            var nbt = getNbt();
+            if(nbt != null) {
+                nbt.putString("lock_id", lb.lockId());
+                nbt.putUuid("lock_owner_uuid", lb.lockOwnerUuid());
+                nbt.putString("lock_owner_name", lb.lockOwnerName());
+                nbt.putInt("lock_type", lb.lockTypeInt());
+                updateNbtFromTag(nbt);
 
                 //WorldLockStorage lps = WorldLockStorage.get((ServerWorld) world);
                 //lps.addLock(lb);
@@ -70,7 +71,7 @@ public class LockableBlockEntity {
     }
 
     private boolean updateNbtFromTag(NbtCompound tag) {
-        BlockEntity be = world.getBlockEntity(lb.blockPos());
+        var be = world.getBlockEntity(lb.blockPos());
         if(be != null) {
             try {
                 be.readNbt(tag);
@@ -81,14 +82,20 @@ public class LockableBlockEntity {
     }
 
     private NbtCompound getNbt(World world, BlockPos blockPos) {
-        BlockEntity be = world.getBlockEntity(blockPos);
+        var be = world.getBlockEntity(blockPos);
         if(be != null) {
-            NbtCompound tag = be.createNbt();
-            if(tag.contains("lock_id") && tag.contains("lock_type") && tag.contains("lock_owner_uuid")) { // Is lockable
-                return tag;
+            var nbt = be.createNbt();
+            if(nbt.contains("lock_id") && nbt.contains("lock_type") && nbt.contains("lock_owner_uuid")
+                    && nbt.contains("lock_owner_name")) { // Is lockable
+                return nbt;
             }
         }
         return null;
+    }
+
+    @Nullable
+    public NbtCompound getNbt() {
+        return getNbt(world, lb.blockPos());
     }
 
     public LockableBlock getBlock() { return lb; };

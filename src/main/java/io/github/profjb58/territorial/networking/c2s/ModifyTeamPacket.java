@@ -1,9 +1,8 @@
-package io.github.profjb58.territorial.networking;
+package io.github.profjb58.territorial.networking.c2s;
 
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.event.registry.TerritorialNetworkRegistry;
-import io.github.profjb58.territorial.util.NbtUtils;
-import io.github.profjb58.territorial.world.team.ServerTeam;
+import io.github.profjb58.territorial.networking.c2s.C2SPacket;
 import io.github.profjb58.territorial.world.team.Team;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.item.ItemStack;
@@ -14,7 +13,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 
-import java.util.List;
 import java.util.UUID;
 
 public class ModifyTeamPacket extends C2SPacket {

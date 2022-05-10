@@ -1,6 +1,7 @@
 package io.github.profjb58.territorial.event;
 
 import io.github.profjb58.territorial.Territorial;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.server.MinecraftServer;

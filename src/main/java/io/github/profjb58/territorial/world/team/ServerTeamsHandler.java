@@ -1,7 +1,7 @@
 package io.github.profjb58.territorial.world.team;
 
 import io.github.profjb58.territorial.Territorial;
-import io.github.profjb58.territorial.networking.SyncTeamDataPacket;
+import io.github.profjb58.territorial.networking.s2c.SyncTeamDataPacket;
 import io.github.profjb58.territorial.util.TickCounter;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.*;

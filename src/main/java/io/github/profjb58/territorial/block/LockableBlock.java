@@ -4,6 +4,8 @@ import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.inventory.ItemInventory;
 import io.github.profjb58.territorial.item.KeyringItem;
 import io.github.profjb58.territorial.util.MathUtils;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.inventory.Inventory;
@@ -25,6 +27,11 @@ import java.util.UUID;
 import static io.github.profjb58.territorial.block.LockableBlock.LockType.*;
 
 public record LockableBlock(String lockId, UUID lockOwnerUuid, String lockOwnerName, LockType lockType, BlockPos blockPos) {
+
+    @Environment(EnvType.CLIENT)
+    public LockableBlock(String lockId, String lockOwnerName, LockType lockType) {
+        this(lockId, null, lockOwnerName, lockType, null);
+    }
 
     public enum LockType { UNBREAKABLE, IRON, GOLD, DIAMOND, NETHERITE }
     public enum LockSound { DENIED_ENTRY, LOCK_ADDED, LOCK_DESTROYED }

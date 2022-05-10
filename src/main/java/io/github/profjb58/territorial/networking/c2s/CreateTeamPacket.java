@@ -1,8 +1,8 @@
-package io.github.profjb58.territorial.networking;
+package io.github.profjb58.territorial.networking.c2s;
 
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.event.registry.TerritorialNetworkRegistry;
-import io.github.profjb58.territorial.util.NbtUtils;
+import io.github.profjb58.territorial.networking.c2s.C2SPacket;
 import io.github.profjb58.territorial.world.team.Team;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.item.ItemStack;
@@ -13,7 +13,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 
-public class CreateTeamPacket extends C2SPacket  {
+public class CreateTeamPacket extends C2SPacket {
 
     private String teamName;
     private ItemStack bannerStack;

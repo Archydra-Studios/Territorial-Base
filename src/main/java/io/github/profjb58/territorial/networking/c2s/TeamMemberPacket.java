@@ -1,7 +1,8 @@
-package io.github.profjb58.territorial.networking;
+package io.github.profjb58.territorial.networking.c2s;
 
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.event.registry.TerritorialNetworkRegistry;
+import io.github.profjb58.territorial.networking.c2s.C2SPacket;
 import io.github.profjb58.territorial.world.team.ServerTeam;
 import io.github.profjb58.territorial.world.team.ServerTeamsHandler;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;

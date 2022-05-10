@@ -1,7 +1,12 @@
 package io.github.profjb58.territorial.client.gui;
 
+import io.github.cottonmc.cotton.gui.client.CottonHud;
+import io.github.cottonmc.cotton.gui.widget.WTiledSprite;
+import io.github.cottonmc.cotton.gui.widget.WWidget;
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.block.LockableBlock;
+import io.github.profjb58.territorial.misc.access.InGameHudAccess;
+import io.github.profjb58.territorial.mixin.client.InGameHudMixin;
 import io.github.profjb58.territorial.mixin.client.OverlayRemainingAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -16,49 +21,34 @@ import net.minecraft.util.Identifier;
 @Environment(EnvType.CLIENT)
 public class LockableHud {
 
-    private boolean ignoreCycle = false;
-    //private WTiledSprite lockImage;
+    private static final int ACTION_MESSAGE_DURATION = 80;
 
-    public void showLockInfo(LockableBlock lb, ClientPlayerEntity player) {
-        if(!ignoreCycle) {
-            if(lb.exists()) {
-                reset();
+    private WTiledSprite lockImage;
+    private boolean showingLockInfo = false;
 
-                var window = MinecraftClient.getInstance().getWindow();
-                int hudHeight = window.getScaledHeight();
-                int hudWidth = window.getScaledWidth();
+    public void showLockInfo(LockableBlock lb) {
+        if(!showingLockInfo) {
+            var window = MinecraftClient.getInstance().getWindow();
+            int hudHeight = window.getScaledHeight();
+            int hudWidth = window.getScaledWidth();
 
-                String lockId, lockOwner;
-                if(lb.lockOwnerUuid().equals(player.getUuid())) {
-                    lockId = lb.lockId();
-                    lockOwner = lb.lockOwnerName();
-                }
-                else {
-                    lockId = "§k" + lb.lockId();
-                    lockOwner = "§k" + lb.lockOwnerName();
-                }
-
-                String fc = getLockableFormattingColour(lb.lockType());
-                LiteralText lockInfoText = new LiteralText(fc + "Id: §f" + lockId + "   " + fc + "Owner: §f" + lockOwner);
-                player.sendMessage(lockInfoText, true);
-
-                var item = lb.getLockItemStack(1).getItem();
-                //lockImage = new WTiledSprite(32, 32, new Identifier(Territorial.MOD_ID, "textures/item/" + item.toString() + ".png"));
-
-                //CottonHud.add(lockImage, (hudWidth / 2) - 16, hudHeight - 100);
-            }
-        }
-        else {
+            String lfc = getLockableFormattingColour(lb.lockType());
+            var lockInfoText = new LiteralText(lfc + "Id: §f" + lb.lockId() + "   " + lfc + "Owner: §f" + lb.lockOwnerName());
             var inGameHud = MinecraftClient.getInstance().inGameHud;
-            if(((OverlayRemainingAccessor) inGameHud).getOverlayRemaining() == 0) {
-                ignoreCycle = false;
-            }
+            ((InGameHudAccess) inGameHud).territorial$setOverlayMessage(lockInfoText, ACTION_MESSAGE_DURATION);
+
+            var item = lb.getLockItemStack(1).getItem();
+            lockImage = new WTiledSprite(32, 32, new Identifier(Territorial.MOD_ID, "textures/item/padlocks/" + item.toString() + ".png"));
+            CottonHud.add(lockImage, CottonHud.Positioner.horizontallyCentered(-100));
+            showingLockInfo = true;
         }
     }
 
-    public void reset() {
-        //CottonHud.remove(lockImage);
-        ((OverlayRemainingAccessor) MinecraftClient.getInstance().inGameHud).setOverlayRemaining(0); // Clears the action message
+    public void overlayFinishedDisplaying() {
+        if(lockImage != null && showingLockInfo) {
+            CottonHud.remove(lockImage);
+            showingLockInfo = false;
+        }
     }
 
     private String getLockableFormattingColour(LockableBlock.LockType lockType) {
@@ -70,11 +60,4 @@ public class LockableHud {
             case UNBREAKABLE -> "§d";
         };
     }
-
-    public void ignoreCycle() {
-        reset();
-        ignoreCycle = true;
-    }
-
-    public boolean isIgnoringCycle() { return ignoreCycle; }
 }

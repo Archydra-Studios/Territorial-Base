@@ -1,7 +1,7 @@
 package io.github.profjb58.territorial.block;
 
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
-import io.github.profjb58.territorial.networking.AddEclipseEffectPacket;
+import io.github.profjb58.territorial.networking.c2s.AddEclipseEffectPacket;
 import io.github.profjb58.territorial.util.TickCounter;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

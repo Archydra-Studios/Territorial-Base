@@ -1,6 +1,6 @@
 package io.github.profjb58.territorial.mixin.client;
 
-import io.github.profjb58.territorial.networking.StartBreakingBlockPacket;
+import io.github.profjb58.territorial.networking.c2s.StartBreakingBlockPacket;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;

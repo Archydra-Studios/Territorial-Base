@@ -14,9 +14,9 @@ public class TerritorialClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        ClientTickHandlers.init();
         TerritorialClientRegistry.registerAll();
         TerritorialNetworkRegistry.registerClientPackets();
         lockableHud = new LockableHud();
+        ClientTickHandlers.init();
     }
 }

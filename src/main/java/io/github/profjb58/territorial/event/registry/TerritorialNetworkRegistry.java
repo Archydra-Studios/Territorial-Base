@@ -1,7 +1,10 @@
 package io.github.profjb58.territorial.event.registry;
 
 import io.github.profjb58.territorial.Territorial;
-import io.github.profjb58.territorial.networking.*;
+import io.github.profjb58.territorial.networking.c2s.*;
+import io.github.profjb58.territorial.networking.s2c.S2CPacket;
+import io.github.profjb58.territorial.networking.s2c.SyncLockInfoPacket;
+import io.github.profjb58.territorial.networking.s2c.SyncTeamDataPacket;
 import net.minecraft.util.Identifier;
 
 public class TerritorialNetworkRegistry  {
@@ -16,6 +19,7 @@ public class TerritorialNetworkRegistry  {
 
     // S2C Packets
     public static final Identifier SYNC_TEAM_DATA_PACKET_ID = new Identifier(Territorial.MOD_ID, "sync_team_data_packet");
+    public static final Identifier SYNC_LOCK_INFO_PACKET_ID = new Identifier(Territorial.MOD_ID, "sync_lock_info_packet");
 
     public static void registerClientPackets() {
         C2SPacket.register(CREATE_TEAM_PACKET_ID, new RemoveTeamPacket());
@@ -28,5 +32,6 @@ public class TerritorialNetworkRegistry  {
 
     public static void registerServerPackets() {
         S2CPacket.register(SYNC_TEAM_DATA_PACKET_ID, new SyncTeamDataPacket());
+        S2CPacket.register(SYNC_LOCK_INFO_PACKET_ID, new SyncLockInfoPacket());
     }
 }

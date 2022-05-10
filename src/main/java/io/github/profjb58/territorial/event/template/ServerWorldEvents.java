@@ -8,9 +8,8 @@ import net.minecraft.world.explosion.Explosion;
 public final class ServerWorldEvents {
 
     public static final Event<BeforeExplosion> BEFORE_EXPLOSION = EventFactory.createArrayBacked(BeforeExplosion.class, callbacks -> (explosion, world) -> {
-        for (BeforeExplosion callback : callbacks) {
+        for (BeforeExplosion callback : callbacks)
             callback.beforeExplosion(explosion, world);
-        }
     });
 
     @FunctionalInterface

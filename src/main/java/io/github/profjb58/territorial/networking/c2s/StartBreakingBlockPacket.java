@@ -1,42 +1,45 @@
-package io.github.profjb58.territorial.networking;
+package io.github.profjb58.territorial.networking.c2s;
 
+import io.github.profjb58.territorial.entity.effect.LockFatigueStatusEffect;
 import io.github.profjb58.territorial.event.registry.TerritorialNetworkRegistry;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
+import io.github.profjb58.territorial.networking.c2s.C2SPacket;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 
-public class AddEclipseEffectPacket extends C2SPacket {
+public class StartBreakingBlockPacket extends C2SPacket {
 
-    private int effectDuration;
+    private BlockPos targetPos;
 
-    public AddEclipseEffectPacket() {}
+    public StartBreakingBlockPacket() {}
 
-    public AddEclipseEffectPacket(int effectDuration) {
-        this.effectDuration = effectDuration;
+    public StartBreakingBlockPacket(BlockPos targetPos) {
+        this.targetPos = targetPos;
     }
 
     @Override
     public void execute(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
-        player.addStatusEffect(new StatusEffectInstance(TerritorialRegistry.ECLIPSE_EFFECT, effectDuration));
+        if(!LockFatigueStatusEffect.addEffect(player, targetPos))
+            player.removeStatusEffect(TerritorialRegistry.LOCK_FATIGUE_EFFECT);
     }
 
     @Override
     public void write(PacketByteBuf buf) {
-        buf.writeInt(effectDuration);
+        buf.writeBlockPos(targetPos);
     }
 
     @Override
     public void read(PacketByteBuf buf) {
-        effectDuration = buf.readInt();
+        targetPos = buf.readBlockPos();
     }
 
     @Override
     public Identifier getId() {
-        return TerritorialNetworkRegistry.ADD_ECLIPSE_EFFECT_PACKET_ID;
+        return TerritorialNetworkRegistry.START_BREAKING_BLOCK_PACKET_ID;
     }
 }
