@@ -28,11 +28,7 @@ public class LockableHud {
 
     public void showLockInfo(LockableBlock lb) {
         if(!showingLockInfo) {
-            var window = MinecraftClient.getInstance().getWindow();
-            int hudHeight = window.getScaledHeight();
-            int hudWidth = window.getScaledWidth();
-
-            String lfc = getLockableFormattingColour(lb.lockType());
+            String lfc = lb.lockType().getFormatColour();
             var lockInfoText = new LiteralText(lfc + "Id: §f" + lb.lockId() + "   " + lfc + "Owner: §f" + lb.lockOwnerName());
             var inGameHud = MinecraftClient.getInstance().inGameHud;
             ((InGameHudAccess) inGameHud).territorial$setOverlayMessage(lockInfoText, ACTION_MESSAGE_DURATION);
@@ -49,15 +45,5 @@ public class LockableHud {
             CottonHud.remove(lockImage);
             showingLockInfo = false;
         }
-    }
-
-    private String getLockableFormattingColour(LockableBlock.LockType lockType) {
-        return switch (lockType) {
-            case NETHERITE -> "§0";
-            case DIAMOND -> "§b";
-            case IRON -> "§7";
-            case GOLD -> "§6";
-            case UNBREAKABLE -> "§d";
-        };
     }
 }

@@ -3,6 +3,7 @@ package io.github.profjb58.territorial.networking.s2c;
 import io.github.profjb58.territorial.TerritorialClient;
 import io.github.profjb58.territorial.block.LockableBlock;
 import io.github.profjb58.territorial.block.entity.LockableBlockEntity;
+import io.github.profjb58.territorial.block.enums.LockType;
 import io.github.profjb58.territorial.event.registry.TerritorialNetworkRegistry;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
@@ -49,7 +50,7 @@ public class SyncLockInfoPacket extends S2CPacket {
     void execute(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
         String lockId = lockableNbt.getString("lock_id");
         String lockOwner = lockableNbt.getString("lock_owner_name");
-        var lockType = LockableBlock.lockType(lockableNbt.getInt("lock_type"));
+        var lockType = LockType.getTypeFromInt(lockableNbt.getInt("lock_type"));
 
         var lb = new LockableBlock(lockId, lockOwner, lockType);
         if(client.player != null) TerritorialClient.lockableHud.showLockInfo(lb);

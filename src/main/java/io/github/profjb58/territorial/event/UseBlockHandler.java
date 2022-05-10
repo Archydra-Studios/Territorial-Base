@@ -4,6 +4,7 @@ import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.TerritorialServer;
 import io.github.profjb58.territorial.block.LockableBlock;
 import io.github.profjb58.territorial.block.entity.LockableBlockEntity;
+import io.github.profjb58.territorial.block.enums.LockSound;
 import io.github.profjb58.territorial.item.KeyItem;
 import io.github.profjb58.territorial.item.PadlockItem;
 import io.github.profjb58.territorial.networking.s2c.SyncLockInfoPacket;
@@ -60,7 +61,7 @@ public class UseBlockHandler implements UseBlockCallback {
                 else // Owns the lock but no matching key was found
                     new SyncLockInfoPacket(player, lbe, false).send();
                     //player.sendMessage(new TranslatableText("message.territorial.lock_no_key"), true);
-                lb.playSound(LockableBlock.LockSound.DENIED_ENTRY, world);
+                lb.playSound(LockSound.DENIED_ENTRY, world);
                 return ActionResult.FAIL;
             }
             else {

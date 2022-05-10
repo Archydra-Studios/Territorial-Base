@@ -2,6 +2,7 @@ package io.github.profjb58.territorial.event;
 
 import io.github.profjb58.territorial.block.LockableBlock;
 import io.github.profjb58.territorial.block.entity.LockableBlockEntity;
+import io.github.profjb58.territorial.block.enums.LockSound;
 import io.github.profjb58.territorial.event.template.ServerWorldEvents;
 import io.github.profjb58.territorial.mixin.common.ExplosionAccessor;
 import io.github.profjb58.territorial.mixin.common.ExplosionAccessor;
@@ -55,7 +56,7 @@ public class DestructionHandlers {
                     }
                 }
             }
-            lbe.getBlock().playSound(LockableBlock.LockSound.LOCK_DESTROYED, world);
+            lbe.getBlock().playSound(LockSound.LOCK_DESTROYED, world);
         }
         return true; // Never cancel the block break
     }
@@ -65,7 +66,7 @@ public class DestructionHandlers {
             var lbe = new LockableBlockEntity(world, pos);
             if(lbe.exists()) {
                 float power = ((ExplosionAccessor) explosion).getPower();
-                return !(power > lbe.getBlock().blastResistance());
+                return !(power > lbe.getBlock().lockType().getBlastResistance());
             }
             return false;
         });

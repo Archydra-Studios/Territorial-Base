@@ -2,10 +2,10 @@ package io.github.profjb58.territorial.event.registry;
 
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.block.*;
-import io.github.profjb58.territorial.block.LockableBlock.LockType;
 import io.github.profjb58.territorial.block.entity.BaseBeaconBlockEntity;
 import io.github.profjb58.territorial.block.entity.BoundaryBeaconBlockEntity;
 import io.github.profjb58.territorial.block.entity.LaserTransmitterBlockEntity;
+import io.github.profjb58.territorial.block.enums.LockType;
 import io.github.profjb58.territorial.screen.BaseBeaconScreenHandler;
 import io.github.profjb58.territorial.screen.BoundaryBeaconScreenHandler;
 import io.github.profjb58.territorial.screen.KeyringScreenHandler;

@@ -1,6 +1,7 @@
 package io.github.profjb58.territorial.block.entity;
 
 import io.github.profjb58.territorial.block.LockableBlock;
+import io.github.profjb58.territorial.block.enums.LockType;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
@@ -26,7 +27,7 @@ public class LockableBlockEntity {
             this.lb = new LockableBlock(nbt.getString("lock_id"),
                     nbt.getUuid("lock_owner_uuid"),
                     nbt.getString("lock_owner_name"),
-                    LockableBlock.lockType(nbt.getInt("lock_type")),
+                    LockType.getTypeFromInt(nbt.getInt("lock_type")),
                     blockPos);
             this.world = world;
         }
@@ -59,7 +60,7 @@ public class LockableBlockEntity {
                 nbt.putString("lock_id", lb.lockId());
                 nbt.putUuid("lock_owner_uuid", lb.lockOwnerUuid());
                 nbt.putString("lock_owner_name", lb.lockOwnerName());
-                nbt.putInt("lock_type", lb.lockTypeInt());
+                nbt.putInt("lock_type", lb.lockType().getTypeInt());
                 updateNbtFromTag(nbt);
 
                 //WorldLockStorage lps = WorldLockStorage.get((ServerWorld) world);
