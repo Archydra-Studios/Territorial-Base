@@ -67,8 +67,13 @@
   "message.territorial.key_copy_fail": "§cCannot assign key from this lock, you don't own it",
 
   "message.territorial.list_locks_header": "§a[Territorial]§r Locks assigned to %s:",
-  "message.territorial.locks_match_failed": "[Territorial] Failed to find any locks for this player",
-  "message.territorial.locks_match_failed_player": "[Territorial] You haven't locked anything yet",
+  "message.territorial.locks_match_failed": "Failed to find any locks for this player",
+  "message.territorial.locks_match_failed_player": "You haven't locked anything yet",
+
+  "message.territorial.blacklist.add_block_success": "§aSuccessfully added block to blacklist",
+  "message.territorial.blacklist.remove_block_success": "§aSuccessfully removed block from blacklist",
+  "message.territorial.blacklist.add_block_failed": "Block already blacklisted",
+  "message.territorial.blacklist.remove_block_failed": "Block is not currently blacklisted",
 
   "message.territorial.enderchest.unknown_player": "§cCannot find the victim %s",
   "message.territorial.enderchest.key_unnamed": "§eThis key needs the name of a victim",

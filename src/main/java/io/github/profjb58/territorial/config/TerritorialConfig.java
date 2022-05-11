@@ -8,7 +8,7 @@ import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
 
 @SuppressWarnings("unused")
 @Config.Gui.Background("minecraft:textures/block/bedrock.png")
-@Config(name = Territorial.MOD_ID)
+@Config(name = Territorial.MOD_ID + "/" + Territorial.MOD_ID)
 public class TerritorialConfig implements ConfigData {
 
     @ConfigEntry.Gui.Excluded
@@ -99,9 +99,8 @@ public class TerritorialConfig implements ConfigData {
 
     private double getWithinBounds(String name, double configValue, double defaultValue, double min, double max) {
         if(configValue < min || configValue > max) {
-            if(!loaded || Territorial.DEBUG_MODE) {
+            if(!loaded || Territorial.DEBUG_MODE)
                 Territorial.LOGGER.warn("Incorrect value for " + name + ": " + configValue + " set in the config file, choosing default value: " + defaultValue);
-            }
             return defaultValue;
         }
         return configValue;

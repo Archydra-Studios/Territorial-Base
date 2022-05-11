@@ -22,6 +22,7 @@ import net.minecraft.util.Identifier;
 public class LockableHud {
 
     private static final int ACTION_MESSAGE_DURATION = 80;
+    private static final String PADLOCK_TEXTURE_DIRECTORY = "textures/item/padlocks/";
 
     private WTiledSprite lockImage;
     private boolean showingLockInfo = false;
@@ -30,11 +31,12 @@ public class LockableHud {
         if(!showingLockInfo) {
             String lfc = lb.lockType().getFormatColour();
             var lockInfoText = new LiteralText(lfc + "Id: §f" + lb.lockId() + "   " + lfc + "Owner: §f" + lb.lockOwnerName());
-            var inGameHud = MinecraftClient.getInstance().inGameHud;
-            ((InGameHudAccess) inGameHud).territorial$setOverlayMessage(lockInfoText, ACTION_MESSAGE_DURATION);
+            var inGameHud = (InGameHudAccess) MinecraftClient.getInstance().inGameHud;
 
-            var item = lb.getLockItemStack(1).getItem();
-            lockImage = new WTiledSprite(32, 32, new Identifier(Territorial.MOD_ID, "textures/item/padlocks/" + item.toString() + ".png"));
+            inGameHud.territorial$setOverlayMessage(lockInfoText, ACTION_MESSAGE_DURATION);
+            lockImage = new WTiledSprite(32, 32, new Identifier(Territorial.MOD_ID,
+                    PADLOCK_TEXTURE_DIRECTORY + lb.lockType().getName() + ".png"));
+
             CottonHud.add(lockImage, CottonHud.Positioner.horizontallyCentered(-100));
             showingLockInfo = true;
         }

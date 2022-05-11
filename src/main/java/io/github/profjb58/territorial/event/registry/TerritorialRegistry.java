@@ -6,6 +6,7 @@ import io.github.profjb58.territorial.block.entity.BaseBeaconBlockEntity;
 import io.github.profjb58.territorial.block.entity.BoundaryBeaconBlockEntity;
 import io.github.profjb58.territorial.block.entity.LaserTransmitterBlockEntity;
 import io.github.profjb58.territorial.block.enums.LockType;
+import io.github.profjb58.territorial.command.BlacklistCommands;
 import io.github.profjb58.territorial.screen.BaseBeaconScreenHandler;
 import io.github.profjb58.territorial.screen.BoundaryBeaconScreenHandler;
 import io.github.profjb58.territorial.screen.KeyringScreenHandler;
@@ -162,6 +163,7 @@ public class TerritorialRegistry {
         // Commands
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
             LockCommands.register(dispatcher);
+            BlacklistCommands.register(dispatcher);
         });
     }
 

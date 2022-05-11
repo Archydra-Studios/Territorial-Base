@@ -4,18 +4,19 @@ import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import net.minecraft.item.Item;
 
 public enum LockType {
-    UNBREAKABLE(TerritorialRegistry.PADLOCK_UNBREAKABLE,  -1, Integer.MAX_VALUE, Float.POSITIVE_INFINITY, "§d"),
-    NETHERITE(TerritorialRegistry.PADLOCK_NETHERITE,4, 3, 8, "§0"),
-    DIAMOND(TerritorialRegistry.PADLOCK_DIAMOND,3, 2, 6, "§b"),
-    GOLD(TerritorialRegistry.PADLOCK_GOLD,2, 1, 3, "§6"), // TODO - Maybe change lockFatigueAmplifier
-    IRON(TerritorialRegistry.PADLOCK,1, 1, 4, "§7");
+    UNBREAKABLE("padlock_unbreakable", TerritorialRegistry.PADLOCK_UNBREAKABLE,  -1, Integer.MAX_VALUE, Float.POSITIVE_INFINITY, "§d"),
+    NETHERITE("padlock_netherite", TerritorialRegistry.PADLOCK_NETHERITE,4, 3, 8, "§0"),
+    DIAMOND("padlock_diamond", TerritorialRegistry.PADLOCK_DIAMOND,3, 2, 6, "§b"),
+    GOLD("padlock_gold", TerritorialRegistry.PADLOCK_GOLD,2, 1, 3, "§6"), // TODO - Maybe change lockFatigueAmplifier
+    IRON("padlock", TerritorialRegistry.PADLOCK,1, 1, 4, "§7");
 
     private final Item item;
     private final int typeInt, lockFatigueAmplifier;
     private final float blastResistance;
-    private final String formatColour;
+    private final String name, formatColour;
 
-    LockType(Item item, int typeInt, int lockFatigueAmplifier, float blastResistance, String formatColour) {
+    LockType(String name, Item item, int typeInt, int lockFatigueAmplifier, float blastResistance, String formatColour) {
+        this.name = name;
         this.item = item;
         this.typeInt = typeInt;
         this.lockFatigueAmplifier = lockFatigueAmplifier;
@@ -23,6 +24,7 @@ public enum LockType {
         this.formatColour = formatColour;
     }
 
+    public String getName() { return name; }
     public Item getItem() { return item; }
     public int getTypeInt() { return typeInt; }
     public int getLockFatigueAmplifier() { return lockFatigueAmplifier; }

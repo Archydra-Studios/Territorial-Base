@@ -1,5 +1,6 @@
 package io.github.profjb58.territorial;
 
+import io.github.profjb58.territorial.config.LockablesBlacklist;
 import io.github.profjb58.territorial.config.TerritorialConfig;
 import io.github.profjb58.territorial.event.*;
 import io.github.profjb58.territorial.event.registry.TerritorialNetworkRegistry;
@@ -34,6 +35,7 @@ public class Territorial implements ModInitializer {
 			() -> new ItemStack(TerritorialRegistry.LOCKPICK));
 
 	public static final ServerTeamsHandler TEAMS_HANDLER = new ServerTeamsHandler();
+	public static final LockablesBlacklist LOCKABLES_BLACKLIST = new LockablesBlacklist();
 
 	@Override
 	public void onInitialize() {
