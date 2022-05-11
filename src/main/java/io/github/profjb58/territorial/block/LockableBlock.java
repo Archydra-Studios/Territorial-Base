@@ -1,5 +1,6 @@
 package io.github.profjb58.territorial.block;
 
+import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.block.enums.LockEntityResult;
 import io.github.profjb58.territorial.block.enums.LockSound;
 import io.github.profjb58.territorial.block.enums.LockType;
@@ -8,6 +9,7 @@ import io.github.profjb58.territorial.inventory.ItemInventory;
 import io.github.profjb58.territorial.item.KeyringItem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.inventory.Inventory;
@@ -37,27 +39,29 @@ public record LockableBlock(String lockId, UUID lockOwnerUuid, String lockOwnerN
     public LockEntityResult createEntity(ServerWorld world) {
         BlockEntity be = world.getBlockEntity(blockPos);
         if(be != null) {
-            NbtCompound nbt = be.createNbt();
-            if(!nbt.contains("lock_id")) { // No lock has been assigned to the block entity
-                nbt.putString("lock_id", lockId);
-                nbt.putUuid("lock_owner_uuid", lockOwnerUuid);
-                nbt.putString("lock_owner_name", lockOwnerName);
-                nbt.putInt("lock_type", lockType.getTypeInt());
+            Block block = be.getCachedState().getBlock();
+            if(!Territorial.LOCKABLES_BLACKLIST.isBlacklisted(block)) {
+                NbtCompound nbt = be.createNbt();
+                if(!nbt.contains("lock_id")) { // No lock has been assigned to the block entity
+                    nbt.putString("lock_id", lockId);
+                    nbt.putUuid("lock_owner_uuid", lockOwnerUuid);
+                    nbt.putString("lock_owner_name", lockOwnerName);
+                    nbt.putInt("lock_type", lockType.getTypeInt());
 
-                // Store locks position in persitent storage
-                //WorldLockStorage lps = WorldLockStorage.get((ServerWorld) world);
-                //lps.addLock(this);
-                try {
-                    be.readNbt(nbt);
-                } catch (Exception ignored) {}
+                    // Store locks position in persitent storage
+                    //WorldLockStorage lps = WorldLockStorage.get((ServerWorld) world);
+                    //lps.addLock(this);
+                    try {
+                        be.readNbt(nbt);
+                    } catch (Exception ignored) {}
 
-                // Sync data to the client
-                world.getChunkManager().markForUpdate(be.getPos());
-                return LockEntityResult.SUCCESS;
+                    // Sync data to the client
+                    world.getChunkManager().markForUpdate(be.getPos());
+                    return LockEntityResult.SUCCESS;
+                }
+                else return LockEntityResult.FAIL;
             }
-            else {
-                return LockEntityResult.FAIL;
-            }
+            else return LockEntityResult.BLACKLISTED;
         }
         return LockEntityResult.NO_ENTITY_EXISTS;
     }

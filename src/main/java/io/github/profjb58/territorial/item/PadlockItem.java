@@ -64,7 +64,7 @@ public class PadlockItem extends Item {
                         lb.playSound(LockSound.DENIED_ENTRY, player.getEntityWorld());
                         return ActionResult.FAIL;
                     }
-                    case NO_ENTITY_EXISTS -> player.sendMessage(new TranslatableText("message.territorial.lock_not_lockable"), true);
+                    case NO_ENTITY_EXISTS, BLACKLISTED -> player.sendMessage(new TranslatableText("message.territorial.lock_not_lockable"), true);
                 }
             } else {
                 player.sendMessage(new TranslatableText("message.territorial.lock_unnamed"), true);

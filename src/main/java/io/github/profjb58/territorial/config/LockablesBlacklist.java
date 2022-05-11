@@ -6,7 +6,6 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 
 import javax.annotation.Nullable;
 import java.io.*;
@@ -67,10 +66,11 @@ public class LockablesBlacklist implements Runnable {
                     writer.close();
                 }
                 else {
+                    boolean deleteSuccessful, renameSuccessful, tempFileCreated;
                     var tempFile = new File(CONFIG_DIRECTORY + "/lockables_temp.txt");
                     var writer = new BufferedWriter(new FileWriter(tempFile, true));
                     var reader = new BufferedReader(new FileReader(blacklistFile));
-                    boolean tempFileCreated = tempFile.createNewFile();
+                    tempFileCreated = tempFile.createNewFile();
                     String currentLine;
 
                     while((currentLine = reader.readLine()) != null) {
@@ -80,17 +80,17 @@ public class LockablesBlacklist implements Runnable {
                     }
                     writer.close();
                     reader.close();
-
-                    boolean deleteSuccessful, renameSuccessful;
                     deleteSuccessful = blacklistFile.delete();
                     renameSuccessful = tempFile.renameTo(blacklistFile);
 
-                    if(!deleteSuccessful || !renameSuccessful || !tempFileCreated)
-                        Territorial.LOGGER.error("Failed to remove ");
+                    if(!tempFileCreated || !deleteSuccessful || !renameSuccessful)
+                        throw new IOException();
                 }
             }
         }
         catch (InterruptedException | IOException e) {
+            Territorial.LOGGER.error("Failed to add/remove a block from blacklist and save changes to lockables_blacklist.txt");
+            Territorial.LOGGER.error("You can manually modify this file instead of using commands if this remains an issue");
             e.printStackTrace();
         }
     }
@@ -124,7 +124,7 @@ public class LockablesBlacklist implements Runnable {
         return optionalKey.map(blockRegistryKey -> blockRegistryKey.getValue().toString()).orElse(null);
     }
 
-    public boolean isBlacklisted(Block block) { return blacklist.contains(block.getTranslationKey()); }
+    public boolean isBlacklisted(Block block) { return blacklist.contains(getRegistryKey(block)); }
 
     public List<String> asList() { return blacklist.stream().toList(); }
 
@@ -139,7 +139,6 @@ public class LockablesBlacklist implements Runnable {
     }
 
     static {
-        //
         String[] colouredBlocks = {
                 "minecraft:bed", "minecraft:banner"
         };
