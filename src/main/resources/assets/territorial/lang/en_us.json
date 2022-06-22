@@ -55,6 +55,7 @@
   "message.territorial.lock_successful": "§aLock protection added!",
   "message.territorial.lock_removed": "§eLock protection removed!",
   "message.territorial.no_lock": "§cThis block is not locked...",
+  "message.territorial.wrong_key": "§cThis key does not match the lock",
   "message.territorial.locked": "§cBlock is locked, no matching key found",
   "message.territorial.lock_no_key": "§eLocked block belongs to you, but no matching key was found",
   "message.territorial.lock_failed": "§cBlock is already locked",
@@ -65,20 +66,16 @@
   "message.territorial.key_unnamed": "§eThis key needs a name",
   "message.territorial.key_copy_success": "§aKey successfully assigned from lock",
   "message.territorial.key_copy_fail": "§cCannot assign key from this lock, you don't own it",
-
   "message.territorial.list_locks_header": "§a[Territorial]§r Locks assigned to %s:",
   "message.territorial.locks_match_failed": "Failed to find any locks for this player",
   "message.territorial.locks_match_failed_player": "You haven't locked anything yet",
-
   "message.territorial.blacklist.add_block_success": "§aSuccessfully added block to blacklist",
   "message.territorial.blacklist.remove_block_success": "§aSuccessfully removed block from blacklist",
   "message.territorial.blacklist.add_block_failed": "Block already blacklisted",
   "message.territorial.blacklist.remove_block_failed": "Block is not currently blacklisted",
-
   "message.territorial.enderchest.unknown_player": "§cCannot find the victim %s",
   "message.territorial.enderchest.key_unnamed": "§eThis key needs the name of a victim",
   "message.territorial.enderchest.warn": "§a[Territorial] §rA player stole items from your ender chest",
-
   "message.territorial.stack_dupe_formatted.warn": "§a[Territorial]§r§c Duplicated item: %s §cfound in %s's §cplayer / ender chest inventory",
   "message.territorial.stack_dupe.warn": "[Territorial] Duplicated item: %s found in %s's player / ender chest inventory",
 
@@ -99,8 +96,8 @@
   "tooltip.territorial.shift": "§7Hold §e§oShift §7for usage",
   "tooltip.territorial.key_shift_0": "§lAccessing locked blocks",
   "tooltip.territorial.key_shift_1": "§7Keep this key in your inventory",
-  "tooltip.territorial.key_shift_2": "§7and make sure the locks id",
-  "tooltip.territorial.key_shift_3": "§7matches the keys",
+  "tooltip.territorial.key_shift_2": "§7and make sure the locks name",
+  "tooltip.territorial.key_shift_3": "§7matches the keys name",
   "tooltip.territorial.key_shift_4": "§lRemoving a lock",
   "tooltip.territorial.key_shift_5": "§7Shift right click with a key in hand",
   "tooltip.territorial.key_unnamed": "§7This key needs a name",

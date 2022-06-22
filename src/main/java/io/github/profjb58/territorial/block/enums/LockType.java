@@ -1,31 +1,25 @@
 package io.github.profjb58.territorial.block.enums;
 
-import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
-import net.minecraft.item.Item;
-
 public enum LockType {
-    UNBREAKABLE("padlock_unbreakable", TerritorialRegistry.PADLOCK_UNBREAKABLE,  -1, Integer.MAX_VALUE, Float.POSITIVE_INFINITY, "§d"),
-    NETHERITE("padlock_netherite", TerritorialRegistry.PADLOCK_NETHERITE,4, 3, 8, "§0"),
-    DIAMOND("padlock_diamond", TerritorialRegistry.PADLOCK_DIAMOND,3, 2, 6, "§b"),
-    GOLD("padlock_gold", TerritorialRegistry.PADLOCK_GOLD,2, 1, 3, "§6"), // TODO - Maybe change lockFatigueAmplifier
-    IRON("padlock", TerritorialRegistry.PADLOCK,1, 1, 4, "§7");
+    UNBREAKABLE("padlock_unbreakable",  -1, Integer.MAX_VALUE, Float.POSITIVE_INFINITY, "§d"),
+    NETHERITE("padlock_netherite",4, 3, 8, "§8"),
+    DIAMOND("padlock_diamond", 3, 2, 6, "§b"),
+    GOLD("padlock_gold", 2, 1, 3, "§6"),
+    IRON("padlock", 1, 1, 4, "§7");
 
-    private final Item item;
     private final int typeInt, lockFatigueAmplifier;
     private final float blastResistance;
-    private final String name, formatColour;
+    private final String registryName, formatColour;
 
-    LockType(String name, Item item, int typeInt, int lockFatigueAmplifier, float blastResistance, String formatColour) {
-        this.name = name;
-        this.item = item;
+    LockType(String registryName, int typeInt, int lockFatigueAmplifier, float blastResistance, String formatColour) {
+        this.registryName = registryName;
         this.typeInt = typeInt;
         this.lockFatigueAmplifier = lockFatigueAmplifier;
         this.blastResistance = blastResistance;
         this.formatColour = formatColour;
     }
 
-    public String getName() { return name; }
-    public Item getItem() { return item; }
+    public String getRegistryName() { return registryName; }
     public int getTypeInt() { return typeInt; }
     public int getLockFatigueAmplifier() { return lockFatigueAmplifier; }
     public float getBlastResistance() { return blastResistance; }

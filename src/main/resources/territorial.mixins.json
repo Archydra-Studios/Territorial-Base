@@ -4,6 +4,7 @@
   "package": "io.github.profjb58.territorial.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "common.AbstractBlockMixin",
     "common.AnvilChunkStorageAccessor",
     "common.BeaconBlockMixin",
     "common.BlockBreakSpeedMixin",
@@ -12,13 +13,15 @@
     "common.ExplosionAccessor",
     "common.LightningEntityMixin",
     "common.RuinedPortalStructurePieceMixin",
+    "common.ServerPlayerInteractionManagerMixin",
     "common.ServerPlayNetworkHandlerMixin",
     "common.StatusEffectInstanceMixin"
   ],
   "client": [
-    "client.InGameHudMixin",
     "client.ClientPlayerInteractionMixin",
     "client.ClientPlayNetworkHandlerMixin",
+    "client.HandledScreenAccessor",
+    "client.InGameHudMixin",
     "client.OverlayRemainingAccessor"
   ],
   "server": [

@@ -29,9 +29,9 @@ public class ServerTeam extends Team {
         super(name, banner, owner);
     }
 
-    void updateLastLogin() { lastLoginDate = Date.from(Instant.EPOCH); }
+    public void updateLastLogin() { lastLoginDate = Date.from(Instant.EPOCH); }
 
-    void addBeaconPos(World world, BlockPos pos) {
+    public void addBeaconPos(World world, BlockPos pos) {
         var worldKey = world.getRegistryKey();
         HashSet<BlockPos> beaconPosSet = new HashSet<>();
 
@@ -45,7 +45,7 @@ public class ServerTeam extends Team {
         }
     }
 
-    void removeBeaconPos(World world, BlockPos pos) {
+    public void removeBeaconPos(World world, BlockPos pos) {
         var worldKey = world.getRegistryKey();
 
         if(beaconPositions.containsKey(worldKey)) {

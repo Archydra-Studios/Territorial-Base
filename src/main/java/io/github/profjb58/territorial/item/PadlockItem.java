@@ -1,25 +1,22 @@
 package io.github.profjb58.territorial.item;
 
 import io.github.profjb58.territorial.Territorial;
-import io.github.profjb58.territorial.TerritorialClient;
-import io.github.profjb58.territorial.TerritorialServer;
+import io.github.profjb58.territorial.api.event.common.LockableBlockEvents;
 import io.github.profjb58.territorial.block.LockableBlock;
 import io.github.profjb58.territorial.block.enums.LockSound;
 import io.github.profjb58.territorial.block.enums.LockType;
-import io.github.profjb58.territorial.util.ActionLogger;
+import io.github.profjb58.territorial.api.event.common.LockableBlockEvents.InteractionType;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -44,7 +41,9 @@ public class PadlockItem extends Item {
 
     public ActionResult useOnBlock(PlayerEntity player, ServerWorld world, BlockHitResult hitResult) {
         if(player != null && !world.isClient) {
+            var serverPlayer = (ServerPlayerEntity) player;
             var lockStack = player.getStackInHand(player.getActiveHand());
+
             var lb = new LockableBlock(
                     lockStack.getName().getString(),
                     player.getUuid(),
@@ -58,17 +57,22 @@ public class PadlockItem extends Item {
                         if (!player.isCreative()) lockStack.decrement(1);
                         player.sendMessage(new TranslatableText("message.territorial.lock_successful"), true);
                         lb.playSound(LockSound.LOCK_ADDED, player.getEntityWorld());
+                        LockableBlockEvents.CREATE.invoker().create(lb, serverPlayer);
                     }
                     case FAIL -> {
                         player.sendMessage(new TranslatableText("message.territorial.lock_failed"), true);
                         lb.playSound(LockSound.DENIED_ENTRY, player.getEntityWorld());
+                        LockableBlockEvents.INTERACT.invoker().interact(lb, serverPlayer, InteractionType.FAILED);
                         return ActionResult.FAIL;
                     }
-                    case NO_ENTITY_EXISTS, BLACKLISTED -> player.sendMessage(new TranslatableText("message.territorial.lock_not_lockable"), true);
+                    case NO_ENTITY_EXISTS, BLACKLISTED -> {
+                        player.sendMessage(new TranslatableText("message.territorial.lock_not_lockable"), true);
+                    }
                 }
             } else {
                 player.sendMessage(new TranslatableText("message.territorial.lock_unnamed"), true);
                 lb.playSound(LockSound.DENIED_ENTRY, player.getEntityWorld());
+                LockableBlockEvents.INTERACT.invoker().interact(lb, serverPlayer, InteractionType.FAILED);
                 return ActionResult.FAIL;
             }
         }

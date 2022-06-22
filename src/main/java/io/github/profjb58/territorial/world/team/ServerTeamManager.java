@@ -1,6 +1,7 @@
 package io.github.profjb58.territorial.world.team;
 
 import io.github.profjb58.territorial.Territorial;
+import io.github.profjb58.territorial.api.event.common.TeamEvents;
 import io.github.profjb58.territorial.networking.s2c.SyncTeamDataPacket;
 import io.github.profjb58.territorial.util.TickCounter;
 import net.minecraft.entity.player.PlayerEntity;
@@ -14,7 +15,7 @@ import javax.annotation.Nullable;
 import java.time.Instant;
 import java.util.*;
 
-public class ServerTeamsHandler extends PersistentState {
+public class ServerTeamManager extends PersistentState {
 
     private static final TickCounter MESSAGE_QUEUE_TICKER = new TickCounter(10);
     private static final Map<UUID, Queue<Text>> MEMBER_MESSAGE_QUEUE = new HashMap<>();
@@ -24,7 +25,8 @@ public class ServerTeamsHandler extends PersistentState {
 
     public enum MemberAction { ADD_MEMBER, REMOVE_MEMBER, PROMOTE_MEMBER, DEMOTE_MEMBER }
 
-    public ServerTeamsHandler() {}
+    public ServerTeamManager() {
+    }
 
     public void checkInactive() {
         boolean purgeTeams = Territorial.getConfig().purgeTeams();
@@ -64,6 +66,7 @@ public class ServerTeamsHandler extends PersistentState {
                 var team = new ServerTeam(teamName, banner, owner);
                 PLAYER_TEAM_REFERENCES.put(owner.getUuid(), team.getId());
                 SERVER_TEAMS.put(team.getId(), team);
+                TeamEvents.CREATE_EVENT.invoker().onCreate(teamName, banner, owner);
                 return true;
             }
         }
@@ -75,6 +78,7 @@ public class ServerTeamsHandler extends PersistentState {
             SERVER_TEAMS.remove(teamId);
             for(var member : members.asList())
                 if(isInTeam(member, teamId)) PLAYER_TEAM_REFERENCES.remove(member);
+            TeamEvents.REMOVE_EVENT.invoker().onRemove(teamId, members);
             return true;
         }
         return false;
@@ -84,15 +88,14 @@ public class ServerTeamsHandler extends PersistentState {
         if(SERVER_TEAMS.containsKey(teamId)) {
             var members = SERVER_TEAMS.get(teamId).members();
             var prevRole = members.getRole(member);
+            boolean result = false;
 
             switch(action) {
                 case ADD_MEMBER -> {
-                    if(prevRole == null && !hasTeam(member))
-                        return members.add(newRole, member);
+                    if (prevRole == null && !hasTeam(member)) result = members.add(newRole, member);
                 }
                 case REMOVE_MEMBER -> {
-                    if(prevRole != null && hasTeam(member))
-                        return members.remove(member);
+                    if(prevRole != null && hasTeam(member)) result = members.remove(member);
                 }
                 case PROMOTE_MEMBER, DEMOTE_MEMBER -> {
                     boolean promoteSuccess, demoteSuccess;
@@ -103,11 +106,13 @@ public class ServerTeamsHandler extends PersistentState {
 
                         if(promoteSuccess || demoteSuccess) {
                             members.remove(member);
-                            return members.add(newRole, member);
+                            result = members.add(newRole, member);
                         }
                     }
                 }
             }
+            if(result) TeamEvents.MEMBER_ACTION_EVENT.invoker().onMemberAction(action, teamId, member, newRole);
+            return result;
         }
         return false;
     }
@@ -149,12 +154,22 @@ public class ServerTeamsHandler extends PersistentState {
 
     public static TreeSet<Map.Entry<UUID, ServerTeam>> getTeamsSortedSet() {
         var teamsSortedSet = new TreeSet<>(Comparator.comparingInt((Map.Entry<UUID, ServerTeam> team) -> team.getValue().members().size()));
-        teamsSortedSet.addAll(ServerTeamsHandler.SERVER_TEAMS.entrySet());
+        teamsSortedSet.addAll(ServerTeamManager.SERVER_TEAMS.entrySet());
         return teamsSortedSet;
     }
 
     @Nullable
     public ServerTeam getTeamById(UUID id) { return SERVER_TEAMS.get(id); }
+
+    @Nullable
+    public ServerTeam getPlayersTeam(ServerPlayerEntity player) {
+        var playerUuid = player.getUuid();
+        if(hasTeam(playerUuid)) {
+            var teamUuid = PLAYER_TEAM_REFERENCES.get(playerUuid);
+            return getTeamById(teamUuid);
+        }
+        return null;
+    }
 
     private boolean hasTeam(UUID playerUuid) { return PLAYER_TEAM_REFERENCES.containsKey(playerUuid); }
 

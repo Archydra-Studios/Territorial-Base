@@ -21,17 +21,17 @@ public class TerritorialNetworkRegistry  {
     public static final Identifier SYNC_TEAM_DATA_PACKET_ID = new Identifier(Territorial.MOD_ID, "sync_team_data_packet");
     public static final Identifier SYNC_LOCK_INFO_PACKET_ID = new Identifier(Territorial.MOD_ID, "sync_lock_info_packet");
 
-    public static void registerClientPackets() {
+    /*public static void registerClientPackets() {
+        S2CPacket.register(SYNC_TEAM_DATA_PACKET_ID, new SyncTeamDataPacket());
+        S2CPacket.register(SYNC_LOCK_INFO_PACKET_ID, new SyncLockInfoPacket());
+    }*/
+
+    public static void registerServerPackets() {
         C2SPacket.register(CREATE_TEAM_PACKET_ID, new RemoveTeamPacket());
         C2SPacket.register(REMOVE_TEAM_PACKET_ID, new CreateTeamPacket());
         C2SPacket.register(TEAM_MEMBER_PACKET_ID, new TeamMemberPacket());
         C2SPacket.register(MODIFY_TEAM_PACKET_ID, new ModifyTeamPacket());
         C2SPacket.register(ADD_ECLIPSE_EFFECT_PACKET_ID, new AddEclipseEffectPacket());
         C2SPacket.register(START_BREAKING_BLOCK_PACKET_ID, new StartBreakingBlockPacket());
-    }
-
-    public static void registerServerPackets() {
-        S2CPacket.register(SYNC_TEAM_DATA_PACKET_ID, new SyncTeamDataPacket());
-        S2CPacket.register(SYNC_LOCK_INFO_PACKET_ID, new SyncLockInfoPacket());
     }
 }

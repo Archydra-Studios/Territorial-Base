@@ -2,9 +2,8 @@ package io.github.profjb58.territorial.networking.c2s;
 
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.event.registry.TerritorialNetworkRegistry;
-import io.github.profjb58.territorial.networking.c2s.C2SPacket;
 import io.github.profjb58.territorial.world.team.ServerTeam;
-import io.github.profjb58.territorial.world.team.ServerTeamsHandler;
+import io.github.profjb58.territorial.world.team.ServerTeamManager;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
@@ -17,13 +16,13 @@ import java.util.UUID;
 
 public class TeamMemberPacket extends C2SPacket {
 
-    private ServerTeamsHandler.MemberAction action;
+    private ServerTeamManager.MemberAction action;
     private UUID memberUuid, teamId;
     private ServerTeam.Members.Role role;
 
     public TeamMemberPacket() {}
 
-    public TeamMemberPacket(ServerTeamsHandler.MemberAction action, UUID teamId, ServerTeam.Members.Role role, UUID memberUuid) {
+    public TeamMemberPacket(ServerTeamManager.MemberAction action, UUID teamId, ServerTeam.Members.Role role, UUID memberUuid) {
         this.action = action;
         this.teamId = teamId;
         this.memberUuid = memberUuid;
@@ -32,7 +31,7 @@ public class TeamMemberPacket extends C2SPacket {
 
     @Override
     public void execute(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
-        Territorial.TEAMS_HANDLER.doMemberAction(action, teamId, memberUuid, role);
+        Territorial.TEAM_MANAGER.doMemberAction(action, teamId, memberUuid, role);
     }
 
     @Override
@@ -54,7 +53,7 @@ public class TeamMemberPacket extends C2SPacket {
             if(nbtCompound.contains("team_id"))
                 teamId = nbtCompound.getUuid("team_id");
         }
-        action = buf.readEnumConstant(ServerTeamsHandler.MemberAction.class);
+        action = buf.readEnumConstant(ServerTeamManager.MemberAction.class);
         role = buf.readEnumConstant(ServerTeam.Members.Role.class);
     }
 

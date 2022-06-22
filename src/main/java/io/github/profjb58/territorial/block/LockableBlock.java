@@ -19,8 +19,10 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.LiteralText;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
 import java.util.UUID;
@@ -28,8 +30,8 @@ import java.util.UUID;
 public record LockableBlock(String lockId, UUID lockOwnerUuid, String lockOwnerName, LockType lockType, BlockPos blockPos) {
 
     @Environment(EnvType.CLIENT)
-    public LockableBlock(String lockId, String lockOwnerName, LockType lockType) {
-        this(lockId, null, lockOwnerName, lockType, null);
+    public LockableBlock(String lockId, UUID lockOwnerUuid, String lockOwnerName, LockType lockType) {
+        this(lockId, lockOwnerUuid, lockOwnerName, lockType, null);
     }
 
     public boolean exists() {
@@ -109,8 +111,8 @@ public record LockableBlock(String lockId, UUID lockOwnerUuid, String lockOwnerN
                 lockType.getLockFatigueAmplifier(), false, false);
     }
 
-    public ItemStack getLockItemStack(int amount) {
-        var padlockStack = new ItemStack(lockType.getItem(), amount);
+    public ItemStack getLockItemStack() {
+        var padlockStack = Registry.ITEM.get(new Identifier(Territorial.MOD_ID, lockType.getRegistryName())).getDefaultStack();
         padlockStack.setCustomName(new LiteralText(lockId));
         return padlockStack;
     }

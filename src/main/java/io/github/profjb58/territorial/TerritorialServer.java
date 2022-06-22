@@ -1,5 +1,6 @@
 package io.github.profjb58.territorial;
 
+import io.github.profjb58.territorial.event.registry.TerritorialNetworkRegistry;
 import io.github.profjb58.territorial.util.ActionLogger;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -13,6 +14,8 @@ public class TerritorialServer implements DedicatedServerModInitializer  {
     public void onInitializeServer() {
         actionLogger = new ActionLogger();
         actionLogger.write(ActionLogger.LogType.INFO, "Server started... ");
+
+        TerritorialNetworkRegistry.registerServerPackets();
 
         ServerLifecycleEvents.SERVER_STARTED.register(
                 server -> TerritorialServer.minOpLevel = server.getOpPermissionLevel());

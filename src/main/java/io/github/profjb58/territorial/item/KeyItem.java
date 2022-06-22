@@ -2,16 +2,16 @@ package io.github.profjb58.territorial.item;
 
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.TerritorialServer;
+import io.github.profjb58.territorial.api.event.common.LockableBlockEvents;
 import io.github.profjb58.territorial.block.LockableBlock;
 import io.github.profjb58.territorial.block.entity.LockableBlockEntity;
 import io.github.profjb58.territorial.util.TextUtils;
 import io.github.profjb58.territorial.util.ActionLogger;
+import io.github.profjb58.territorial.api.event.common.LockableBlockEvents.InteractionType;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
@@ -20,9 +20,8 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Pair;
 import net.minecraft.util.hit.BlockHitResult;
+
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -70,22 +69,26 @@ public class KeyItem extends Item {
         return ActionResult.FAIL; // Transfer logic to UseBlockHandler event class
     }
 
-    public ActionResult useOnBlock(ServerPlayerEntity player, ServerWorld world, BlockHitResult hitResult) {
+    public ActionResult useOnBlockWhileSneaking(ServerPlayerEntity player, ServerWorld world, BlockHitResult hitResult) {
         var lbe = new LockableBlockEntity(world, hitResult.getBlockPos());
-        if(player.isSneaking()) {
-            if(lbe.exists()) {
-                var lb = lbe.getBlock();
-                if(lb.findMatchingKey(player, false).getLeft() != null) {
+        if(lbe.exists()) {
+            var lb = lbe.getBlock();
+            if(masterKey) onUseMasterKey(player.getStackInHand(player.getActiveHand()), player, lb);
+            if(lb.findMatchingKey(player, false).getLeft() != null) { // Matching key found
+                boolean cancelAction = LockableBlockEvents.INTERACT.invoker().interact(lb, player, InteractionType.REMOVED_PADLOCK);
+                if(!cancelAction) {
                     if(lbe.remove()) {
                         onRemoveLock(player, world, hitResult.getBlockPos(), lb); // Remove the lock
                         //WorldLockStorage.get((ServerWorld) ctx.getWorld()).removeLock(lb); // Remove from persistent storage
+                        return ActionResult.PASS;
                     }
-                    else Territorial.LOGGER.error("Lockpick failed to remove NBT lock data :(. Please report this as an issue");
+                    else Territorial.LOGGER.error("Key failed to remove NBT lock data at: " + lb.blockPos().toShortString() + " :(. Please report this as an issue");
                 }
-                if(masterKey) onUseMasterKey(player.getStackInHand(player.getActiveHand()), player, lb);
             }
-            else player.sendMessage(new TranslatableText("message.territorial.no_lock"), true);
+            else player.sendMessage(new TranslatableText("message.territorial.wrong_key"), true);
+            LockableBlockEvents.INTERACT.invoker().interact(lb, player, InteractionType.FAILED_REMOVE_PADLOCK);
         }
+        else player.sendMessage(new TranslatableText("message.territorial.no_lock"), true);
         return ActionResult.PASS;
     }
 
@@ -108,7 +111,7 @@ public class KeyItem extends Item {
         }
     }
 
-    public void onUseMasterKey(ItemStack masterKeyStack, ServerPlayerEntity player, LockableBlock lb) {
+    public boolean onUseMasterKey(ItemStack masterKeyStack, ServerPlayerEntity player, LockableBlock lb) {
         masterKeyStack.decrement(1);
         player.sendMessage(new TranslatableText("message.territorial.master_key_vanished"), false);
 
@@ -116,10 +119,11 @@ public class KeyItem extends Item {
             TerritorialServer.actionLogger.write(ActionLogger.LogType.INFO, ActionLogger.LogModule.LOCKS,
                     "Player " + player.getName().getString() + " used a master key at location " + lb.blockPos());
         }
+        return LockableBlockEvents.INTERACT.invoker().interact(lb, player, LockableBlockEvents.InteractionType.OPEN_MASTER_KEY);
     }
 
     void onRemoveLock(ServerPlayerEntity player, ServerWorld world, BlockPos pos, LockableBlock lb) {
-        var padlockStack = lb.getLockItemStack(1);
+        var padlockStack = lb.getLockItemStack();
         world.spawnEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), padlockStack));
         player.sendMessage(new TranslatableText("message.territorial.lock_removed"), true);
     }

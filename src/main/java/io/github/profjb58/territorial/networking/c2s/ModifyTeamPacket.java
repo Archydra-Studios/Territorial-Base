@@ -2,7 +2,6 @@ package io.github.profjb58.territorial.networking.c2s;
 
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.event.registry.TerritorialNetworkRegistry;
-import io.github.profjb58.territorial.networking.c2s.C2SPacket;
 import io.github.profjb58.territorial.world.team.Team;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.item.ItemStack;
@@ -33,7 +32,7 @@ public class ModifyTeamPacket extends C2SPacket {
 
     @Override
     public void execute(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
-        var team = Territorial.TEAMS_HANDLER.getTeamById(oldId);
+        var team = Territorial.TEAM_MANAGER.getTeamById(oldId);
         if(team != null) team.setIdentifyingData(newName, new Team.Banner(newBannerStack, DyeColor.byId(newBannerBaseColourId)));
     }
 

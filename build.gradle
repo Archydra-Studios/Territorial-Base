@@ -62,7 +62,7 @@ dependencies {
 	modImplementation "vazkii.patchouli:Patchouli:${project.patchouli_version}"
 
 	// H2 stuff
-	implementation(include("com.h2database:h2:${project.h2_version}"))
+	//implementation(include("com.h2database:h2:${project.h2_version}"))
 }
 
 processResources {

@@ -1,6 +1,7 @@
 package io.github.profjb58.territorial.block;
 
 import io.github.profjb58.territorial.Territorial;
+import io.github.profjb58.territorial.api.block.EclipseBlock;
 import io.github.profjb58.territorial.util.TickCounter;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
@@ -9,7 +10,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
 import java.util.Random;

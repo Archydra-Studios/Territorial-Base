@@ -1,9 +1,7 @@
 package io.github.profjb58.territorial.mixin.common;
 
 import io.github.profjb58.territorial.misc.access.BlockAccess;
-import net.minecraft.block.BeaconBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
+import net.minecraft.block.*;
 import net.minecraft.state.StateManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

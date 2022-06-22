@@ -21,6 +21,6 @@ public abstract class ClientPlayerInteractionMixin {
     {
         /*  Fixes MC issue: https://bugs.mojang.com/browse/MC-69865
             (breakingBlock = false) check is to make sure packets are not repeatedly sent when it's clear that a block is broken */
-        if(!breakingBlock) new StartBreakingBlockPacket(blockPos).send();
+        //if(!breakingBlock) new StartBreakingBlockPacket(blockPos).send();
     }
 }

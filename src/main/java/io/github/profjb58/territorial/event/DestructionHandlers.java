@@ -1,10 +1,8 @@
 package io.github.profjb58.territorial.event;
 
-import io.github.profjb58.territorial.block.LockableBlock;
 import io.github.profjb58.territorial.block.entity.LockableBlockEntity;
 import io.github.profjb58.territorial.block.enums.LockSound;
 import io.github.profjb58.territorial.event.template.ServerWorldEvents;
-import io.github.profjb58.territorial.mixin.common.ExplosionAccessor;
 import io.github.profjb58.territorial.mixin.common.ExplosionAccessor;
 import io.github.profjb58.territorial.util.MathUtils;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
@@ -12,14 +10,13 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 
 public class DestructionHandlers {
 
@@ -29,7 +26,7 @@ public class DestructionHandlers {
     }
 
     /**
-     *  Locked block broken by a player that isn't the owner
+     *  Locked block broken by a player
      */
     private static boolean getLockableBlockDrops(World world, PlayerEntity player, BlockPos pos, BlockState state, BlockEntity blockEntity) {
         var lbe = new LockableBlockEntity(world, pos);
@@ -40,7 +37,7 @@ public class DestructionHandlers {
                 Inventory beInv = (Inventory) lbe.getBlockEntity();
                 if(!beInv.isEmpty()) {
 
-                    var occupiedSlots = new LinkedList<Integer>();
+                    var occupiedSlots = new ArrayList<Integer>();
                     for(int i=0; i < beInv.size(); i++) {
                         if (!beInv.getStack(i).isEmpty()) {
                             occupiedSlots.add(i);

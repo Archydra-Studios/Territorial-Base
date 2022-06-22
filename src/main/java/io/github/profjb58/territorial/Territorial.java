@@ -1,12 +1,12 @@
 package io.github.profjb58.territorial;
 
+import io.github.cottonmc.cotton.gui.client.LibGui;
 import io.github.profjb58.territorial.config.LockablesBlacklist;
 import io.github.profjb58.territorial.config.TerritorialConfig;
 import io.github.profjb58.territorial.event.*;
-import io.github.profjb58.territorial.event.registry.TerritorialNetworkRegistry;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.util.debug.DebugTimer;
-import io.github.profjb58.territorial.world.team.ServerTeamsHandler;
+import io.github.profjb58.territorial.world.team.ServerTeamManager;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.EnvType;
@@ -34,7 +34,7 @@ public class Territorial implements ModInitializer {
 			new Identifier(MOD_ID, BASE_GROUP_ID),
 			() -> new ItemStack(TerritorialRegistry.LOCKPICK));
 
-	public static final ServerTeamsHandler TEAMS_HANDLER = new ServerTeamsHandler();
+	public static final ServerTeamManager TEAM_MANAGER = new ServerTeamManager();
 	public static final LockablesBlacklist LOCKABLES_BLACKLIST = new LockablesBlacklist();
 
 	@Override
@@ -43,10 +43,9 @@ public class Territorial implements ModInitializer {
 
 		// Event handlers
 		TerritorialRegistry.registerAll();
-		TerritorialNetworkRegistry.registerServerPackets();
 		AttackHandlers.init();
 		ServerTickHandlers.init();
-		UseBlockHandler.init();
+		UseBlockHandlers.init();
 		DestructionHandlers.init();
 		LootTableHandler.init();
 		ServerConnectionHandlers.init();

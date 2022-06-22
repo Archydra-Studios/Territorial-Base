@@ -1,6 +1,7 @@
 package io.github.profjb58.territorial.item;
 
 import io.github.profjb58.territorial.Territorial;
+import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.screen.KeyringScreenHandler;
 import io.github.profjb58.territorial.inventory.ItemInventory;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
@@ -67,7 +68,7 @@ public class KeyringItem extends Item {
                 if (keyItem.isMasterKey()) {
                     tooltip.add(new LiteralText("§d" + itemStack.getName().getString()));
                 }
-                else if(!stack.hasCustomName()) {
+                else if(stack.getName().equals(TerritorialRegistry.KEY.getName())) {
                     tooltip.add(new TranslatableText("tooltip.territorial.blank_key"));
                 }
                 else {

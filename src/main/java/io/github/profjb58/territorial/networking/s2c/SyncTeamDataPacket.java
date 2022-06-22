@@ -52,7 +52,7 @@ public class SyncTeamDataPacket extends S2CPacket {
 
     @Override
     public void execute(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
-
+        // TODO - Handle client shit
     }
 
     @Override

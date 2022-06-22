@@ -4,7 +4,6 @@ import io.github.profjb58.territorial.Territorial;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.DoorBlock;
 import org.apache.commons.lang3.tuple.Triple;
-import org.h2.mvstore.tx.Transaction;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

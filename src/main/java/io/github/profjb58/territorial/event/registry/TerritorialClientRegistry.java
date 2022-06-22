@@ -1,17 +1,20 @@
 package io.github.profjb58.territorial.event.registry;
 
+import io.github.cottonmc.cotton.gui.widget.TooltipBuilder;
 import io.github.profjb58.territorial.block.BoundaryBeaconBlock;
 import io.github.profjb58.territorial.client.gui.BaseBeaconScreen;
 import io.github.profjb58.territorial.client.gui.BoundaryBeaconScreen;
 import io.github.profjb58.territorial.client.gui.KeyringScreen;
 import io.github.profjb58.territorial.client.render.entity.BoundaryBeaconBlockEntityRenderer;
 import io.github.profjb58.territorial.client.render.entity.LaserBlockEntityRenderer;
+import io.github.profjb58.territorial.event.ScreenHandlers;
 import io.github.profjb58.territorial.inventory.ItemInventory;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredicateProviderRegistry;
 import net.minecraft.client.render.RenderLayer;
@@ -55,6 +58,9 @@ public class TerritorialClientRegistry {
 
         ScreenRegistry.register(TerritorialRegistry.BOUNDARY_BEACON_SCREEN_HANDLER_TYPE, BoundaryBeaconScreen::new);
         ScreenRegistry.register(TerritorialRegistry.BASE_BEACON_SCREEN_HANDLER_TYPE, BaseBeaconScreen::new);
+
+        // Events...
+        ScreenHandlers.init();
     }
 
     private static void registerItemPredicates() {

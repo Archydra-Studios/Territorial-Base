@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.*;
 
-public class Team implements Serializable {
+public class Team {
 
     private final UUID id;
     private String name;

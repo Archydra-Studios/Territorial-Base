@@ -17,7 +17,7 @@ public abstract class BlockEntityMixin {
     private int territorial$lockType;
     private String territorial$ownerName;
 
-    @Inject(at = @At("HEAD"), method = "writeNbt", cancellable = true)
+    @Inject(at = @At("HEAD"), method = "writeNbt")
     public void writeNbt(NbtCompound tag, CallbackInfo info) {
         if (territorial$lockId != null && territorial$ownerUuid != null && territorial$lockType != 0 && territorial$ownerName != null) {
             tag.putString("lock_id", territorial$lockId);

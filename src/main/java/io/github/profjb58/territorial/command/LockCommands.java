@@ -6,8 +6,15 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+import io.github.profjb58.territorial.util.UuidUtils;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
+import org.apache.http.client.HttpResponseException;
+
+import java.io.IOException;
+import java.util.UUID;
+import java.util.concurrent.TimeoutException;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
@@ -39,6 +46,14 @@ public final class LockCommands {
     private static int listLocksByPlayerName(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
         ServerCommandSource scs = ctx.getSource();
         String playerName = StringArgumentType.getString(ctx, "player name");
+
+        // TODO - Testing stuff...
+        try {
+            var uuid = UuidUtils.findUuid(playerName);
+            if(uuid != null) scs.getPlayer().sendMessage(new LiteralText("Your UUID is: " + uuid), false);
+        } catch (IOException | TimeoutException e) {
+            e.printStackTrace();
+        }
 
         /*
         WorldLockStorage lps = WorldLockStorage.get(scs.getWorld());

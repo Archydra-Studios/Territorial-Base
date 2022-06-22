@@ -28,6 +28,10 @@ public class InGameHudMixin implements InGameHudAccess {
         this.overlayTinted = false;
     }
 
+    public void territorial$clearOverlayMessage() {
+        this.overlayRemaining = 0;
+    }
+
     @Inject(method="tick()V", at = @At("TAIL"))
     public void tick(CallbackInfo ci) {
         if(prevOverlayRemaining > 0 && overlayRemaining == 0)

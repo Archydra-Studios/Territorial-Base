@@ -6,9 +6,12 @@ import com.mojang.authlib.yggdrasil.response.MinecraftProfilePropertiesResponse;
 import io.github.profjb58.territorial.Territorial;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
+import org.apache.commons.lang3.exception.ExceptionContext;
+import org.apache.http.client.HttpResponseException;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -17,18 +20,42 @@ import java.net.URL;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class UuidUtils {
     private static final String MOJANG_UUID_API = "https://api.mojang.com/users/profiles/minecraft/";
+    private static final int TIMEOUT_IN_SECS = 3;
 
-    @Nullable
+    private static CompletableFuture<UUID> uuidFuture;
+
+    /**
+     * Takes a users name and finds a matching UUID
+     *
+     * @return Users UUID. Can be null if nothing is found
+     * @throws HttpResponseException Called if the HTTP response code is anything other than success (200)
+     * @throws TimeoutException Response took longer than the TIMEOUT_IN_SECS
+     */
     @Environment(EnvType.CLIENT)
-    public static UUID findUuid(String playerName) {
+    @Nullable
+    public static UUID findUuid(String playerName) throws IOException, TimeoutException {
         UUID uuid = null;
-        CompletableFuture<UUID> uuidFuture = CompletableFuture.supplyAsync(() -> UuidUtils.getUuidFromPlayer(playerName));
+
+        // Asynchronously search for a users UUID
+        uuidFuture = CompletableFuture.supplyAsync(() -> UuidUtils.getUuidFromPlayer(playerName));
         try {
-            uuid = uuidFuture.get();
-        } catch (InterruptedException | ExecutionException ignored) { }
+            // Get the response or time out if it took to long to retrieve a result
+            uuid = uuidFuture.get(TIMEOUT_IN_SECS, TimeUnit.SECONDS);
+        }
+        catch(ExecutionException ee) {
+            if(ee.getCause() instanceof HttpResponseException hre) throw hre;
+        }
+        catch(TimeoutException te) {
+            throw new TimeoutException("Timed out. Took longer than: " + TIMEOUT_IN_SECS + " seconds to complete");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         return uuid;
     }
 
@@ -42,13 +69,12 @@ public class UuidUtils {
 
             int responseCode = httpURLConnection.getResponseCode();
             if(responseCode != 200)
-                Territorial.LOGGER.warn("Failed to get UUID for the player, Api response code: " + responseCode);
+                uuidFuture.completeExceptionally(new IOException("Failed to get a valid UUID for the player"));
 
             var stringBuilder = new StringBuilder();
             var scanner = new Scanner(uuidGetRequest.openStream());
-            while(scanner.hasNext()) {
+            while(scanner.hasNext())
                 stringBuilder.append(scanner.nextLine());
-            }
             scanner.close();
 
             var uuidObject = (JsonObject) JsonParser.parseString(stringBuilder.toString());
@@ -66,6 +92,8 @@ public class UuidUtils {
 
         return uuid;
     }
+
+
 
     public static class LootStack {
 

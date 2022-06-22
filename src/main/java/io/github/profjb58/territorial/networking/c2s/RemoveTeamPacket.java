@@ -2,7 +2,6 @@ package io.github.profjb58.territorial.networking.c2s;
 
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.event.registry.TerritorialNetworkRegistry;
-import io.github.profjb58.territorial.networking.c2s.C2SPacket;
 import io.github.profjb58.territorial.util.NbtUtils;
 import io.github.profjb58.territorial.world.team.ServerTeam;
 import io.github.profjb58.territorial.world.team.Team;
@@ -29,7 +28,7 @@ public class RemoveTeamPacket extends C2SPacket {
 
     @Override
     public void execute(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
-        Territorial.TEAMS_HANDLER.removeTeam(id, members);
+        Territorial.TEAM_MANAGER.removeTeam(id, members);
     }
 
     @Override
