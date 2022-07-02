@@ -2,9 +2,8 @@ package io.github.profjb58.territorial.event.registry;
 
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.networking.c2s.*;
-import io.github.profjb58.territorial.networking.s2c.S2CPacket;
-import io.github.profjb58.territorial.networking.s2c.SyncLockInfoPacket;
-import io.github.profjb58.territorial.networking.s2c.SyncTeamDataPacket;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.util.Identifier;
 
 public class TerritorialNetworkRegistry  {
@@ -26,12 +25,24 @@ public class TerritorialNetworkRegistry  {
         S2CPacket.register(SYNC_LOCK_INFO_PACKET_ID, new SyncLockInfoPacket());
     }*/
 
-    public static void registerServerPackets() {
-        C2SPacket.register(CREATE_TEAM_PACKET_ID, new RemoveTeamPacket());
-        C2SPacket.register(REMOVE_TEAM_PACKET_ID, new CreateTeamPacket());
-        C2SPacket.register(TEAM_MEMBER_PACKET_ID, new TeamMemberPacket());
-        C2SPacket.register(MODIFY_TEAM_PACKET_ID, new ModifyTeamPacket());
+    public static Territorial modInstance;
+
+    public static void init(Territorial modInstance) {
+        TerritorialNetworkRegistry.modInstance = modInstance;
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> registerServerPackets());
+        ClientLifecycleEvents.CLIENT_STARTED.register(client -> registerClientPackets());
+    }
+
+    private static void registerServerPackets() {
+        C2SPacket.register(CREATE_TEAM_PACKET_ID, new RemoveTeamPacket(modInstance.getTeamManager()));
+        C2SPacket.register(REMOVE_TEAM_PACKET_ID, new CreateTeamPacket(modInstance.getTeamManager()));
+        C2SPacket.register(TEAM_MEMBER_PACKET_ID, new TeamMemberPacket(modInstance.getTeamManager()));
+        C2SPacket.register(MODIFY_TEAM_PACKET_ID, new ModifyTeamPacket(modInstance.getTeamManager()));
         C2SPacket.register(ADD_ECLIPSE_EFFECT_PACKET_ID, new AddEclipseEffectPacket());
         C2SPacket.register(START_BREAKING_BLOCK_PACKET_ID, new StartBreakingBlockPacket());
+    }
+
+    private static void registerClientPackets() {
+
     }
 }

@@ -8,6 +8,7 @@ import io.github.profjb58.territorial.misc.access.ServerPlayerInteractionManager
 import io.github.profjb58.territorial.util.TickCounter;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.packet.s2c.play.BlockBreakingProgressS2CPacket;

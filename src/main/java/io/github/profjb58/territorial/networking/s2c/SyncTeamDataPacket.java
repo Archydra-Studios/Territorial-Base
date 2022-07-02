@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
@@ -38,7 +39,7 @@ public class SyncTeamDataPacket extends S2CPacket {
         buf.writeString(name);
         buf.writeItemStack(bannerStack);
         buf.writeInt(bannerBaseColourId);
-        buf.writeNbt(NbtUtils.getNbtFromMembers(members));
+        buf.writeNbt(NbtUtils.getMembersNbt(members));
     }
 
     @Override

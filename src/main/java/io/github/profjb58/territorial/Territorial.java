@@ -1,11 +1,13 @@
 package io.github.profjb58.territorial;
 
-import io.github.cottonmc.cotton.gui.client.LibGui;
-import io.github.profjb58.territorial.config.LockablesBlacklist;
+import io.github.profjb58.territorial.api.LockTypeRegistry;
+import io.github.profjb58.territorial.config.LockablesBlacklistHandler;
 import io.github.profjb58.territorial.config.TerritorialConfig;
 import io.github.profjb58.territorial.event.*;
+import io.github.profjb58.territorial.event.registry.TerritorialNetworkRegistry;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.util.debug.DebugTimer;
+import io.github.profjb58.territorial.util.dispatcher.Dispatcher;
 import io.github.profjb58.territorial.world.team.ServerTeamManager;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
@@ -34,22 +36,33 @@ public class Territorial implements ModInitializer {
 			new Identifier(MOD_ID, BASE_GROUP_ID),
 			() -> new ItemStack(TerritorialRegistry.LOCKPICK));
 
-	public static final ServerTeamManager TEAM_MANAGER = new ServerTeamManager();
-	public static final LockablesBlacklist LOCKABLES_BLACKLIST = new LockablesBlacklist();
+	private static final ServerTeamManager teamManager = new ServerTeamManager();
+	private static final LockablesBlacklistHandler lockablesBlacklist = new LockablesBlacklistHandler();
+	private static final Dispatcher dispatcher = new Dispatcher();
 
 	@Override
 	public void onInitialize() {
 		AutoConfig.register(TerritorialConfig.class, JanksonConfigSerializer::new);
 
 		// Event handlers
-		TerritorialRegistry.registerAll();
+		TerritorialRegistry.registerAll(this);
+		TerritorialNetworkRegistry.init(this);
+
 		AttackHandlers.init();
 		ServerTickHandlers.init();
 		UseBlockHandlers.init();
 		DestructionHandlers.init();
 		LootTableHandler.init();
-		ServerConnectionHandlers.init();
+		ServerConnectionHandlers.init(this);
+
+		LockTypeRegistry.register("test", );
 	}
+
+	public ServerTeamManager getTeamManager() {
+		return teamManager;
+	}
+	public LockablesBlacklistHandler getLockablesBlacklist() { return lockablesBlacklist; }
+	public Dispatcher getDispatcher() { return dispatcher; }
 
 	public static TerritorialConfig getConfig() {
 		return AutoConfig.getConfigHolder(TerritorialConfig.class).getConfig();

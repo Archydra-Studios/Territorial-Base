@@ -2,6 +2,7 @@ package io.github.profjb58.territorial.config;
 
 import com.mojang.datafixers.util.Pair;
 import io.github.profjb58.territorial.Territorial;
+import io.github.profjb58.territorial.api.LockablesBlacklist;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.util.DyeColor;
@@ -16,30 +17,29 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class LockablesBlacklist implements Runnable {
+public class LockablesBlacklistHandler implements Runnable {
 
-    private static final String CONFIG_DIRECTORY;
-    private static final List<String> BLACKLIST_DEFAULTS;
-
-    private File blacklistFile;
-    private final Set<String> blacklist;
+    private static final String configDirectory;
+    private static final List<String> blacklistDefaults;
+    private static final Set<String> blacklistSet;
 
     public enum QueueOperation { WRITE, REMOVE }
+
+    private File blacklistFile;
     private final BlockingQueue<Pair<QueueOperation, String>> queue;
     private final AtomicBoolean threadActive;
 
-    public LockablesBlacklist() {
-        this.blacklistFile = new File(CONFIG_DIRECTORY + "/lockables_blacklist.txt");
-        this.blacklist = new LinkedHashSet<>();
+    public LockablesBlacklistHandler() {
+        this.blacklistFile = new File(configDirectory + "/lockables_blacklist.txt");
         this.queue = new LinkedBlockingQueue<>();
         this.threadActive = new AtomicBoolean(true);
 
         try {
-            if(Files.notExists(Paths.get(CONFIG_DIRECTORY)))
-                Files.createDirectory(Paths.get(CONFIG_DIRECTORY));
+            if(Files.notExists(Paths.get(configDirectory)))
+                Files.createDirectory(Paths.get(configDirectory));
             if(blacklistFile.createNewFile()) {
                 var fileWriter = new FileWriter(blacklistFile);
-                for(String blacklistedBlock : BLACKLIST_DEFAULTS)
+                for(String blacklistedBlock : blacklistDefaults)
                     fileWriter.append(blacklistedBlock).append("\n");
                 fileWriter.close();
             }
@@ -67,7 +67,7 @@ public class LockablesBlacklist implements Runnable {
                 }
                 else {
                     boolean deleteSuccessful, renameSuccessful, tempFileCreated;
-                    var tempFile = new File(CONFIG_DIRECTORY + "/lockables_temp.txt");
+                    var tempFile = new File(configDirectory + "/lockables_temp.txt");
                     var writer = new BufferedWriter(new FileWriter(tempFile, true));
                     var reader = new BufferedReader(new FileReader(blacklistFile));
                     tempFileCreated = tempFile.createNewFile();
@@ -98,12 +98,12 @@ public class LockablesBlacklist implements Runnable {
     private void read() throws IOException {
         var scanner = new Scanner(blacklistFile);
         while(scanner.hasNextLine())
-            blacklist.add(scanner.nextLine());
+            blacklistSet.add(scanner.nextLine());
         scanner.close();
     }
 
     public boolean addBlock(Block block) {
-        if(blacklist.add(getRegistryKey(block))) {
+        if(blacklistSet.add(getRegistryKey(block))) {
             queue.add(Pair.of(QueueOperation.WRITE, getRegistryKey(block)));
             return true;
         }
@@ -111,7 +111,7 @@ public class LockablesBlacklist implements Runnable {
     }
 
     public boolean removeBlock(Block block) {
-        if(blacklist.remove(getRegistryKey(block))) {
+        if(blacklistSet.remove(getRegistryKey(block))) {
             queue.add(Pair.of(QueueOperation.REMOVE, getRegistryKey(block)));
             return true;
         }
@@ -119,14 +119,14 @@ public class LockablesBlacklist implements Runnable {
     }
 
     @Nullable
-    private String getRegistryKey(Block block) {
+    private static String getRegistryKey(Block block) {
         var optionalKey = Registry.BLOCK.getKey(block);
         return optionalKey.map(blockRegistryKey -> blockRegistryKey.getValue().toString()).orElse(null);
     }
 
-    public boolean isBlacklisted(Block block) { return blacklist.contains(getRegistryKey(block)); }
+    public static boolean isBlacklisted(Block block) { return blacklistSet.contains(getRegistryKey(block)); }
 
-    public List<String> asList() { return blacklist.stream().toList(); }
+    public List<String> asList() { return blacklistSet.stream().toList(); }
 
     private static List<String> getColouredBlockList(String[] colouredBlocks) {
         List<String> colouredBlocksList = new ArrayList<>();
@@ -139,19 +139,13 @@ public class LockablesBlacklist implements Runnable {
     }
 
     static {
-        String[] colouredBlocks = {
-                "minecraft:bed", "minecraft:banner"
-        };
-        String[] singleEntryBlocks = {
-                "minecraft:beacon", "minecraft:comparator", "minecraft:conduit", "minecraft:daylight_detector",
-                "minecraft:end_gateway", "minecraft:end_portal", "minecraft:piston", "minecraft:sticky_piston",
-                "minecraft:sculk_sensor", "minecraft:bell", "territorial:laser_transmitter", "territorial:laser_receiver",
-                "territorial:boundary_beacon"
-        };
-
-        CONFIG_DIRECTORY = FabricLoader.getInstance().getConfigDir().toString() + "/" + Territorial.MOD_ID;
-        BLACKLIST_DEFAULTS = new ArrayList<>();
-        BLACKLIST_DEFAULTS.addAll(getColouredBlockList(colouredBlocks));
-        BLACKLIST_DEFAULTS.addAll(List.of(singleEntryBlocks));
+        configDirectory = FabricLoader.getInstance().getConfigDir().toString() + "/" + Territorial.MOD_ID;
+        blacklistSet = new LinkedHashSet<>();
+        blacklistDefaults = new ArrayList<>();
+        blacklistDefaults.addAll(getColouredBlockList(LockablesBlacklist.COLOURED_BLOCKS));
+        blacklistDefaults.addAll(List.of(LockablesBlacklist.VANILLA_BLOCKS));
+        blacklistDefaults.addAll(List.of(LockablesBlacklist.TERRITORIAL_BLOCKS));
+        blacklistDefaults.addAll(getColouredBlockList(LockablesBlacklist.MODDED_COLOURED_BLOCKS));
+        blacklistDefaults.addAll(List.of(LockablesBlacklist.MODDED_BLOCKS));
     }
 }

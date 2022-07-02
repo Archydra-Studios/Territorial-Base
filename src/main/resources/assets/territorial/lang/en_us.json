@@ -78,6 +78,15 @@
   "message.territorial.enderchest.warn": "§a[Territorial] §rA player stole items from your ender chest",
   "message.territorial.stack_dupe_formatted.warn": "§a[Territorial]§r§c Duplicated item: %s §cfound in %s's §cplayer / ender chest inventory",
   "message.territorial.stack_dupe.warn": "[Territorial] Duplicated item: %s found in %s's player / ender chest inventory",
+  "message.territorial.team.create.success": "§aSuccessfully created team %s",
+  "message.territorial.team.remove.cancel": "§cCancelled disbanding your current team",
+  "message.territorial.team.no_team": "§cYou do not own a team",
+  "message.territorial.team.remove.warning": "§eTeam %s §ewill be disbanded in 20 seconds. Type §r/territorial cancel disband §eto cancel",
+  "message.territorial.dispatcher.already_running": "§cThis task is already active",
+  "message.territorial.dispatcher.not_running": "§cNo task is currently running",
+
+  "error.territorial.team.multiple": "Cannot create more than one team",
+  "error.territorial.team.duplicate": "Team with name %s already exists",
 
   "title.territorial.config": "Territorial Config",
 

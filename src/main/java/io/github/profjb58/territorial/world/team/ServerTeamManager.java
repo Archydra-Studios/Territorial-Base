@@ -9,6 +9,7 @@ import net.minecraft.nbt.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.DyeColor;
 import net.minecraft.world.PersistentState;
 
 import javax.annotation.Nullable;
@@ -22,6 +23,7 @@ public class ServerTeamManager extends PersistentState {
     
     private static final Map<UUID, ServerTeam> SERVER_TEAMS = new HashMap<>();
     private static final Map<UUID, UUID> PLAYER_TEAM_REFERENCES = new HashMap<>();
+    static final int[] BANNER_DYE_COLOR_USAGE = new int[16];
 
     public enum MemberAction { ADD_MEMBER, REMOVE_MEMBER, PROMOTE_MEMBER, DEMOTE_MEMBER }
 
@@ -57,7 +59,7 @@ public class ServerTeamManager extends PersistentState {
         }
     }
 
-    public boolean createTeam(String teamName, ServerTeam.Banner banner, ServerPlayerEntity owner) {
+    public TeamResult createTeam(String teamName, ServerTeam.Banner banner, ServerPlayerEntity owner)  {
         if(!PLAYER_TEAM_REFERENCES.containsKey(owner.getUuid())) {
             boolean isUnique = getTeamsSortedSet().stream().noneMatch(
                     (team -> team.getValue().getName().equals(teamName) || team.getValue().getBanner().equals(banner)));
@@ -66,15 +68,18 @@ public class ServerTeamManager extends PersistentState {
                 var team = new ServerTeam(teamName, banner, owner);
                 PLAYER_TEAM_REFERENCES.put(owner.getUuid(), team.getId());
                 SERVER_TEAMS.put(team.getId(), team);
+                BANNER_DYE_COLOR_USAGE[banner.baseColour().getId()]++;
                 TeamEvents.CREATE_EVENT.invoker().onCreate(teamName, banner, owner);
-                return true;
+                return TeamResult.SUCCESS;
             }
+            return TeamResult.DUPLICATE_TEAM;
         }
-        return false;
+        return TeamResult.MULTIPLE_TEAMS;
     }
 
     public boolean removeTeam(UUID teamId, Team.Members members) {
         if(SERVER_TEAMS.containsKey(teamId)) {
+            BANNER_DYE_COLOR_USAGE[SERVER_TEAMS.get(teamId).getBanner().baseColour().getId()]--;
             SERVER_TEAMS.remove(teamId);
             for(var member : members.asList())
                 if(isInTeam(member, teamId)) PLAYER_TEAM_REFERENCES.remove(member);
@@ -101,8 +106,8 @@ public class ServerTeamManager extends PersistentState {
                     boolean promoteSuccess, demoteSuccess;
 
                     if(prevRole != null && isInTeam(member, teamId)) {
-                        promoteSuccess = (action == MemberAction.PROMOTE_MEMBER && newRole.getRank() > prevRole.getRank());
-                        demoteSuccess = (action == MemberAction.DEMOTE_MEMBER && newRole.getRank() < prevRole.getRank());
+                        promoteSuccess = (action == MemberAction.PROMOTE_MEMBER && newRole.rank() > prevRole.rank());
+                        demoteSuccess = (action == MemberAction.DEMOTE_MEMBER && newRole.rank() < prevRole.rank());
 
                         if(promoteSuccess || demoteSuccess) {
                             members.remove(member);
@@ -171,11 +176,22 @@ public class ServerTeamManager extends PersistentState {
         return null;
     }
 
-    private boolean hasTeam(UUID playerUuid) { return PLAYER_TEAM_REFERENCES.containsKey(playerUuid); }
+    public boolean hasTeam(UUID playerUuid) { return PLAYER_TEAM_REFERENCES.containsKey(playerUuid); }
 
     private boolean isInTeam(UUID playerUuid, UUID teamId) {
         if(PLAYER_TEAM_REFERENCES.containsKey(playerUuid))
             return teamId.equals(PLAYER_TEAM_REFERENCES.get(playerUuid));
         return false;
+    }
+
+    public static DyeColor getLeastUsedDyeColour() {
+        DyeColor leastUsedDyeColor = DyeColor.WHITE;
+        int prevUsage = Integer.MAX_VALUE;
+
+        for(int i=0; i < BANNER_DYE_COLOR_USAGE.length; i++) {
+           if(BANNER_DYE_COLOR_USAGE[i] < prevUsage)
+               leastUsedDyeColor = DyeColor.byId(BANNER_DYE_COLOR_USAGE[i]);
+        }
+        return leastUsedDyeColor;
     }
 }

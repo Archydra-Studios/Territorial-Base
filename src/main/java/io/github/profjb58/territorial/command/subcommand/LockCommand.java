@@ -1,4 +1,4 @@
-package io.github.profjb58.territorial.command;
+package io.github.profjb58.territorial.command.subcommand;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
@@ -6,20 +6,20 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+import com.mojang.brigadier.tree.LiteralCommandNode;
+import io.github.profjb58.territorial.command.SubCommand;
 import io.github.profjb58.territorial.util.UuidUtils;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
-import org.apache.http.client.HttpResponseException;
 
 import java.io.IOException;
-import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
-public final class LockCommands {
+public final class LockCommand implements SubCommand {
 
     private static final SimpleCommandExceptionType LOCKS_MATCH_FAILED = new SimpleCommandExceptionType(
             new TranslatableText("message.territorial.locks_match_failed")
@@ -29,21 +29,19 @@ public final class LockCommands {
             new TranslatableText("message.territorial.locks_match_failed_player")
     );
 
-    public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-        dispatcher.register(literal("territorial")
-                .then(literal("locks")
-                        .then(literal("list")
-                                .then(argument("player name", StringArgumentType.greedyString())
-                                        .requires(source -> source.hasPermissionLevel(2))
-                                        .executes(LockCommands::listLocksByPlayerName)
-                                )
-                                .executes(LockCommands::listLocks)
+    @Override
+    public LiteralCommandNode<ServerCommandSource> build() {
+        return literal("lock")
+                .then(literal("list")
+                        .then(argument("player name", StringArgumentType.greedyString())
+                                .requires(source -> source.hasPermissionLevel(2))
+                                .executes(this::listLocksByPlayerName)
                         )
-                )
-        );
+                        .executes(this::listLocks)
+                ).build();
     }
 
-    private static int listLocksByPlayerName(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+    private int listLocksByPlayerName(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
         ServerCommandSource scs = ctx.getSource();
         String playerName = StringArgumentType.getString(ctx, "player name");
 
@@ -70,7 +68,7 @@ public final class LockCommands {
         return Command.SINGLE_SUCCESS;
     }
 
-    private static int listLocks(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+    private int listLocks(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
         ServerCommandSource scs = ctx.getSource();
 
         /*

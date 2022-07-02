@@ -4,6 +4,7 @@ import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.event.registry.TerritorialNetworkRegistry;
 import io.github.profjb58.territorial.world.team.ServerTeam;
 import io.github.profjb58.territorial.world.team.ServerTeamManager;
+import io.github.profjb58.territorial.world.team.Team;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
@@ -11,6 +12,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+import org.apache.logging.log4j.core.jmx.Server;
 
 import java.util.UUID;
 
@@ -18,9 +20,13 @@ public class TeamMemberPacket extends C2SPacket {
 
     private ServerTeamManager.MemberAction action;
     private UUID memberUuid, teamId;
-    private ServerTeam.Members.Role role;
+    private Team.Members.Role role;
 
-    public TeamMemberPacket() {}
+    private static ServerTeamManager teamManager;
+
+    public TeamMemberPacket(ServerTeamManager teamManager) {
+        TeamMemberPacket.teamManager = teamManager;
+    }
 
     public TeamMemberPacket(ServerTeamManager.MemberAction action, UUID teamId, ServerTeam.Members.Role role, UUID memberUuid) {
         this.action = action;
@@ -31,7 +37,7 @@ public class TeamMemberPacket extends C2SPacket {
 
     @Override
     public void execute(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
-        Territorial.TEAM_MANAGER.doMemberAction(action, teamId, memberUuid, role);
+        teamManager.doMemberAction(action, teamId, memberUuid, role);
     }
 
     @Override
@@ -41,7 +47,8 @@ public class TeamMemberPacket extends C2SPacket {
         nbtCompound.putUuid("team_id", teamId);
         buf.writeNbt(nbtCompound);
         buf.writeEnumConstant(action);
-        buf.writeEnumConstant(role);
+        buf.writeString(role.name());
+        buf.writeInt(role.rank());
     }
 
     @Override
@@ -54,7 +61,7 @@ public class TeamMemberPacket extends C2SPacket {
                 teamId = nbtCompound.getUuid("team_id");
         }
         action = buf.readEnumConstant(ServerTeamManager.MemberAction.class);
-        role = buf.readEnumConstant(ServerTeam.Members.Role.class);
+        role = new Team.Members.Role(buf.readString(), buf.readInt());
     }
 
     @Override

@@ -41,6 +41,4 @@ public class EclipseStatusEffect extends StatusEffect {
             clientWorld.setTimeOfDay(18000);
         }
     }
-
-
 }

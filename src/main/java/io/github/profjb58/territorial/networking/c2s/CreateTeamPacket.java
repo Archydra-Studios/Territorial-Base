@@ -2,6 +2,7 @@ package io.github.profjb58.territorial.networking.c2s;
 
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.event.registry.TerritorialNetworkRegistry;
+import io.github.profjb58.territorial.world.team.ServerTeamManager;
 import io.github.profjb58.territorial.world.team.Team;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.item.ItemStack;
@@ -18,7 +19,11 @@ public class CreateTeamPacket extends C2SPacket {
     private ItemStack bannerStack;
     private int bannerBaseColourId;
 
-    public CreateTeamPacket() {}
+    private static ServerTeamManager teamManager;
+
+    public CreateTeamPacket(ServerTeamManager teamManager) {
+        CreateTeamPacket.teamManager = teamManager;
+    }
 
     public CreateTeamPacket(String teamName, ItemStack bannerStack, int bannerBaseColourId) {
         this.teamName = teamName;
@@ -47,6 +52,6 @@ public class CreateTeamPacket extends C2SPacket {
     }
 
     public void execute(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
-        Territorial.TEAM_MANAGER.createTeam(teamName, new Team.Banner(bannerStack, DyeColor.byId(bannerBaseColourId)), player);
+        teamManager.createTeam(teamName, new Team.Banner(bannerStack, DyeColor.byId(bannerBaseColourId)), player);
     }
 }

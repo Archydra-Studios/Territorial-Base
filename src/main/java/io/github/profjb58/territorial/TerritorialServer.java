@@ -15,8 +15,6 @@ public class TerritorialServer implements DedicatedServerModInitializer  {
         actionLogger = new ActionLogger();
         actionLogger.write(ActionLogger.LogType.INFO, "Server started... ");
 
-        TerritorialNetworkRegistry.registerServerPackets();
-
         ServerLifecycleEvents.SERVER_STARTED.register(
                 server -> TerritorialServer.minOpLevel = server.getOpPermissionLevel());
     }

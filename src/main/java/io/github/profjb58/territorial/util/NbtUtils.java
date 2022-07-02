@@ -8,6 +8,7 @@ import net.minecraft.block.entity.BannerBlockEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.BlockPos;
@@ -15,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import io.github.profjb58.territorial.world.team.Team.Members;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 public class NbtUtils {
@@ -42,38 +44,71 @@ public class NbtUtils {
         return nbtCompound;
     }
 
-    public static NbtCompound getNbtFromMembers(Members members) {
-        var membersListNbt = new NbtCompound();
+    private static NbtCompound getRolesNbt(Members members) {
+        var nbtRoles = new NbtCompound();
+        var rolesNbtList = new NbtList();
+        var roleMap = members.roleMap();
 
-        for(var role : Members.Role.values()) {
-            var nbtList = new NbtList();
-            var membersSet = members.roleMap().get(role);
-
-            for(UUID member : membersSet) {
-                var nbtCompound = new NbtCompound();
-                nbtCompound.putUuid("uuid", member);
-                nbtList.add(nbtCompound);
-            }
-            membersListNbt.put(role.getKey(), nbtList);
+        for(Members.Role role : roleMap.keySet()) {
+            var nbtRole = new NbtCompound();
+            nbtRole.putString("name", role.name());
+            nbtRole.putInt("rank", role.rank());
+            rolesNbtList.add(nbtRole);
         }
-        return membersListNbt;
+        nbtRoles.put("roles", rolesNbtList);
+        return nbtRoles;
     }
 
-    public static Members getMembersFromNbt(NbtCompound nbtCompound) {
-        Map<Members.Role, Set<UUID>> teamMembers = new EnumMap<>(Members.Role.class);
+    @Nullable
+    private static List<Members.Role> getRolesFromNbt(NbtCompound nbtCompound) {
+        var rolesList = new ArrayList<Members.Role>();
+        if(nbtCompound.contains("roles")) {
+            var rolesNbtList = nbtCompound.getList("roles", NbtType.COMPOUND);
 
-        if(nbtCompound != null) {
-            for(var role : Members.Role.values()) {
-                if(nbtCompound.contains(role.getKey())) {
+            for(var rolesNbtElement : rolesNbtList) {
+                String name = ((NbtCompound) rolesNbtElement).getString("name");
+                int rank = ((NbtCompound) rolesNbtElement).getInt("rank");
+                rolesList.add(new Members.Role(name, rank));
+            }
+            return rolesList;
+        }
+        return null;
+    }
+
+    public static NbtCompound getMembersNbt(Members members) {
+        var roleMap = members.roleMap();
+        var membersNbt = getRolesNbt(members);
+
+        for(var role : roleMap.keySet()) { // Cycle through all available roles
+            var membersNbtList = new NbtList();
+            var membersSet = roleMap.get(role);
+
+            for(UUID member : membersSet) { // Cycle through all members that have this role
+                var nbtMember = new NbtCompound();
+                nbtMember.putUuid("uuid", member);
+                membersNbtList.add(nbtMember);
+            }
+            membersNbt.put(role.name(), membersNbtList);
+        }
+        return membersNbt;
+    }
+
+    public static Members getMembersFromNbt(NbtCompound membersNbt) {
+        var rolesList = getRolesFromNbt(membersNbt);
+        var roleMap = new HashMap<Members.Role, Set<UUID>>();
+
+        if(rolesList != null && rolesList.size() > 0) {
+            for(var role : rolesList) {
+                if(membersNbt.contains(role.name())) {
                     var members = new HashSet<UUID>();
-                    var nbtList = nbtCompound.getList(role.getKey(), NbtType.COMPOUND);
+                    var membersNbtList = membersNbt.getList(role.name(), NbtType.COMPOUND);
 
-                    for(var memberElement : nbtList)
-                        members.add(((NbtCompound) memberElement).getUuid("uuid"));
-                    teamMembers.put(role, members);
+                    for(var memberNbtElement : membersNbtList)
+                        members.add(((NbtCompound) memberNbtElement).getUuid("uuid"));
+                    roleMap.put(role, members);
                 }
             }
         }
-        return new Members(teamMembers);
+        return new Members(roleMap);
     }
 }

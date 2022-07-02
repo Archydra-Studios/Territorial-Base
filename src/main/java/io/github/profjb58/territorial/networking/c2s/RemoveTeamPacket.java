@@ -4,8 +4,10 @@ import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.event.registry.TerritorialNetworkRegistry;
 import io.github.profjb58.territorial.util.NbtUtils;
 import io.github.profjb58.territorial.world.team.ServerTeam;
+import io.github.profjb58.territorial.world.team.ServerTeamManager;
 import io.github.profjb58.territorial.world.team.Team;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -19,7 +21,11 @@ public class RemoveTeamPacket extends C2SPacket {
     private UUID id;
     private Team.Members members;
 
-    public RemoveTeamPacket() {}
+    private static ServerTeamManager teamManager;
+
+    public RemoveTeamPacket(ServerTeamManager teamManager) {
+        this.teamManager = teamManager;
+    }
 
     public RemoveTeamPacket(UUID teamId, ServerTeam.Members members) {
         this.id = teamId;
@@ -28,13 +34,13 @@ public class RemoveTeamPacket extends C2SPacket {
 
     @Override
     public void execute(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
-        Territorial.TEAM_MANAGER.removeTeam(id, members);
+        teamManager.removeTeam(id, members);
     }
 
     @Override
     public void write(PacketByteBuf buf) {
         buf.writeUuid(id);
-        buf.writeNbt(NbtUtils.getNbtFromMembers(members));
+        buf.writeNbt(NbtUtils.getMembersNbt(members));
     }
 
     @Override

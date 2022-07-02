@@ -4,6 +4,7 @@ import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.block.enums.LockEntityResult;
 import io.github.profjb58.territorial.block.enums.LockSound;
 import io.github.profjb58.territorial.block.enums.LockType;
+import io.github.profjb58.territorial.config.LockablesBlacklistHandler;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.inventory.ItemInventory;
 import io.github.profjb58.territorial.item.KeyringItem;
@@ -42,7 +43,7 @@ public record LockableBlock(String lockId, UUID lockOwnerUuid, String lockOwnerN
         BlockEntity be = world.getBlockEntity(blockPos);
         if(be != null) {
             Block block = be.getCachedState().getBlock();
-            if(!Territorial.LOCKABLES_BLACKLIST.isBlacklisted(block)) {
+            if(!LockablesBlacklistHandler.isBlacklisted(block)) {
                 NbtCompound nbt = be.createNbt();
                 if(!nbt.contains("lock_id")) { // No lock has been assigned to the block entity
                     nbt.putString("lock_id", lockId);

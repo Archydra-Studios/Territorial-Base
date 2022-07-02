@@ -6,11 +6,13 @@ import io.github.profjb58.territorial.block.entity.BaseBeaconBlockEntity;
 import io.github.profjb58.territorial.block.entity.BoundaryBeaconBlockEntity;
 import io.github.profjb58.territorial.block.entity.LaserTransmitterBlockEntity;
 import io.github.profjb58.territorial.block.enums.LockType;
-import io.github.profjb58.territorial.command.BlacklistCommands;
+import io.github.profjb58.territorial.command.TerritorialCommand;
+import io.github.profjb58.territorial.command.subcommand.BlacklistCommand;
+import io.github.profjb58.territorial.command.subcommand.TeamCommand;
 import io.github.profjb58.territorial.screen.BaseBeaconScreenHandler;
 import io.github.profjb58.territorial.screen.BoundaryBeaconScreenHandler;
 import io.github.profjb58.territorial.screen.KeyringScreenHandler;
-import io.github.profjb58.territorial.command.LockCommands;
+import io.github.profjb58.territorial.command.subcommand.LockCommand;
 import io.github.profjb58.territorial.enchantment.BloodshedCurseEnchantment;
 import io.github.profjb58.territorial.entity.effect.EclipseStatusEffect;
 import io.github.profjb58.territorial.entity.effect.LockFatigueStatusEffect;
@@ -37,7 +39,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class TerritorialRegistry {
-
     // Items
     public static final Item KEY = new KeyItem(false);
     public static final Item MASTER_KEY = new KeyItem(true);
@@ -95,7 +96,11 @@ public class TerritorialRegistry {
     public static final SpecialRecipeSerializer<ConditionalRecipes.OmniscientObsidian> OMNISCIENT_OBSIDIAN_RECIPE_SERIALIZER
             = new SpecialRecipeSerializer<>(ConditionalRecipes.OmniscientObsidian::new);
 
-    public static void registerAll() {
+    private static Territorial modInstance;
+
+    public static void registerAll(Territorial modInstance) {
+        TerritorialRegistry.modInstance = modInstance;
+
         var blocks = new LinkedHashMap<String, Block>();
         var items = new LinkedHashMap<String, Item>();
         var recipes = new LinkedHashMap<String, RecipeSerializer<?>>();
@@ -162,8 +167,10 @@ public class TerritorialRegistry {
 
         // Commands
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
-            LockCommands.register(dispatcher);
-            BlacklistCommands.register(dispatcher);
+            TerritorialCommand.register(dispatcher);
+            TerritorialCommand.registerSubCommand(new TeamCommand(modInstance.getTeamManager(), modInstance.getDispatcher()).build());
+            TerritorialCommand.registerSubCommand(new BlacklistCommand(modInstance.getLockablesBlacklist()).build());
+            TerritorialCommand.registerSubCommand(new LockCommand().build());
         });
     }
 

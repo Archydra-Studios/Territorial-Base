@@ -2,6 +2,8 @@ package io.github.profjb58.territorial.networking.c2s;
 
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.event.registry.TerritorialNetworkRegistry;
+import io.github.profjb58.territorial.world.team.ServerTeam;
+import io.github.profjb58.territorial.world.team.ServerTeamManager;
 import io.github.profjb58.territorial.world.team.Team;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.item.ItemStack;
@@ -21,7 +23,10 @@ public class ModifyTeamPacket extends C2SPacket {
     private ItemStack newBannerStack;
     private int newBannerBaseColourId;
 
-    public ModifyTeamPacket() {}
+    private static ServerTeamManager teamManager;
+    public ModifyTeamPacket(ServerTeamManager teamManager) {
+        ModifyTeamPacket.teamManager = teamManager;
+    }
 
     public ModifyTeamPacket(UUID oldId, String newName, ItemStack newBannerStack, int newBannerBaseColourId) {
         this.oldId = oldId;
@@ -32,8 +37,8 @@ public class ModifyTeamPacket extends C2SPacket {
 
     @Override
     public void execute(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
-        var team = Territorial.TEAM_MANAGER.getTeamById(oldId);
-        if(team != null) team.setIdentifyingData(newName, new Team.Banner(newBannerStack, DyeColor.byId(newBannerBaseColourId)));
+        var serverTeam = (ServerTeam) teamManager.getTeamById(oldId);
+        if(serverTeam != null) serverTeam.setIdentifyingData(newName, new Team.Banner(newBannerStack, DyeColor.byId(newBannerBaseColourId)));
     }
 
     @Override

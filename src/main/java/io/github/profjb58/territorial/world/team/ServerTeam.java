@@ -29,6 +29,14 @@ public class ServerTeam extends Team {
         super(name, banner, owner);
     }
 
+    public void setIdentifyingData(String name, Banner banner) {
+        ServerTeamManager.BANNER_DYE_COLOR_USAGE[this.banner.baseColour().getId()]--;
+        ServerTeamManager.BANNER_DYE_COLOR_USAGE[banner.baseColour().getId()]++;
+
+        this.name = name;
+        this.banner = banner;
+    }
+
     public void updateLastLogin() { lastLoginDate = Date.from(Instant.EPOCH); }
 
     public void addBeaconPos(World world, BlockPos pos) {

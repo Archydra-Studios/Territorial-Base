@@ -12,9 +12,12 @@ import java.util.*;
 
 public class Team {
 
+    protected static final Members.Role OWNER = new Members.Role("owner", 9);
+    protected static final Members.Role MEMBER = new Members.Role("member", 0);
+
     private final UUID id;
-    private String name;
-    private Banner banner;
+    protected String name;
+    protected Banner banner;
     private final Members members;
 
     protected Team(UUID id, String name, Banner banner, Members members) {
@@ -28,7 +31,7 @@ public class Team {
         id = UUID.randomUUID();
         this.name = name;
         this.banner = banner;
-        this.members = new Members(Map.of(Members.Role.OWNER, Set.of(owner.getUuid())));
+        this.members = new Members(Map.of(OWNER, Set.of(owner.getUuid())));
     }
 
     public UUID getId() { return id; }
@@ -36,29 +39,10 @@ public class Team {
     public Team.Banner getBanner() { return banner; }
     public Team.Members members() { return members; }
 
-    public void setIdentifyingData(String name, Banner banner) {
-        this.name = name;
-        this.banner = banner;
-    }
-
     public record Banner(ItemStack stack, DyeColor baseColour) {}
 
     public record Members(Map<Role, Set<UUID>> roleMap) {
-        public enum Role {
-            // Rank goes from 0 (minimum) to 9 (maximum)
-            OWNER("owner", 9), DEFAULT("member", 0);
-
-            private final int rank;
-            private final String key;
-
-            Role(String key, int rank) {
-                this.key = key;
-                this.rank = rank;
-            }
-
-            public int getRank() { return this.rank; }
-            public String getKey() { return this.key; }
-        }
+        public record Role(String name, int rank) {}
 
         boolean add(Role role, UUID playerUuid) {
             return roleMap.get(role).add(playerUuid);
