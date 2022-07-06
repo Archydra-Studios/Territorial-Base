@@ -2,8 +2,8 @@ package io.github.profjb58.territorial.util;
 
 public class TickCounter {
 
-    private final int TICK_THRESHOLD;
-    private final int MAX_VALUE;
+    private final int tickThreshold;
+    private final int maxValue;
 
     private int counter = 0;
 
@@ -12,12 +12,12 @@ public class TickCounter {
     }
 
     public TickCounter(int tickThreshold, int maxValue) {
-        TICK_THRESHOLD = tickThreshold;
-        MAX_VALUE = maxValue;
+        this.tickThreshold = tickThreshold;
+        this.maxValue = maxValue;
     }
 
     public boolean test() {
-        if(counter >= TICK_THRESHOLD) {
+        if(counter >= tickThreshold) {
             reset();
             return true;
         }
@@ -25,7 +25,7 @@ public class TickCounter {
     }
 
     public void increment() {
-        if(counter >= MAX_VALUE || counter < 0) reset();
+        if(counter >= maxValue || counter < 0) reset();
         else counter++;
     }
 
@@ -34,4 +34,6 @@ public class TickCounter {
     }
 
     public int value() { return this.counter; }
+
+    public int getTickThreshold() { return this.tickThreshold; }
 }

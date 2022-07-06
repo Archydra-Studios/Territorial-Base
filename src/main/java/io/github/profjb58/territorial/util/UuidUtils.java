@@ -18,10 +18,10 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class UuidUtils {
     private static final String MOJANG_UUID_API = "https://api.mojang.com/users/profiles/minecraft/";
@@ -32,31 +32,16 @@ public class UuidUtils {
     /**
      * Takes a users name and finds a matching UUID
      *
+     * @param
+     *
      * @return Users UUID. Can be null if nothing is found
      * @throws HttpResponseException Called if the HTTP response code is anything other than success (200)
      * @throws TimeoutException Response took longer than the TIMEOUT_IN_SECS
      */
-    @Environment(EnvType.CLIENT)
-    @Nullable
-    public static UUID findUuid(String playerName) throws IOException, TimeoutException {
-        UUID uuid = null;
-
+    public static void findUuid(String playerName, Consumer<UUID> finish) throws IOException, TimeoutException {
         // Asynchronously search for a users UUID
         uuidFuture = CompletableFuture.supplyAsync(() -> UuidUtils.getUuidFromPlayer(playerName));
-        try {
-            // Get the response or time out if it took to long to retrieve a result
-            uuid = uuidFuture.get(TIMEOUT_IN_SECS, TimeUnit.SECONDS);
-        }
-        catch(ExecutionException ee) {
-            if(ee.getCause() instanceof HttpResponseException hre) throw hre;
-        }
-        catch(TimeoutException te) {
-            throw new TimeoutException("Timed out. Took longer than: " + TIMEOUT_IN_SECS + " seconds to complete");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        return uuid;
+        uuidFuture.thenAccept(finish);
     }
 
     private static UUID getUuidFromPlayer(String playerName) {
@@ -92,8 +77,6 @@ public class UuidUtils {
 
         return uuid;
     }
-
-
 
     public static class LootStack {
 

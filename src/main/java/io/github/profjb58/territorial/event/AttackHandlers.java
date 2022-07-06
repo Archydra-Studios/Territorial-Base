@@ -26,7 +26,6 @@ public class AttackHandlers {
 
     static final TickCounter TICKS_SINCE_BLOCK_ATTACK = new TickCounter(Integer.MAX_VALUE);
 
-
     public static void init() {
         AttackBlockCallback.EVENT.register(AttackHandlers::onAttackBlock);
         AttackEntityCallback.EVENT.register(AttackHandlers::onAttackEntity);

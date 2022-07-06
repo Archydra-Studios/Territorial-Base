@@ -5,6 +5,7 @@ import io.github.profjb58.territorial.screen.EnderKeyScreenHandler;
 import io.github.profjb58.territorial.misc.access.StatusEffectInstanceAccess;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.util.TickCounter;
+import io.github.profjb58.territorial.util.task.TickerTask;
 import io.github.profjb58.territorial.world.team.ServerTeamManager;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -19,6 +20,7 @@ public class ServerTickHandlers {
     private static final TickCounter LOCK_FATIGUE_TICKER = new TickCounter(LOCK_FATIGUE_CHECK_TICK_INTERVAL);
 
     public static void init() {
+        ServerTickEvents.START_SERVER_TICK.register((server) -> TickerTask.onTick());
         ServerTickEvents.START_SERVER_TICK.register(ServerTeamManager::messageQueueTick);
         ServerTickEvents.START_WORLD_TICK.register(ServerTickHandlers::lockStatusEffectTick);
         ServerTickEvents.START_WORLD_TICK.register(ServerTickHandlers::enderKeyScreenTick);

@@ -82,8 +82,8 @@
   "message.territorial.team.remove.cancel": "§cCancelled disbanding your current team",
   "message.territorial.team.no_team": "§cYou do not own a team",
   "message.territorial.team.remove.warning": "§eTeam %s §ewill be disbanded in 20 seconds. Type §r/territorial cancel disband §eto cancel",
-  "message.territorial.dispatcher.already_running": "§cThis task is already active",
-  "message.territorial.dispatcher.not_running": "§cNo task is currently running",
+  "message.territorial.task.already_running": "§cThis task is already active",
+  "message.territorial.task.not_running": "§cNo task is currently running",
 
   "error.territorial.team.multiple": "Cannot create more than one team",
   "error.territorial.team.duplicate": "Team with name %s already exists",

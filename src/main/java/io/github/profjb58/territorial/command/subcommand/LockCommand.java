@@ -4,16 +4,22 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandExceptionType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.github.profjb58.territorial.command.SubCommand;
 import io.github.profjb58.territorial.util.UuidUtils;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Formatting;
+import org.apache.http.client.HttpResponseException;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import static net.minecraft.server.command.CommandManager.argument;
@@ -41,15 +47,20 @@ public final class LockCommand implements SubCommand {
                 ).build();
     }
 
-    private int listLocksByPlayerName(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+    private int listLocksByPlayerName(CommandContext<ServerCommandSource> ctx) {
         ServerCommandSource scs = ctx.getSource();
         String playerName = StringArgumentType.getString(ctx, "player name");
 
-        // TODO - Testing stuff...
         try {
-            var uuid = UuidUtils.findUuid(playerName);
-            if(uuid != null) scs.getPlayer().sendMessage(new LiteralText("Your UUID is: " + uuid), false);
-        } catch (IOException | TimeoutException e) {
+            UuidUtils.findUuid(playerName, uuid -> {
+                try {
+                    scs.getPlayer().sendMessage(new LiteralText("found UUID: " + uuid.toString())
+                            .formatted(Formatting.AQUA), false);
+                }
+                catch(CommandSyntaxException e) {}
+            });
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
 

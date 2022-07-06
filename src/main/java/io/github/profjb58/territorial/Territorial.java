@@ -1,13 +1,12 @@
 package io.github.profjb58.territorial;
 
-import io.github.profjb58.territorial.api.LockTypeRegistry;
 import io.github.profjb58.territorial.config.LockablesBlacklistHandler;
 import io.github.profjb58.territorial.config.TerritorialConfig;
 import io.github.profjb58.territorial.event.*;
 import io.github.profjb58.territorial.event.registry.TerritorialNetworkRegistry;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.util.debug.DebugTimer;
-import io.github.profjb58.territorial.util.dispatcher.Dispatcher;
+import io.github.profjb58.territorial.util.task.Tasks;
 import io.github.profjb58.territorial.world.team.ServerTeamManager;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
@@ -20,6 +19,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class Territorial implements ModInitializer {
 
@@ -38,7 +40,7 @@ public class Territorial implements ModInitializer {
 
 	private static final ServerTeamManager teamManager = new ServerTeamManager();
 	private static final LockablesBlacklistHandler lockablesBlacklist = new LockablesBlacklistHandler();
-	private static final Dispatcher dispatcher = new Dispatcher();
+	private static final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
 	@Override
 	public void onInitialize() {
@@ -54,15 +56,13 @@ public class Territorial implements ModInitializer {
 		DestructionHandlers.init();
 		LootTableHandler.init();
 		ServerConnectionHandlers.init(this);
-
-		LockTypeRegistry.register("test", );
 	}
 
 	public ServerTeamManager getTeamManager() {
 		return teamManager;
 	}
 	public LockablesBlacklistHandler getLockablesBlacklist() { return lockablesBlacklist; }
-	public Dispatcher getDispatcher() { return dispatcher; }
+	public ScheduledExecutorService getScheduler() { return scheduler; }
 
 	public static TerritorialConfig getConfig() {
 		return AutoConfig.getConfigHolder(TerritorialConfig.class).getConfig();

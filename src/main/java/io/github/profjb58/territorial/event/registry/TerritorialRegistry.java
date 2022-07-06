@@ -1,5 +1,6 @@
 package io.github.profjb58.territorial.event.registry;
 
+import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.block.*;
 import io.github.profjb58.territorial.block.entity.BaseBeaconBlockEntity;
@@ -8,6 +9,7 @@ import io.github.profjb58.territorial.block.entity.LaserTransmitterBlockEntity;
 import io.github.profjb58.territorial.block.enums.LockType;
 import io.github.profjb58.territorial.command.TerritorialCommand;
 import io.github.profjb58.territorial.command.subcommand.BlacklistCommand;
+import io.github.profjb58.territorial.command.subcommand.CancelCommand;
 import io.github.profjb58.territorial.command.subcommand.TeamCommand;
 import io.github.profjb58.territorial.screen.BaseBeaconScreenHandler;
 import io.github.profjb58.territorial.screen.BoundaryBeaconScreenHandler;
@@ -32,10 +34,13 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.recipe.*;
 import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TerritorialRegistry {
@@ -100,7 +105,6 @@ public class TerritorialRegistry {
 
     public static void registerAll(Territorial modInstance) {
         TerritorialRegistry.modInstance = modInstance;
-
         var blocks = new LinkedHashMap<String, Block>();
         var items = new LinkedHashMap<String, Item>();
         var recipes = new LinkedHashMap<String, RecipeSerializer<?>>();
@@ -146,8 +150,6 @@ public class TerritorialRegistry {
         items.put("boundary_beacon", createBlockItem(BOUNDARY_BEACON));
         register(Registry.ITEM, items);
 
-        FabricLoader.getInstance().isModLoaded("example mod");
-
         // Status Effects
         register(Registry.STATUS_EFFECT, Map.of(
                 "lock_fatigue", LOCK_FATIGUE_EFFECT,
@@ -168,9 +170,13 @@ public class TerritorialRegistry {
         // Commands
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
             TerritorialCommand.register(dispatcher);
-            TerritorialCommand.registerSubCommand(new TeamCommand(modInstance.getTeamManager(), modInstance.getDispatcher()).build());
-            TerritorialCommand.registerSubCommand(new BlacklistCommand(modInstance.getLockablesBlacklist()).build());
-            TerritorialCommand.registerSubCommand(new LockCommand().build());
+            var subCommands = List.of(
+                    new TeamCommand(modInstance).build(),
+                    new BlacklistCommand(modInstance.getLockablesBlacklist()).build(),
+                    new LockCommand().build(),
+                    new CancelCommand(modInstance.getServerTasks()).build()
+            );
+            for(var subCommand : subCommands) TerritorialCommand.registerSubCommand(subCommand);
         });
     }
 
