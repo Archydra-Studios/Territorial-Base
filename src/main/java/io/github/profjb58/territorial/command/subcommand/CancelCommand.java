@@ -17,12 +17,6 @@ public class CancelCommand implements SubCommand {
 
     private static final TranslatableText NO_TASK = new TranslatableText("message.territorial.task.not_running");
 
-    private static Tasks serverTasks;
-
-    public CancelCommand(Tasks serverTasks) {
-        CancelCommand.serverTasks = serverTasks;
-    }
-
     @Override
     public LiteralCommandNode<ServerCommandSource> build() {
         return literal("cancel")

@@ -174,7 +174,7 @@ public class TerritorialRegistry {
                     new TeamCommand(modInstance).build(),
                     new BlacklistCommand(modInstance.getLockablesBlacklist()).build(),
                     new LockCommand().build(),
-                    new CancelCommand(modInstance.getServerTasks()).build()
+                    new CancelCommand().build()
             );
             for(var subCommand : subCommands) TerritorialCommand.registerSubCommand(subCommand);
         });
