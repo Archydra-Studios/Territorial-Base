@@ -12,7 +12,8 @@ import java.util.concurrent.TimeUnit;
 public class TickerTask extends AbstractTask {
 
     private static final EnumMap<TestFreq, HashSet<TickerTask>> TASK_FREQ_MAPPINGS = new EnumMap<>(TestFreq.class);
-    private static final TickCounter FAST_TICKER = new TickCounter(100);
+    private static final int FAST_TICKER_TICKS = 100;
+    private static final TickCounter FAST_TICKER = new TickCounter(FAST_TICKER_TICKS);
 
     private final long timeInterval;
     private final TimeUnit timeUnit;
@@ -92,9 +93,9 @@ public class TickerTask extends AbstractTask {
      * How frequently the server/client should check if a task has been completed (20 tps)
      */
     public enum TestFreq {
-        FREQUENT(new TickCounter(FAST_TICKER.getTickThreshold())),
-        REGULAR(new TickCounter(FAST_TICKER.getTickThreshold() * 24)),
-        INFREQUENT(new TickCounter(FAST_TICKER.getTickThreshold() * 240));
+        FREQUENT(new TickCounter(FAST_TICKER_TICKS)),
+        REGULAR(new TickCounter(FAST_TICKER_TICKS * 24)),
+        INFREQUENT(new TickCounter(FAST_TICKER_TICKS * 240));
 
         private final TickCounter tickCounter;
 

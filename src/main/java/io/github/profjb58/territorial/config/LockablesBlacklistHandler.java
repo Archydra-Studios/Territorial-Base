@@ -11,6 +11,7 @@ import net.minecraft.util.registry.Registry;
 import javax.annotation.Nullable;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
@@ -35,8 +36,10 @@ public class LockablesBlacklistHandler implements Runnable {
         this.threadActive = new AtomicBoolean(true);
 
         try {
-            if(Files.notExists(Paths.get(configDirectory)))
-                Files.createDirectory(Paths.get(configDirectory));
+            var configPath = Path.of(configDirectory);
+
+            if(Files.notExists(configPath))
+                Files.createDirectory(configPath);
             if(blacklistFile.createNewFile()) {
                 var fileWriter = new FileWriter(blacklistFile);
                 for(String blacklistedBlock : blacklistDefaults)
@@ -66,11 +69,10 @@ public class LockablesBlacklistHandler implements Runnable {
                     writer.close();
                 }
                 else {
-                    boolean deleteSuccessful, renameSuccessful, tempFileCreated;
                     var tempFile = new File(configDirectory + "/lockables_temp.txt");
                     var writer = new BufferedWriter(new FileWriter(tempFile, true));
                     var reader = new BufferedReader(new FileReader(blacklistFile));
-                    tempFileCreated = tempFile.createNewFile();
+                    boolean tempFileCreated = tempFile.createNewFile();
                     String currentLine;
 
                     while((currentLine = reader.readLine()) != null) {
@@ -80,8 +82,8 @@ public class LockablesBlacklistHandler implements Runnable {
                     }
                     writer.close();
                     reader.close();
-                    deleteSuccessful = blacklistFile.delete();
-                    renameSuccessful = tempFile.renameTo(blacklistFile);
+                    boolean deleteSuccessful = blacklistFile.delete();
+                    boolean renameSuccessful = tempFile.renameTo(blacklistFile);
 
                     if(!tempFileCreated || !deleteSuccessful || !renameSuccessful)
                         throw new IOException();

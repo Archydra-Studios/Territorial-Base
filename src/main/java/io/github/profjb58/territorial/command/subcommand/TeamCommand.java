@@ -33,7 +33,7 @@ public final class TeamCommand implements SubCommand {
     private static final TranslatableText TEAM_REMOVE_CANCEL = new TranslatableText("message.territorial.team.remove.cancel");
     private static final TranslatableText TASK_ALREADY_RUNNING = new TranslatableText("message.territorial.task.already_running");
 
-    private static final int REMOVE_TEAM_DURATION_SECS = 10;
+    private static final int REMOVE_TEAM_DURATION_SECS = 30;
 
     private static final SimpleCommandExceptionType MULTIPLE_TEAMS = new SimpleCommandExceptionType(
             new TranslatableText("error.territorial.team.multiple")

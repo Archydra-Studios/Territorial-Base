@@ -68,6 +68,8 @@ public class TerritorialConfig implements ConfigData {
         @ConfigEntry.Gui.CollapsibleObject
         Advanced advanced = new Advanced();
 
+
+
         static class Limits {
             int maxWaypointsPerTeam = 0;
             int maxTeamsPerPlayer = 1;

@@ -18,10 +18,10 @@ public class AntiCheatUtils {
         UUID stackUuid = UuidUtils.LootStack.getUuid(itemStack);
         if(stackUuid != null && (!targetPlayer.isCreative() && !targetPlayer.hasPermissionLevel(2))) {
             Inventory[] inventories = { targetPlayer.getInventory(), targetPlayer.getEnderChestInventory() };
-
             int stackCount = 0;
             ItemStack invItemStack;
             UUID invStackUuid;
+
             for(Inventory inv : inventories) {
                 for(int i=0; i < inv.size(); i++) {
                     invItemStack = inv.getStack(i);

@@ -76,26 +76,23 @@ public class EnderKeyItem extends Item {
                         var displayInv = new EnderChestInventory();
 
                         String targetName = target.getDisplayName().getString();
-                        if(targetName.length() > 12) targetName = targetName.substring(0, 9) + "...";
+                        if(targetName.length() > 12)
+                            targetName = targetName.substring(0, 9) + "...";
 
                         player.playSound(SoundEvents.BLOCK_ENDER_CHEST_OPEN, SoundCategory.BLOCKS, 0.5F, world.random.nextFloat() * 0.1F + 0.9F);
                         player.openHandledScreen(new SimpleNamedScreenHandlerFactory((i, playerInventory, playerEntity) ->
                                 new EnderKeyScreenHandler(i, playerInventory, displayInv, enderChestInv, target),
                                 new TranslatableText("container.territorial.enderchest", targetName)));
 
-                        if(!player.isCreative()) itemStack.decrement(1);
-                    } else {
+                        if(!player.isCreative())
+                            itemStack.decrement(1);
+                    } else
                         player.sendMessage(new TranslatableText("message.territorial.enderchest.unknown_player",
                                 itemStackName), true);
-                    }
                 }
-                else {
-                    player.sendMessage(new TranslatableText("message.territorial.enderchest.key_unnamed"), true);
-                }
+                else player.sendMessage(new TranslatableText("message.territorial.enderchest.key_unnamed"), true);
             }
-            else {
-                AntiCheatUtils.warnLootStackDuped(itemStack, (ServerPlayerEntity) player);
-            }
+            else AntiCheatUtils.warnLootStackDuped(itemStack, (ServerPlayerEntity) player);
         }
         return TypedActionResult.pass(itemStack);
     }

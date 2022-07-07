@@ -15,11 +15,12 @@ public class Tasks {
 
     public static boolean store(AbstractTask task, @Nullable PlayerEntity associatedPlayer) {
         try {
-            if(associatedPlayer == null)
-                if(!GAME_TASKS.containsKey(task.taskId) || !GAME_TASKS.get(task.taskId).isActive()) {
+            if(associatedPlayer == null) {
+                if (!GAME_TASKS.containsKey(task.taskId) || !GAME_TASKS.get(task.taskId).isActive()) {
                     GAME_TASKS.put(task.taskId, task);
                     return true;
                 }
+            }
             else {
                 var tasksSet = new WeakHashMap<Identifier, AbstractTask>();
 

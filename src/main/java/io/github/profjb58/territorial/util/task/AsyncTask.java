@@ -4,8 +4,8 @@ import io.github.profjb58.territorial.exception.ScheduleException;
 import net.minecraft.util.Identifier;
 
 import javax.annotation.Nullable;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class AsyncTask extends AbstractTask {
 
@@ -16,7 +16,7 @@ public class AsyncTask extends AbstractTask {
         super(taskId, taskRunnable, cancelRunnable);
     }
 
-    public void schedule(@Nullable ScheduledExecutorService scheduler) {
+    public void submit(ExecutorService scheduler) {
         if(scheduler != null)
             future = scheduler.submit(taskRunnable);
     }

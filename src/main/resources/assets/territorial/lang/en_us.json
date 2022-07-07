@@ -81,7 +81,7 @@
   "message.territorial.team.create.success": "§aSuccessfully created team %s",
   "message.territorial.team.remove.cancel": "§cCancelled disbanding your current team",
   "message.territorial.team.no_team": "§cYou do not own a team",
-  "message.territorial.team.remove.warning": "§eTeam %s §ewill be disbanded in 20 seconds. Type §r/territorial cancel disband §eto cancel",
+  "message.territorial.team.remove.warning": "§eTeam %s §ewill be disbanded in 30 seconds. Type §r/territorial cancel disband §eto cancel",
   "message.territorial.task.already_running": "§cThis task is already active",
   "message.territorial.task.not_running": "§cNo task is currently running",
 
