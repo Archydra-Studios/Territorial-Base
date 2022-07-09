@@ -91,15 +91,6 @@ public class LockablesBlacklistHandler {
                     () -> {
                         try {
                             removeAsync(blockRegistryKey);
-
-                            // TODO - REPLACE ME
-                            try {
-                                Thread.sleep(5000);
-                            }
-                            catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-
                             if(source != null)
                                 server.execute(() -> source.sendMessage(BLOCK_REMOVE_SUCCESS, false));
                         } catch (IOException e) {
