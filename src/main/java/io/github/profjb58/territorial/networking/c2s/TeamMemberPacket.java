@@ -1,7 +1,6 @@
 package io.github.profjb58.territorial.networking.c2s;
 
-import io.github.profjb58.territorial.Territorial;
-import io.github.profjb58.territorial.event.registry.TerritorialNetworkRegistry;
+import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.world.team.ServerTeam;
 import io.github.profjb58.territorial.world.team.ServerTeamManager;
 import io.github.profjb58.territorial.world.team.Team;
@@ -12,7 +11,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
-import org.apache.logging.log4j.core.jmx.Server;
 
 import java.util.UUID;
 
@@ -66,6 +64,6 @@ public class TeamMemberPacket extends C2SPacket {
 
     @Override
     public Identifier getId() {
-        return TerritorialNetworkRegistry.TEAM_MEMBER_PACKET_ID;
+        return TerritorialRegistry.TEAM_MEMBER_PACKET_ID;
     }
 }

@@ -3,10 +3,8 @@ package io.github.profjb58.territorial;
 import io.github.profjb58.territorial.config.LockablesBlacklistHandler;
 import io.github.profjb58.territorial.config.TerritorialConfig;
 import io.github.profjb58.territorial.event.*;
-import io.github.profjb58.territorial.event.registry.TerritorialNetworkRegistry;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.util.debug.DebugTimer;
-import io.github.profjb58.territorial.util.task.Tasks;
 import io.github.profjb58.territorial.world.team.ServerTeamManager;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
@@ -39,17 +37,16 @@ public class Territorial implements ModInitializer {
 			() -> new ItemStack(TerritorialRegistry.LOCKPICK));
 
 	private static final ServerTeamManager teamManager = new ServerTeamManager();
-	private static final LockablesBlacklistHandler lockablesBlacklist = new LockablesBlacklistHandler();
 	private static final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+	private static final LockablesBlacklistHandler lockablesBlacklist = new LockablesBlacklistHandler(scheduler);
+
 
 	@Override
 	public void onInitialize() {
-		AutoConfig.register(TerritorialConfig.class, JanksonConfigSerializer::new);
+		AutoConfig.register(TerritorialConfig.class, JanksonConfigSerializer::new); // Config
+		TerritorialRegistry.registerAll(this); // Registries
 
-		// Event handlers
-		TerritorialRegistry.registerAll(this);
-		TerritorialNetworkRegistry.init(this);
-
+		// Event initialization
 		AttackHandlers.init();
 		ServerTickHandlers.init();
 		UseBlockHandlers.init();

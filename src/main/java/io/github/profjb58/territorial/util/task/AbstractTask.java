@@ -2,10 +2,15 @@ package io.github.profjb58.territorial.util.task;
 
 import net.minecraft.util.Identifier;
 
+import javax.annotation.Nullable;
+import java.util.concurrent.Callable;
+
 public abstract class AbstractTask implements TaskInfo {
 
     protected final Identifier taskId;
-    protected final Runnable taskRunnable, cancelRunnable;
+    protected final Runnable taskRunnable;
+    @Nullable
+    protected final Runnable cancelRunnable;
 
     /**
      * Abstract task foundation class. Used primarily to allow storing and retrieving different
@@ -15,7 +20,7 @@ public abstract class AbstractTask implements TaskInfo {
      * @param taskRunnable Task to run on completion
      * @param cancelRunnable Task to run in the case of a soft fail
      */
-    public AbstractTask(Identifier taskId, Runnable taskRunnable, Runnable cancelRunnable) {
+    public AbstractTask(Identifier taskId, Runnable taskRunnable, @Nullable Runnable cancelRunnable) {
         this.taskId = taskId;
         this.taskRunnable = taskRunnable;
         this.cancelRunnable = cancelRunnable;

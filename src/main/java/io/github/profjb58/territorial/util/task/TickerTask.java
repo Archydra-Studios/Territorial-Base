@@ -74,7 +74,7 @@ public class TickerTask extends AbstractTask {
 
     @Override
     public boolean cancel(boolean failHard) {
-        if(!failHard)
+        if(!failHard && cancelRunnable != null)
             cancelRunnable.run();
         return finish();
     }

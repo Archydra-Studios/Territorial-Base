@@ -1,14 +1,9 @@
 package io.github.profjb58.territorial.event;
 
-import io.github.cottonmc.cotton.gui.client.CottonClientScreen;
-import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.TerritorialClient;
-import io.github.profjb58.territorial.client.gui.LockableScreen;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.item.ToolItem;
-import net.minecraft.util.Hand;
 
 
 public class ScreenHandlers {

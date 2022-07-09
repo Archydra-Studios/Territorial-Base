@@ -1,9 +1,7 @@
 package io.github.profjb58.territorial.networking.c2s;
 
 import io.github.profjb58.territorial.entity.effect.LockFatigueStatusEffect;
-import io.github.profjb58.territorial.event.registry.TerritorialNetworkRegistry;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
-import io.github.profjb58.territorial.networking.c2s.C2SPacket;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
@@ -40,6 +38,6 @@ public class StartBreakingBlockPacket extends C2SPacket {
 
     @Override
     public Identifier getId() {
-        return TerritorialNetworkRegistry.START_BREAKING_BLOCK_PACKET_ID;
+        return TerritorialRegistry.START_BREAKING_BLOCK_PACKET_ID;
     }
 }

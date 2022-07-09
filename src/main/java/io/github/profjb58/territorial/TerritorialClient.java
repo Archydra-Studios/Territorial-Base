@@ -20,7 +20,6 @@ public class TerritorialClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         TerritorialClientRegistry.registerAll();
-        //TerritorialNetworkRegistry.registerClientPackets();
         ClientTickHandlers.init();
     }
 }

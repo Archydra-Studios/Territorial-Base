@@ -1,13 +1,12 @@
 package io.github.profjb58.territorial.networking.s2c;
 
-import io.github.profjb58.territorial.event.registry.TerritorialNetworkRegistry;
+import io.github.profjb58.territorial.event.registry.TerritorialClientRegistry;
 import io.github.profjb58.territorial.util.NbtUtils;
 import io.github.profjb58.territorial.world.team.Team;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
@@ -58,6 +57,6 @@ public class SyncTeamDataPacket extends S2CPacket {
 
     @Override
     public Identifier getId() {
-        return TerritorialNetworkRegistry.SYNC_TEAM_DATA_PACKET_ID;
+        return TerritorialClientRegistry.SYNC_TEAM_DATA_PACKET_ID;
     }
 }

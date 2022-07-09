@@ -11,6 +11,7 @@ import io.github.profjb58.territorial.command.TerritorialCommand;
 import io.github.profjb58.territorial.command.subcommand.BlacklistCommand;
 import io.github.profjb58.territorial.command.subcommand.CancelCommand;
 import io.github.profjb58.territorial.command.subcommand.TeamCommand;
+import io.github.profjb58.territorial.networking.c2s.*;
 import io.github.profjb58.territorial.screen.BaseBeaconScreenHandler;
 import io.github.profjb58.territorial.screen.BoundaryBeaconScreenHandler;
 import io.github.profjb58.territorial.screen.KeyringScreenHandler;
@@ -22,6 +23,7 @@ import io.github.profjb58.territorial.item.*;
 import io.github.profjb58.territorial.recipe.LensRecipe;
 import io.github.profjb58.territorial.recipe.ConditionalRecipes;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
@@ -101,10 +103,15 @@ public class TerritorialRegistry {
     public static final SpecialRecipeSerializer<ConditionalRecipes.OmniscientObsidian> OMNISCIENT_OBSIDIAN_RECIPE_SERIALIZER
             = new SpecialRecipeSerializer<>(ConditionalRecipes.OmniscientObsidian::new);
 
-    private static Territorial modInstance;
+    // C2S Packets
+    public static final Identifier CREATE_TEAM_PACKET_ID = new Identifier(Territorial.MOD_ID, "create_team_packet");
+    public static final Identifier REMOVE_TEAM_PACKET_ID = new Identifier(Territorial.MOD_ID, "remove_team_packet");
+    public static final Identifier TEAM_MEMBER_PACKET_ID = new Identifier(Territorial.MOD_ID, "team_member_packet");
+    public static final Identifier MODIFY_TEAM_PACKET_ID = new Identifier(Territorial.MOD_ID, "modify_team_packet");
+    public static final Identifier ADD_ECLIPSE_EFFECT_PACKET_ID = new Identifier(Territorial.MOD_ID, "add_eclipse_effect_packet");
+    public static final Identifier START_BREAKING_BLOCK_PACKET_ID = new Identifier(Territorial.MOD_ID, "start_breaking_block_packet");
 
     public static void registerAll(Territorial modInstance) {
-        TerritorialRegistry.modInstance = modInstance;
         var blocks = new LinkedHashMap<String, Block>();
         var items = new LinkedHashMap<String, Item>();
         var recipes = new LinkedHashMap<String, RecipeSerializer<?>>();
@@ -167,7 +174,11 @@ public class TerritorialRegistry {
                 "bloodshed_curse", new BloodshedCurseEnchantment()
         ));
 
-        // Commands
+        registerCommands(modInstance); // Commands
+        registerPackets(modInstance); // Packets
+    }
+
+    private static void registerCommands(Territorial modInstance) {
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
             TerritorialCommand.register(dispatcher);
             var subCommands = List.of(
@@ -177,6 +188,17 @@ public class TerritorialRegistry {
                     new CancelCommand().build()
             );
             for(var subCommand : subCommands) TerritorialCommand.registerSubCommand(subCommand);
+        });
+    }
+
+    private static void registerPackets(Territorial modInstance) {
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+            C2SPacket.register(REMOVE_TEAM_PACKET_ID, new RemoveTeamPacket(modInstance.getTeamManager()));
+            C2SPacket.register(CREATE_TEAM_PACKET_ID, new CreateTeamPacket(modInstance.getTeamManager()));
+            C2SPacket.register(TEAM_MEMBER_PACKET_ID, new TeamMemberPacket(modInstance.getTeamManager()));
+            C2SPacket.register(MODIFY_TEAM_PACKET_ID, new ModifyTeamPacket(modInstance.getTeamManager()));
+            C2SPacket.register(ADD_ECLIPSE_EFFECT_PACKET_ID, new AddEclipseEffectPacket());
+            C2SPacket.register(START_BREAKING_BLOCK_PACKET_ID, new StartBreakingBlockPacket());
         });
     }
 

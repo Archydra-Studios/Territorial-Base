@@ -1,7 +1,6 @@
 package io.github.profjb58.territorial.networking.c2s;
 
-import io.github.profjb58.territorial.Territorial;
-import io.github.profjb58.territorial.event.registry.TerritorialNetworkRegistry;
+import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.world.team.ServerTeamManager;
 import io.github.profjb58.territorial.world.team.Team;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -48,7 +47,7 @@ public class CreateTeamPacket extends C2SPacket {
 
     @Override
     public Identifier getId() {
-        return TerritorialNetworkRegistry.CREATE_TEAM_PACKET_ID;
+        return TerritorialRegistry.CREATE_TEAM_PACKET_ID;
     }
 
     public void execute(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {

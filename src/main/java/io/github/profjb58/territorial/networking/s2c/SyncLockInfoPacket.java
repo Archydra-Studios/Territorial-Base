@@ -6,7 +6,7 @@ import io.github.profjb58.territorial.block.entity.LockableBlockEntity;
 import io.github.profjb58.territorial.block.enums.LockType;
 import io.github.profjb58.territorial.client.gui.LockableHud;
 import io.github.profjb58.territorial.client.gui.LockableScreen;
-import io.github.profjb58.territorial.event.registry.TerritorialNetworkRegistry;
+import io.github.profjb58.territorial.event.registry.TerritorialClientRegistry;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -50,7 +50,7 @@ public class SyncLockInfoPacket extends S2CPacket {
 
     @Override
     public Identifier getId() {
-        return TerritorialNetworkRegistry.SYNC_LOCK_INFO_PACKET_ID;
+        return TerritorialClientRegistry.SYNC_LOCK_INFO_PACKET_ID;
     }
 
     @Override

@@ -1,8 +1,6 @@
 package io.github.profjb58.territorial.networking.c2s;
 
-import io.github.profjb58.territorial.event.registry.TerritorialNetworkRegistry;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
-import io.github.profjb58.territorial.networking.c2s.C2SPacket;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.network.PacketByteBuf;
@@ -38,6 +36,6 @@ public class AddEclipseEffectPacket extends C2SPacket {
 
     @Override
     public Identifier getId() {
-        return TerritorialNetworkRegistry.ADD_ECLIPSE_EFFECT_PACKET_ID;
+        return TerritorialRegistry.ADD_ECLIPSE_EFFECT_PACKET_ID;
     }
 }

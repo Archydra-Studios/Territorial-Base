@@ -57,7 +57,7 @@ public final class LockCommand implements SubCommand {
                     scs.getPlayer().sendMessage(new LiteralText("found UUID: " + uuid.toString())
                             .formatted(Formatting.AQUA), false);
                 }
-                catch(CommandSyntaxException e) {}
+                catch(CommandSyntaxException ignored) {}
             });
         }
         catch (Exception e) {

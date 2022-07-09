@@ -10,6 +10,7 @@ import io.github.profjb58.territorial.command.SubCommand;
 import io.github.profjb58.territorial.config.LockablesBlacklistHandler;
 import net.minecraft.command.argument.BlockStateArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 
@@ -19,11 +20,11 @@ import static net.minecraft.server.command.CommandManager.literal;
 public final class BlacklistCommand implements SubCommand {
 
     private static final SimpleCommandExceptionType ADD_BLOCK_FAILED = new SimpleCommandExceptionType(
-            new TranslatableText("message.territorial.blacklist.add_block_failed")
+            new TranslatableText("message.territorial.blacklist.already_blacklisted")
     );
 
     private static final SimpleCommandExceptionType REMOVE_BLOCK_FAILED = new SimpleCommandExceptionType(
-            new TranslatableText("message.territorial.blacklist.remove_block_failed")
+            new TranslatableText("message.territorial.blacklist.not_blacklisted")
     );
 
     private static LockablesBlacklistHandler lockablesBlacklist;
@@ -53,24 +54,20 @@ public final class BlacklistCommand implements SubCommand {
 
     private int addBlockToBlacklist(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
         var blockState = BlockStateArgumentType.getBlockState(ctx, "block to add").getBlockState();
-        var player = ctx.getSource().getPlayer();
+        var playerSource = (ctx.getSource().getEntity() instanceof ServerPlayerEntity player) ? player : null;
 
-        if(lockablesBlacklist.addBlock(blockState.getBlock())) {
-            player.sendMessage(new TranslatableText("message.territorial.blacklist.add_block_success"), false);
+        if(lockablesBlacklist.addBlock(blockState.getBlock(), ctx.getSource().getServer(), playerSource))
             return Command.SINGLE_SUCCESS;
-        }
         else
             throw ADD_BLOCK_FAILED.create();
     }
 
     private int removeBlockFromBlacklist(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
         var blockState = BlockStateArgumentType.getBlockState(ctx, "block to remove").getBlockState();
-        var player = ctx.getSource().getPlayer();
+        var playerSource = (ctx.getSource().getEntity() instanceof ServerPlayerEntity player) ? player : null;
 
-        if(lockablesBlacklist.removeBlock(blockState.getBlock())) {
-            player.sendMessage(new TranslatableText("message.territorial.blacklist.remove_block_success"), false);
+        if(lockablesBlacklist.removeBlock(blockState.getBlock(), ctx.getSource().getServer(), playerSource))
             return Command.SINGLE_SUCCESS;
-        }
         else
             throw REMOVE_BLOCK_FAILED.create();
     }
