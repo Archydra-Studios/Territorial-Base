@@ -2,14 +2,10 @@ package io.github.profjb58.territorial.block.entity;
 
 import com.mojang.datafixers.util.Pair;
 import io.github.profjb58.territorial.block.BoundaryBeaconBlock;
-import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.screen.BoundaryBeaconScreenHandler;
-import io.github.profjb58.territorial.world.team.Team;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BannerBlockEntity;
 import net.minecraft.block.entity.BannerPattern;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -22,9 +18,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class BoundaryBeaconBlockEntity extends BaseBeaconBlockEntity {
 

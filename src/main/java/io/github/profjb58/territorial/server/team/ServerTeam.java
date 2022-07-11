@@ -1,5 +1,6 @@
-package io.github.profjb58.territorial.world.team;
+package io.github.profjb58.territorial.server.team;
 
+import io.github.profjb58.territorial.team.Team;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.RegistryKey;
@@ -46,8 +47,7 @@ public class ServerTeam extends Team {
         if(beaconPositions.containsKey(worldKey)) {
             beaconPosSet = beaconPositions.get(worldKey);
             beaconPosSet.add(pos);
-        }
-        else {
+        } else {
             beaconPosSet.add(pos);
             beaconPositions.put(worldKey, beaconPosSet);
         }

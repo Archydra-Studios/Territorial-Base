@@ -10,8 +10,8 @@ import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.command.SubCommand;
 import io.github.profjb58.territorial.util.task.ScheduledTask;
 import io.github.profjb58.territorial.util.task.Tasks;
-import io.github.profjb58.territorial.world.team.ServerTeamManager;
-import io.github.profjb58.territorial.world.team.Team;
+import io.github.profjb58.territorial.server.team.ServerTeamManager;
+import io.github.profjb58.territorial.team.Team;
 import net.minecraft.block.BannerBlock;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
@@ -57,6 +57,10 @@ public final class TeamCommand implements SubCommand {
                 )
                 .then(literal("disband")
                         .executes(TeamCommand::removeTeam)
+                        .then(argument("name", StringArgumentType.greedyString())
+                                .requires(source -> source.hasPermissionLevel(2))
+                                .executes(TeamCommand::adminRemoveTeam)
+                        )
                 ).build();
     }
 
@@ -82,11 +86,15 @@ public final class TeamCommand implements SubCommand {
 
         Team team = teamManager.getPlayersTeam(player);
         if(team != null) {
-            // Warning that the players team is about to be removed
             player.sendMessage(new TranslatableText("message.territorial.team.remove.warning", team.getName()), false);
 
             var teamRemovalTask = new ScheduledTask(TEAM_REMOVAL_TASK_ID, REMOVE_TEAM_DURATION_SECS, TimeUnit.SECONDS,
-                    () -> server.execute(() -> teamManager.removeTeam(team.getId(), team.members())),
+                    () -> server.execute(() -> {
+                        if(teamManager.removeTeam(team.getId(), team.members()))
+                            player.sendMessage(new TranslatableText("message.territorial.team.remove.success", team.getName()), false);
+                        else
+                            player.sendMessage(new TranslatableText("message.territorial.team.remove.error", team.getName()), false);
+                    }),
                     () -> server.execute(() -> player.sendMessage(TEAM_REMOVE_CANCEL, false)), false
             );
             teamRemovalTask.schedule(taskScheduler);
@@ -95,6 +103,12 @@ public final class TeamCommand implements SubCommand {
                 player.sendMessage(TASK_ALREADY_RUNNING, false); // Task is already stored and running
         }
         else player.sendMessage(NO_TEAM, false); // No team exists
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int adminRemoveTeam(CommandContext<ServerCommandSource> ctx) {
+        // TODO - Finish this...
+        // Gave up for the moment, so fucking boring to do
         return Command.SINGLE_SUCCESS;
     }
 }

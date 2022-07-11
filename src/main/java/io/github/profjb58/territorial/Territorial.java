@@ -5,7 +5,7 @@ import io.github.profjb58.territorial.config.TerritorialConfig;
 import io.github.profjb58.territorial.event.*;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.util.debug.DebugTimer;
-import io.github.profjb58.territorial.world.team.ServerTeamManager;
+import io.github.profjb58.territorial.server.team.ServerTeamManager;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.EnvType;
@@ -36,10 +36,9 @@ public class Territorial implements ModInitializer {
 			new Identifier(MOD_ID, BASE_GROUP_ID),
 			() -> new ItemStack(TerritorialRegistry.LOCKPICK));
 
-	private static final ServerTeamManager teamManager = new ServerTeamManager();
-	private static final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-	private static final LockablesBlacklistHandler lockablesBlacklist = new LockablesBlacklistHandler(scheduler);
-
+	private static final ServerTeamManager TEAM_MANAGER = new ServerTeamManager();
+	private static final ScheduledExecutorService SCHEDULER = Executors.newSingleThreadScheduledExecutor();
+	private static final LockablesBlacklistHandler LOCKABLES_BLACKLIST = new LockablesBlacklistHandler(SCHEDULER);
 
 	@Override
 	public void onInitialize() {
@@ -53,13 +52,14 @@ public class Territorial implements ModInitializer {
 		DestructionHandlers.init();
 		LootTableHandler.init();
 		ServerConnectionHandlers.init(this);
+		ChunkSyncHandler.init();
 	}
 
 	public ServerTeamManager getTeamManager() {
-		return teamManager;
+		return TEAM_MANAGER;
 	}
-	public LockablesBlacklistHandler getLockablesBlacklist() { return lockablesBlacklist; }
-	public ScheduledExecutorService getScheduler() { return scheduler; }
+	public LockablesBlacklistHandler getLockablesBlacklist() { return LOCKABLES_BLACKLIST; }
+	public ScheduledExecutorService getScheduler() { return SCHEDULER; }
 
 	public static TerritorialConfig getConfig() {
 		return AutoConfig.getConfigHolder(TerritorialConfig.class).getConfig();

@@ -14,7 +14,8 @@
     "common.RuinedPortalStructurePieceMixin",
     "common.ServerPlayerInteractionManagerMixin",
     "common.ServerPlayNetworkHandlerMixin",
-    "common.StatusEffectInstanceMixin"
+    "common.StatusEffectInstanceMixin",
+    "common.ThreadedAnvilChunkStorageMixin"
   ],
   "client": [
     "client.ClientPlayerInteractionMixin",

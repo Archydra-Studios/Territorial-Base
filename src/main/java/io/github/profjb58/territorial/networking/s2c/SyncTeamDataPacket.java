@@ -2,7 +2,7 @@ package io.github.profjb58.territorial.networking.s2c;
 
 import io.github.profjb58.territorial.event.registry.TerritorialClientRegistry;
 import io.github.profjb58.territorial.util.NbtUtils;
-import io.github.profjb58.territorial.world.team.Team;
+import io.github.profjb58.territorial.team.Team;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;

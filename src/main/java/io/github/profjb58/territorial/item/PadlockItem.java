@@ -6,6 +6,7 @@ import io.github.profjb58.territorial.block.LockableBlock;
 import io.github.profjb58.territorial.block.enums.LockSound;
 import io.github.profjb58.territorial.block.enums.LockType;
 import io.github.profjb58.territorial.api.event.common.LockableBlockEvents.InteractionType;
+import io.github.profjb58.territorial.world.ServerChunkLockStorage;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
@@ -18,6 +19,7 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,11 +59,19 @@ public class PadlockItem extends Item {
                         if (!player.isCreative()) lockStack.decrement(1);
                         player.sendMessage(new TranslatableText("message.territorial.lock_successful"), true);
                         lb.playSound(LockSound.LOCK_ADDED, player.getEntityWorld());
+
+                        // Store new locked block
+                        ChunkPos chunkHitPos = world.getChunk(hitResult.getBlockPos()).getPos();
+                        ServerChunkLockStorage.get(world, chunkHitPos).addLockedBlock(lb);
+
+                        // Fire event
                         LockableBlockEvents.CREATE.invoker().create(lb, serverPlayer);
                     }
                     case FAIL -> {
                         player.sendMessage(new TranslatableText("message.territorial.lock_failed"), true);
                         lb.playSound(LockSound.DENIED_ENTRY, player.getEntityWorld());
+
+                        // Fire event
                         LockableBlockEvents.INTERACT.invoker().interact(lb, serverPlayer, InteractionType.FAILED);
                         return ActionResult.FAIL;
                     }

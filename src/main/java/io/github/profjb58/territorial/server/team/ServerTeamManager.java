@@ -1,8 +1,10 @@
-package io.github.profjb58.territorial.world.team;
+package io.github.profjb58.territorial.server.team;
 
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.api.event.common.TeamEvents;
 import io.github.profjb58.territorial.networking.s2c.SyncTeamDataPacket;
+import io.github.profjb58.territorial.team.Team;
+import io.github.profjb58.territorial.team.TeamResult;
 import io.github.profjb58.territorial.util.TickCounter;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.*;
@@ -27,8 +29,7 @@ public class ServerTeamManager extends PersistentState {
 
     public enum MemberAction { ADD_MEMBER, REMOVE_MEMBER, PROMOTE_MEMBER, DEMOTE_MEMBER }
 
-    public ServerTeamManager() {
-    }
+    public ServerTeamManager() {}
 
     public void checkInactive() {
         boolean purgeTeams = Territorial.getConfig().purgeTeams();
@@ -165,6 +166,16 @@ public class ServerTeamManager extends PersistentState {
 
     @Nullable
     public ServerTeam getTeamById(UUID id) { return SERVER_TEAMS.get(id); }
+
+    @Nullable
+    public ServerTeam getTeamByName(String teamName) {
+        for(var teamMap : SERVER_TEAMS.entrySet()) {
+            if(teamMap.getValue().getName().equals(teamName)) {
+                return teamMap.getValue();
+            }
+        }
+        return null;
+    }
 
     @Nullable
     public ServerTeam getPlayersTeam(ServerPlayerEntity player) {

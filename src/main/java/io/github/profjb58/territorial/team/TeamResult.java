@@ -1,4 +1,4 @@
-package io.github.profjb58.territorial.world.team;
+package io.github.profjb58.territorial.team;
 
 public enum TeamResult {
     SUCCESS,

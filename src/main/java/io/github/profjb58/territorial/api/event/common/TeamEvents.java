@@ -1,8 +1,8 @@
 package io.github.profjb58.territorial.api.event.common;
 
-import io.github.profjb58.territorial.world.team.ServerTeam;
-import io.github.profjb58.territorial.world.team.ServerTeamManager;
-import io.github.profjb58.territorial.world.team.Team;
+import io.github.profjb58.territorial.server.team.ServerTeam;
+import io.github.profjb58.territorial.server.team.ServerTeamManager;
+import io.github.profjb58.territorial.team.Team;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.server.network.ServerPlayerEntity;

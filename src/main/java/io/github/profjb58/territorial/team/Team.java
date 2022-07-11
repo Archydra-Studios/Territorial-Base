@@ -1,13 +1,10 @@
-package io.github.profjb58.territorial.world.team;
+package io.github.profjb58.territorial.team;
 
-import com.mojang.datafixers.util.Pair;
-import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.DyeColor;
 
 import javax.annotation.Nullable;
-import java.io.Serializable;
 import java.util.*;
 
 public class Team {

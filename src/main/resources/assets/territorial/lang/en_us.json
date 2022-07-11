@@ -1,4 +1,5 @@
 {
+  "_comment": "Config stuff",
   "text.autoconfig.territorial.title": "Territorial Config",
   "text.autoconfig.territorial.category.default": "   Common   ",
   "text.autoconfig.territorial.category.protections": "   Protections   ",
@@ -26,6 +27,7 @@
   "text.autoconfig.territorial.option.teams.advanced.numOfDaysBeforePurge": "Number of days before Purge",
   "text.autoconfig.territorial.option.teams.advanced.numOfDaysBeforeInactive": "Number of days before Inactive",
 
+  "_comment": "Blocks",
   "block.territorial.laser_transmitter": "Laser Transmitter",
   "block.territorial.laser_receiver": "Laser Receiver",
   "block.territorial.plinth_of_peeking": "Plinth of Peeking",
@@ -35,6 +37,7 @@
   "block.territorial.eclipse_rose_bush": "Eclipse Rose Bush",
   "block.territorial.boundary_beacon": "Boundary Beacon",
 
+  "_comment": "Items",
   "item.territorial.ender_amulet": "Ender Amulet",
   "item.territorial.key":"Key",
   "item.territorial.master_key":"Master Key",
@@ -52,6 +55,7 @@
 
   "itemGroup.territorial.territorial_base": "Territorial (base)",
 
+  "_comment": "Lock and key messages",
   "message.territorial.lock_successful": "§aLock protection added!",
   "message.territorial.lock_removed": "§eLock protection removed!",
   "message.territorial.no_lock": "§cThis block is not locked...",
@@ -69,26 +73,34 @@
   "message.territorial.list_locks_header": "§a[Territorial]§r Locks assigned to %s:",
   "message.territorial.locks_match_failed": "Failed to find any locks for this player",
   "message.territorial.locks_match_failed_player": "You haven't locked anything yet",
+
+  "_comment": "Blacklist messages",
   "message.territorial.blacklist.add_block_success": "§aSuccessfully added block to blacklist",
   "message.territorial.blacklist.remove_block_success": "§aSuccessfully removed block from blacklist",
   "message.territorial.blacklist.already_blacklisted": "Block already blacklisted",
   "message.territorial.blacklist_write_error": "Unable to blacklist this block. A file IO error occurred",
   "message.territorial.blacklist.not_blacklisted": "Block is not currently blacklisted",
   "message.territorial.blacklist.remove_error": "Unable to remove this block from the blacklist. A file IO error occurred",
+
+  "_comment": "Team messages",
+  "message.territorial.team.create.success": "§aSuccessfully created team %s",
+  "message.territorial.team.remove.cancel": "§cCancelled disbanding your current team",
+  "message.territorial.team.no_team": "§cYou do not own a team",
+  "message.territorial.team.no_team_admin": "Team %s does not exist...",
+  "message.territorial.team.remove.warning": "§eTeam %s §ewill be disbanded in 30 seconds. Type §r/territorial cancel disband §eto cancel",
+  "message.territorial.team.remove.success": "§aSuccessfully removed team %s",
+  "message.territorial.team.remove.error": "§cFailed to remove team %s",
+  "error.territorial.team.multiple": "Cannot create more than one team",
+  "error.territorial.team.duplicate": "Team with name %s already exists",
+
+  "message.territorial.task.already_running": "§cThis task is already active",
+  "message.territorial.task.not_running": "§cNo task is currently running",
+
   "message.territorial.enderchest.unknown_player": "§cCannot find the victim %s",
   "message.territorial.enderchest.key_unnamed": "§eThis key needs the name of a victim",
   "message.territorial.enderchest.warn": "§a[Territorial] §rA player stole items from your ender chest",
   "message.territorial.stack_dupe_formatted.warn": "§a[Territorial]§r§c Duplicated item: %s §cfound in %s's §cplayer / ender chest inventory",
   "message.territorial.stack_dupe.warn": "[Territorial] Duplicated item: %s found in %s's player / ender chest inventory",
-  "message.territorial.team.create.success": "§aSuccessfully created team %s",
-  "message.territorial.team.remove.cancel": "§cCancelled disbanding your current team",
-  "message.territorial.team.no_team": "§cYou do not own a team",
-  "message.territorial.team.remove.warning": "§eTeam %s §ewill be disbanded in 30 seconds. Type §r/territorial cancel disband §eto cancel",
-  "message.territorial.task.already_running": "§cThis task is already active",
-  "message.territorial.task.not_running": "§cNo task is currently running",
-
-  "error.territorial.team.multiple": "Cannot create more than one team",
-  "error.territorial.team.duplicate": "Team with name %s already exists",
 
   "title.territorial.config": "Territorial Config",
 
@@ -104,6 +116,7 @@
   "advancements.territorial.key": "Open Sesame!",
   "advancements.territorial.key.desc": "Craft a Key",
 
+  "_comment": "Tooltips",
   "tooltip.territorial.shift": "§7Hold §e§oShift §7for usage",
   "tooltip.territorial.key_shift_0": "§lAccessing locked blocks",
   "tooltip.territorial.key_shift_1": "§7Keep this key in your inventory",
@@ -142,12 +155,5 @@
 
   "gui.territorial.beacon.mode": "Mode",
   "gui.territorial.beacon.team": "Team",
-  "gui.territorial.beacon.range": "Range",
-
-  "team.territorial.creation.failed": "§a[Territorial]§r§c Failed to create team %s§c. Already exists",
-  "team.territorial.creation.successful": "§a[Territorial]§r Team %s created successfully!",
-  "team.territorial.removal.reason.admin": "removed by an Admin",
-  "team.territorial.removal.reason.team_owner": "removed by a Team Owner",
-  "team.territorial.removal.reason.purged": "purged for being in-active",
-  "team.territorial.removal.failed": "§a[Territorial]§r§c Failed to remove team %s§c. Team does not exist"
+  "gui.territorial.beacon.range": "Range"
 }

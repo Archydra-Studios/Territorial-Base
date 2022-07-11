@@ -5,9 +5,11 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.TerritorialServer;
 import io.github.profjb58.territorial.command.SubCommand;
 import io.github.profjb58.territorial.config.LockablesBlacklistHandler;
+import io.github.profjb58.territorial.util.CommandUtils;
 import net.minecraft.command.argument.BlockStateArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -54,9 +56,8 @@ public final class BlacklistCommand implements SubCommand {
 
     private int addBlockToBlacklist(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
         var blockState = BlockStateArgumentType.getBlockState(ctx, "block to add").getBlockState();
-        var playerSource = (ctx.getSource().getEntity() instanceof ServerPlayerEntity player) ? player : null;
 
-        if(lockablesBlacklist.addBlock(blockState.getBlock(), ctx.getSource().getServer(), playerSource))
+        if(lockablesBlacklist.addBlock(blockState.getBlock(), ctx.getSource().getServer(), CommandUtils.getPlayerOrNull(ctx)))
             return Command.SINGLE_SUCCESS;
         else
             throw ADD_BLOCK_FAILED.create();
@@ -64,20 +65,20 @@ public final class BlacklistCommand implements SubCommand {
 
     private int removeBlockFromBlacklist(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
         var blockState = BlockStateArgumentType.getBlockState(ctx, "block to remove").getBlockState();
-        var playerSource = (ctx.getSource().getEntity() instanceof ServerPlayerEntity player) ? player : null;
 
-        if(lockablesBlacklist.removeBlock(blockState.getBlock(), ctx.getSource().getServer(), playerSource))
+        if(lockablesBlacklist.removeBlock(blockState.getBlock(), ctx.getSource().getServer(), CommandUtils.getPlayerOrNull(ctx)))
             return Command.SINGLE_SUCCESS;
         else
             throw REMOVE_BLOCK_FAILED.create();
     }
 
     private int listBlacklist(CommandContext<ServerCommandSource> ctx) {
-        try {
-            var player = ctx.getSource().getPlayer();
-            var stringBuilder = new StringBuilder();
+        var entity = ctx.getSource().getEntity();
 
+        if(entity instanceof ServerPlayerEntity player) {
+            var stringBuilder = new StringBuilder();
             stringBuilder.append("\n").append("§a ================= BLACKLISTED BLOCKS =================§r").append("\n ");
+
             for (String blacklistedBlock : lockablesBlacklist.asList()) {
                 String[] split = blacklistedBlock.split(":");
 
@@ -86,8 +87,9 @@ public final class BlacklistCommand implements SubCommand {
                 stringBuilder.append(split[1]).append(" §7|§r ");
             }
             player.sendMessage(new LiteralText(stringBuilder.toString()), false);
-        } catch (CommandSyntaxException cse) {
-            cse.printStackTrace();
+        }
+        else {
+            Territorial.LOGGER.info("List of blacklisted blocks available at: ./config/territorial/lockables_blacklist.txt");
         }
         return Command.SINGLE_SUCCESS;
     }

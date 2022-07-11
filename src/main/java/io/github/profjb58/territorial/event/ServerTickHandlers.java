@@ -6,7 +6,7 @@ import io.github.profjb58.territorial.misc.access.StatusEffectInstanceAccess;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.util.TickCounter;
 import io.github.profjb58.territorial.util.task.TickerTask;
-import io.github.profjb58.territorial.world.team.ServerTeamManager;
+import io.github.profjb58.territorial.server.team.ServerTeamManager;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.server.world.ServerWorld;

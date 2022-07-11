@@ -20,11 +20,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.UUID;
 
-public class WorldLockStorage extends PersistentState {
+public class WorldLockStorageOld extends PersistentState {
 
-    HashMap<UUID, LinkedList<BlockPos>> locksUUIDMap = new HashMap<>();
+    private static final HashMap<UUID, LinkedList<BlockPos>> locksUUIDMap = new HashMap<>();
 
-    public WorldLockStorage() {}
+    public WorldLockStorageOld() {}
 
     public void addLock(LockableBlock lb) {
         removeLock(lb); // Remove existing lock if one is already there
@@ -87,12 +87,14 @@ public class WorldLockStorage extends PersistentState {
         return false;
     }
 
-    public static WorldLockStorage get(ServerWorld world) {
-        return null;
+    public static void get(ServerWorld world) {
+        //return world.getChunkManager().getPersistentStateManager().getOrCreate(WorldLockStorageOld::readNbt, WorldLockStorageOld::new, "territorial_world_locks");
         // return world.getChunkManager().getPersistentStateManager().getOrCreate(WorldLockStorage::new, "territorial_world_locks");
+
+        //ServerChunkLockStorage.get(world, world.getChunk(2, 1).getPos())
     }
 
-    public void readNbt(NbtCompound nbtCompound) {
+    public static void readNbt(NbtCompound nbtCompound) {
         NbtList worldLocksTags = nbtCompound.getList("world_locked_tiles", NbtType.COMPOUND);
 
         for (NbtElement worldLocksTag : worldLocksTags) {

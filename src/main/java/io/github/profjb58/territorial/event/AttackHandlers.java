@@ -9,9 +9,12 @@ import io.github.profjb58.territorial.util.TickCounter;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.minecraft.block.Block;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.network.packet.s2c.play.BlockBreakingProgressS2CPacket;
+import net.minecraft.network.packet.s2c.play.PlayerActionResponseS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
@@ -34,15 +37,14 @@ public class AttackHandlers {
     private static ActionResult onAttackBlock(PlayerEntity player, World world, Hand hand, BlockPos pos, Direction direction) {
         var lbe = new LockableBlockEntity(world, pos);
 
-        if(!world.isClient && lbe.exists()) {
-            var serverPlayer = (ServerPlayerEntity) player;
-            var interactionManager = ((ServerPlayerInteractionManagerAccessor) serverPlayer.interactionManager);
-
-            interactionManager.territorial$resetBlockBreakingProgress();
-            LockFatigueStatusEffect.addEffect(serverPlayer, pos);
-
+        if(world.isClient) {
+            LockFatigueStatusEffect.addEffect(player, pos);
+        } else {
             // Update ticks since last attack on the dedicated or integrated server for the Ender Key GUI
             TICKS_SINCE_BLOCK_ATTACK.reset();
+            if(lbe.exists() && !player.hasStatusEffect(TerritorialRegistry.LOCK_FATIGUE_EFFECT)) {
+                return ActionResult.FAIL;
+            }
         }
         return ActionResult.PASS;
     }

@@ -1,20 +1,13 @@
 package io.github.profjb58.territorial.util;
 
-import io.github.profjb58.territorial.world.team.ServerTeam;
-import io.github.profjb58.territorial.world.team.Team;
 import net.fabricmc.fabric.api.util.NbtType;
-import net.minecraft.block.BannerBlock;
-import net.minecraft.block.entity.BannerBlockEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import org.jetbrains.annotations.NotNull;
 
-import io.github.profjb58.territorial.world.team.Team.Members;
+import io.github.profjb58.territorial.team.Team.Members;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -32,6 +25,18 @@ public class NbtUtils {
 
     public static BlockPos deserializeBlockPos(int[] posSerializable) {
         return new BlockPos(posSerializable[0], posSerializable[1], posSerializable[2]);
+    }
+
+    public static int[] serializeChunkPos(@NotNull ChunkPos chunkPos) {
+        int[] chunkSerializable = new int[2];
+        chunkSerializable[0] = chunkPos.x;
+        chunkSerializable[1] = chunkPos.z;
+
+        return chunkSerializable;
+    }
+
+    public static ChunkPos deserializeChunkPos(int[] posSerializable) {
+        return new ChunkPos(posSerializable[0], posSerializable[1]);
     }
 
     public static NbtCompound removeBlockFeatures(NbtCompound nbtCompound) {

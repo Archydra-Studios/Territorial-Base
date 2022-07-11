@@ -31,14 +31,8 @@ public class UuidUtils {
 
     /**
      * Takes a users name and finds a matching UUID
-     *
-     * @param
-     *
-     * @return Users UUID. Can be null if nothing is found
-     * @throws HttpResponseException Called if the HTTP response code is anything other than success (200)
-     * @throws TimeoutException Response took longer than the TIMEOUT_IN_SECS
      */
-    public static void findUuid(String playerName, Consumer<UUID> finish) throws IOException, TimeoutException {
+    public static void findUuid(String playerName, Consumer<UUID> finish) {
         // Asynchronously search for a users UUID
         uuidFuture = CompletableFuture.supplyAsync(() -> UuidUtils.getUuidFromPlayer(playerName));
         uuidFuture.thenAccept(finish);

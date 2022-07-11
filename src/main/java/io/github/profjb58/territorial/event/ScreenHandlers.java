@@ -2,6 +2,7 @@ package io.github.profjb58.territorial.event;
 
 import io.github.profjb58.territorial.TerritorialClient;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 

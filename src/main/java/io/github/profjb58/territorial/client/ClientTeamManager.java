@@ -1,5 +1,6 @@
-package io.github.profjb58.territorial.world.team;
+package io.github.profjb58.territorial.client;
 
+import io.github.profjb58.territorial.team.Team;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
