@@ -13,7 +13,7 @@ import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
-public abstract class C2SPacket implements Packet, ServerPlayNetworking.PlayChannelHandler {
+public abstract class C2SPacket implements Packet {
 
     @Environment(EnvType.CLIENT)
     public void send() {
@@ -23,7 +23,6 @@ public abstract class C2SPacket implements Packet, ServerPlayNetworking.PlayChan
         ClientPlayNetworking.send(id, packetByteBuf);
     }
 
-    @Override
     public void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
         this.read(buf);
         server.execute(() -> execute(server, player, handler, buf, responseSender));
@@ -31,5 +30,7 @@ public abstract class C2SPacket implements Packet, ServerPlayNetworking.PlayChan
 
     abstract void execute(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender);
 
-    public static <T extends C2SPacket> void register(Identifier id, T obj) { ServerPlayNetworking.registerGlobalReceiver(id, obj); }
+    public static <T extends C2SPacket> void register(Identifier id, T obj) {
+        ServerPlayNetworking.registerGlobalReceiver(id, obj::receive);
+    }
 }

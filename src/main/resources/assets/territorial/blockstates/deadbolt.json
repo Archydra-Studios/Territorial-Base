@@ -1,0 +1,110 @@
+{
+  "variants": {
+    "face=ceiling,facing=east,locked=true": {
+      "model": "territorial:block/deadbolt",
+      "x": 180,
+      "y": 270
+    },
+    "face=ceiling,facing=east,locked=false": {
+      "model": "territorial:block/deadbolt_on",
+      "x": 180,
+      "y": 270
+    },
+    "face=ceiling,facing=north,locked=true": {
+      "model": "territorial:block/deadbolt",
+      "x": 180,
+      "y": 180
+    },
+    "face=ceiling,facing=north,locked=false": {
+      "model": "territorial:block/deadbolt_on",
+      "x": 180,
+      "y": 180
+    },
+    "face=ceiling,facing=south,locked=true": {
+      "model": "territorial:block/deadbolt",
+      "x": 180
+    },
+    "face=ceiling,facing=south,locked=false": {
+      "model": "territorial:block/deadbolt_on",
+      "x": 180
+    },
+    "face=ceiling,facing=west,locked=true": {
+      "model": "territorial:block/deadbolt",
+      "x": 180,
+      "y": 90
+    },
+    "face=ceiling,facing=west,locked=false": {
+      "model": "territorial:block/deadbolt_on",
+      "x": 180,
+      "y": 90
+    },
+    "face=floor,facing=east,locked=true": {
+      "model": "territorial:block/deadbolt",
+      "y": 90
+    },
+    "face=floor,facing=east,locked=false": {
+      "model": "territorial:block/deadbolt_on",
+      "y": 90
+    },
+    "face=floor,facing=north,locked=true": {
+      "model": "territorial:block/deadbolt"
+    },
+    "face=floor,facing=north,locked=false": {
+      "model": "territorial:block/deadbolt_on"
+    },
+    "face=floor,facing=south,locked=true": {
+      "model": "territorial:block/deadbolt",
+      "y": 180
+    },
+    "face=floor,facing=south,locked=false": {
+      "model": "territorial:block/deadbolt_on",
+      "y": 180
+    },
+    "face=floor,facing=west,locked=true": {
+      "model": "territorial:block/deadbolt",
+      "y": 270
+    },
+    "face=floor,facing=west,locked=false": {
+      "model": "territorial:block/deadbolt_on",
+      "y": 270
+    },
+    "face=wall,facing=east,locked=true": {
+      "model": "territorial:block/deadbolt",
+      "x": 90,
+      "y": 90
+    },
+    "face=wall,facing=east,locked=false": {
+      "model": "territorial:block/deadbolt_on",
+      "x": 90,
+      "y": 90
+    },
+    "face=wall,facing=north,locked=true": {
+      "model": "territorial:block/deadbolt",
+      "x": 90
+    },
+    "face=wall,facing=north,locked=false": {
+      "model": "territorial:block/deadbolt_on",
+      "x": 90
+    },
+    "face=wall,facing=south,locked=true": {
+      "model": "territorial:block/deadbolt",
+      "x": 90,
+      "y": 180
+    },
+    "face=wall,facing=south,locked=false": {
+      "model": "territorial:block/deadbolt_on",
+      "x": 90,
+      "y": 180
+    },
+    "face=wall,facing=west,locked=true": {
+      "model": "territorial:block/deadbolt",
+      "x": 90,
+      "y": 270
+    },
+    "face=wall,facing=west,locked=false": {
+      "model": "territorial:block/deadbolt_on",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

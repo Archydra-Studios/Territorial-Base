@@ -6,7 +6,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.chunk.WorldChunk;
 
 public interface ChunkClientSyncEvent {
-    Event<ChunkClientSyncEvent> EVENT = EventFactory.createArrayBacked(ChunkClientSyncEvent.class,
+
+    Event<ChunkClientSyncEvent> SYNC_CLIENT = EventFactory.createArrayBacked(ChunkClientSyncEvent.class,
             (listeners) -> (serverPlayer, worldChunk) -> {
                 for (ChunkClientSyncEvent listener : listeners)
                     listener.onSync(serverPlayer, worldChunk);

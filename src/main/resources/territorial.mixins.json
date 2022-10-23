@@ -15,7 +15,8 @@
     "common.ServerPlayerInteractionManagerMixin",
     "common.ServerPlayNetworkHandlerMixin",
     "common.StatusEffectInstanceMixin",
-    "common.ThreadedAnvilChunkStorageMixin"
+    "common.ThreadedAnvilChunkStorageMixin",
+    "common.ServerWorldMixin"
   ],
   "client": [
     "client.ClientPlayerInteractionMixin",

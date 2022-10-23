@@ -12,9 +12,19 @@ public final class ServerWorldEvents {
             callback.beforeExplosion(explosion, world);
     });
 
+    public static final Event<SaveLevel> SAVE_LEVEL = EventFactory.createArrayBacked(SaveLevel.class, callbacks -> () -> {
+        for(SaveLevel callback : callbacks)
+            callback.onSaveLevel();
+    });
+
     @FunctionalInterface
     public interface BeforeExplosion {
         void beforeExplosion(Explosion explosion, ServerWorld world);
+    }
+
+    @FunctionalInterface
+    public interface SaveLevel {
+        void onSaveLevel();
     }
 
     private ServerWorldEvents() {}

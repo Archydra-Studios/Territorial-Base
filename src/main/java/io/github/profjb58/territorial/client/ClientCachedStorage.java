@@ -7,20 +7,21 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 
+import java.util.HashMap;
 import java.util.WeakHashMap;
 
 @Environment(EnvType.CLIENT)
 public class ClientCachedStorage {
 
-    private final WeakHashMap<ChunkPos, LongOpenHashSet> lockableBlocks = new WeakHashMap<>();
+    private final HashMap<ChunkPos, LongOpenHashSet> lockableBlocks = new HashMap<>();
 
     public void onSyncLockableBlocks(ChunkPos chunkPos, LongOpenHashSet lockableBlocks) {
         this.lockableBlocks.put(chunkPos, lockableBlocks);
     }
 
-    public boolean isLockableBlock(ClientPlayerEntity player, BlockPos pos) {
-        if(lockableBlocks.containsKey(player.getChunkPos()))
-            return lockableBlocks.get(player.getChunkPos()).contains(pos.asLong());
+    public boolean isLockableBlock(ClientPlayerEntity player, ChunkPos chunkPos, BlockPos pos) {
+        if(lockableBlocks.containsKey(chunkPos))
+            return lockableBlocks.get(chunkPos).contains(pos.asLong());
         return false;
     }
 

@@ -3,6 +3,7 @@ package io.github.profjb58.territorial;
 import io.github.profjb58.territorial.client.ClientCachedStorage;
 import io.github.profjb58.territorial.client.gui.LockableHud;
 import io.github.profjb58.territorial.client.gui.LockableScreen;
+import io.github.profjb58.territorial.event.AttackHandlers;
 import io.github.profjb58.territorial.event.ClientChunkHandlers;
 import io.github.profjb58.territorial.event.ClientTickHandlers;
 import io.github.profjb58.territorial.event.registry.TerritorialClientRegistry;
@@ -20,11 +21,15 @@ public class TerritorialClient implements ClientModInitializer {
     public static LockableScreen lockableScreen;
     public static LockableHud lockableHud;
 
-
     @Override
     public void onInitializeClient() {
-        TerritorialClientRegistry.registerAll();
+        TerritorialClientRegistry.registerAll(this);
+        AttackHandlers.initClient(CLIENT_CACHED_STORAGE);
         ClientTickHandlers.init();
         ClientChunkHandlers.init(CLIENT_CACHED_STORAGE);
+    }
+
+    public ClientCachedStorage getClientCachedStorage() {
+        return CLIENT_CACHED_STORAGE;
     }
 }

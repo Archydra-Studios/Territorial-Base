@@ -6,7 +6,7 @@ import io.github.profjb58.territorial.block.LockableBlock;
 import io.github.profjb58.territorial.block.enums.LockSound;
 import io.github.profjb58.territorial.block.enums.LockType;
 import io.github.profjb58.territorial.api.event.common.LockableBlockEvents.InteractionType;
-import io.github.profjb58.territorial.world.ServerChunkLockStorage;
+import io.github.profjb58.territorial.world.ServerChunkStorage;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
@@ -53,26 +53,16 @@ public class PadlockItem extends Item {
                     type,
                     hitResult.getBlockPos());
 
-            if (!lb.lockId().equals("") && lockStack.hasCustomName()) {
-                switch (lb.createEntity(world)) {
+            if (lockStack.hasCustomName()) {
+                switch (lb.createEntity(world, serverPlayer)) {
                     case SUCCESS -> {
                         if (!player.isCreative()) lockStack.decrement(1);
                         player.sendMessage(new TranslatableText("message.territorial.lock_successful"), true);
                         lb.playSound(LockSound.LOCK_ADDED, player.getEntityWorld());
-
-                        // Store new locked block
-                        ChunkPos chunkHitPos = world.getChunk(hitResult.getBlockPos()).getPos();
-                        ServerChunkLockStorage.get(world, chunkHitPos).addLockedBlock(lb);
-
-                        // Fire event
-                        LockableBlockEvents.CREATE.invoker().create(lb, serverPlayer);
                     }
                     case FAIL -> {
                         player.sendMessage(new TranslatableText("message.territorial.lock_failed"), true);
                         lb.playSound(LockSound.DENIED_ENTRY, player.getEntityWorld());
-
-                        // Fire event
-                        LockableBlockEvents.INTERACT.invoker().interact(lb, serverPlayer, InteractionType.FAILED);
                         return ActionResult.FAIL;
                     }
                     case NO_ENTITY_EXISTS, BLACKLISTED -> {
@@ -81,8 +71,6 @@ public class PadlockItem extends Item {
                 }
             } else {
                 player.sendMessage(new TranslatableText("message.territorial.lock_unnamed"), true);
-                lb.playSound(LockSound.DENIED_ENTRY, player.getEntityWorld());
-                LockableBlockEvents.INTERACT.invoker().interact(lb, serverPlayer, InteractionType.FAILED);
                 return ActionResult.FAIL;
             }
         }

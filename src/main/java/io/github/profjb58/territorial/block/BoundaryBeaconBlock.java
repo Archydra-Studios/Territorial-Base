@@ -40,7 +40,7 @@ public class BoundaryBeaconBlock extends BeaconBlock {
 
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(type, TerritorialRegistry.BOUNDARY_BEACON_BLOCK_ENTITY, BoundaryBeaconBlockEntity::tick);
+        return checkType(type, TerritorialRegistry.BOUNDARY_BEACON_BLOCK_ENTITY_TYPE, BoundaryBeaconBlockEntity::tick);
     }
 
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {

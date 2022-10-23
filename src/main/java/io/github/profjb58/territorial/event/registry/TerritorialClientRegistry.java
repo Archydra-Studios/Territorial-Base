@@ -1,7 +1,7 @@
 package io.github.profjb58.territorial.event.registry;
 
-import io.github.cottonmc.cotton.gui.widget.TooltipBuilder;
 import io.github.profjb58.territorial.Territorial;
+import io.github.profjb58.territorial.TerritorialClient;
 import io.github.profjb58.territorial.block.BoundaryBeaconBlock;
 import io.github.profjb58.territorial.client.gui.BaseBeaconScreen;
 import io.github.profjb58.territorial.client.gui.BoundaryBeaconScreen;
@@ -11,15 +11,13 @@ import io.github.profjb58.territorial.client.render.entity.LaserBlockEntityRende
 import io.github.profjb58.territorial.event.ScreenHandlers;
 import io.github.profjb58.territorial.inventory.ItemInventory;
 import io.github.profjb58.territorial.networking.s2c.S2CPacket;
+import io.github.profjb58.territorial.networking.s2c.SyncChunkLockablesPacket;
 import io.github.profjb58.territorial.networking.s2c.SyncLockInfoPacket;
 import io.github.profjb58.territorial.networking.s2c.SyncTeamDataPacket;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredicateProviderRegistry;
 import net.minecraft.client.render.RenderLayer;
@@ -28,15 +26,18 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 
-@Environment(EnvType.CLIENT)
 public class TerritorialClientRegistry {
 
     // S2C Packets
     public static final Identifier SYNC_TEAM_DATA_PACKET_ID = new Identifier(Territorial.MOD_ID, "sync_team_data_packet");
     public static final Identifier SYNC_LOCK_INFO_PACKET_ID = new Identifier(Territorial.MOD_ID, "sync_lock_info_packet");
+    public static final Identifier SYNC_CHUNK_LOCKABLES_PACKET_ID = new Identifier(Territorial.MOD_ID, "sync_chunk_lockables_packet");
 
-    public static void registerAll() {
-        registerPackets();
+    private static TerritorialClient modInstance;
+
+    public static void registerAll(TerritorialClient modInstance) {
+        TerritorialClientRegistry.modInstance = modInstance;
+        registerPackets(modInstance);
         registerItemPredicates();
         registerRenderers();
         registerScreens();
@@ -65,8 +66,8 @@ public class TerritorialClientRegistry {
         );
 
         // Block Entity renderers
-        BlockEntityRendererRegistry.register(TerritorialRegistry.LASER_BLOCK_ENTITY, ctx -> new LaserBlockEntityRenderer());
-        BlockEntityRendererRegistry.register(TerritorialRegistry.BOUNDARY_BEACON_BLOCK_ENTITY, ctx -> new BoundaryBeaconBlockEntityRenderer());
+        BlockEntityRendererRegistry.register(TerritorialRegistry.LASER_BLOCK_ENTITY_TYPE, ctx -> new LaserBlockEntityRenderer());
+        BlockEntityRendererRegistry.register(TerritorialRegistry.BOUNDARY_BEACON_BLOCK_ENTITY_TYPE, ctx -> new BoundaryBeaconBlockEntityRenderer());
     }
 
     private static void registerScreens() {
@@ -78,10 +79,11 @@ public class TerritorialClientRegistry {
         ScreenHandlers.init();
     }
 
-    private static void registerPackets() {
+    private static void registerPackets(TerritorialClient modInstance) {
         ClientLifecycleEvents.CLIENT_STARTED.register(client -> {
             S2CPacket.register(SYNC_TEAM_DATA_PACKET_ID, new SyncTeamDataPacket());
             S2CPacket.register(SYNC_LOCK_INFO_PACKET_ID, new SyncLockInfoPacket());
+            S2CPacket.register(SYNC_CHUNK_LOCKABLES_PACKET_ID, new SyncChunkLockablesPacket(modInstance.getClientCachedStorage()));
         });
     }
 

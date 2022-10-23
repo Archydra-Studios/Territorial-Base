@@ -63,18 +63,6 @@ dependencies {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
 
-	// Cardinal Components
-	modImplementation(include("dev.onyxstudios.cardinal-components-api:cardinal-components-base:${project.cardinal_version}")) {
-		exclude(group: "net.fabricmc.fabric-api")
-	}
-	modImplementation(include("dev.onyxstudios.cardinal-components-api:cardinal-components-chunk:${project.cardinal_version}")) {
-		exclude(group: "net.fabricmc.fabric-api")
-	}
-	modImplementation(include("dev.onyxstudios.cardinal-components-api:cardinal-components-base:${project.cardinal_version}")) {
-		exclude(group: "net.fabricmc.fabric-api")
-	}
-
-
 	// Mod Menu
 	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}") {
 		exclude(group: "net.fabricmc.fabric-api")

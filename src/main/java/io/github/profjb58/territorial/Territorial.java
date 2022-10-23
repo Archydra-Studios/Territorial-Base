@@ -6,6 +6,7 @@ import io.github.profjb58.territorial.event.*;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.util.debug.DebugTimer;
 import io.github.profjb58.territorial.server.team.ServerTeamManager;
+import io.github.profjb58.territorial.world.TerritorialWorldStorage;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.EnvType;
@@ -39,6 +40,7 @@ public class Territorial implements ModInitializer {
 	private static final ServerTeamManager TEAM_MANAGER = new ServerTeamManager();
 	private static final ScheduledExecutorService SCHEDULER = Executors.newSingleThreadScheduledExecutor();
 	private static final LockablesBlacklistHandler LOCKABLES_BLACKLIST = new LockablesBlacklistHandler(SCHEDULER);
+	private static TerritorialWorldStorage territorial$worldStorage;
 
 	@Override
 	public void onInitialize() {
@@ -53,6 +55,15 @@ public class Territorial implements ModInitializer {
 		LootTableHandler.init();
 		ServerConnectionHandlers.init(this);
 		ChunkSyncHandler.init();
+		ServerWorldHandlers.init();
+	}
+
+	public static TerritorialWorldStorage getWorldStorage() {
+		return Territorial.territorial$worldStorage;
+	}
+
+	public static void initWorldStorage(TerritorialWorldStorage territorialStorage) {
+		Territorial.territorial$worldStorage = territorialStorage;
 	}
 
 	public ServerTeamManager getTeamManager() {

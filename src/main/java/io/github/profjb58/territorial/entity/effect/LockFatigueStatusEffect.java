@@ -1,15 +1,18 @@
 package io.github.profjb58.territorial.entity.effect;
 
+import io.github.profjb58.territorial.block.entity.LockableBlockEntity;
+import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.misc.access.StatusEffectInstanceAccess;
 import io.github.profjb58.territorial.block.LockableBlock;
-import io.github.profjb58.territorial.block.entity.LockableBlockEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 
 public class LockFatigueStatusEffect extends StatusEffect {
@@ -32,7 +35,12 @@ public class LockFatigueStatusEffect extends StatusEffect {
         super.onApplied(entity, attributes, amplifier);
     }
 
-    public static boolean addEffect(PlayerEntity player, BlockPos target) {
+    public static void addEffect(PlayerEntity player, int duration, int amplifier) {
+        player.addStatusEffect(new StatusEffectInstance(TerritorialRegistry.LOCK_FATIGUE_EFFECT, duration,
+                amplifier, false, false));
+    }
+
+    public static boolean addEffect(ServerPlayerEntity player, BlockPos target) {
         if(!player.isCreative() || !player.isSpectator()) {
             var lbe = new LockableBlockEntity(player.getEntityWorld(), target);
             if(lbe.exists()) {

@@ -1,0 +1,23 @@
+{
+	"credit": "Made with Blockbench",
+	"ambientocclusion": false,
+	"texture_size": [32, 32],
+	"textures": {
+		"layer0": "territorial:block/deadbolt",
+		"particle": "block/iron_block"
+	},
+	"elements": [
+		{
+			"from": [4, 0, 3],
+			"to": [12, 3, 13],
+			"faces": {
+				"north": {"uv": [0, 6.5, 4, 8], "texture": "#layer0"},
+				"east": {"uv": [0, 5, 5, 6.5], "texture": "#layer0"},
+				"south": {"uv": [4, 6.5, 8, 8], "texture": "#layer0"},
+				"west": {"uv": [5, 5, 10, 6.5], "texture": "#layer0"},
+				"up": {"uv": [4, 5, 0, 0], "texture": "#layer0"},
+				"down": {"uv": [8, 0, 4, 5], "texture": "#layer0", "cullface": "down"}
+			}
+		}
+	]
+}

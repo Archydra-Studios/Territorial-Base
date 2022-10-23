@@ -1,10 +1,10 @@
 package io.github.profjb58.territorial.event.registry;
 
-import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.github.profjb58.territorial.Territorial;
 import io.github.profjb58.territorial.block.*;
 import io.github.profjb58.territorial.block.entity.BaseBeaconBlockEntity;
 import io.github.profjb58.territorial.block.entity.BoundaryBeaconBlockEntity;
+import io.github.profjb58.territorial.block.entity.DeadboltBlockEntity;
 import io.github.profjb58.territorial.block.entity.LaserTransmitterBlockEntity;
 import io.github.profjb58.territorial.block.enums.LockType;
 import io.github.profjb58.territorial.command.TerritorialCommand;
@@ -28,7 +28,6 @@ import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
@@ -36,11 +35,9 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.recipe.*;
 import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,16 +70,21 @@ public class TerritorialRegistry {
     public static final Block ECLIPSE_ROSE_BUSH = new EclipseRoseBushBlock();
     public static final Block ECLIPSE_TRAP = new Block(FabricBlockSettings.copyOf(Blocks.ROSE_BUSH));
     public static final Block BOUNDARY_BEACON = new BoundaryBeaconBlock();
+    public static final Block DEADBOLT = new DeadboltBlock();
 
     // Block Entities
-    public static final BlockEntityType<LaserTransmitterBlockEntity> LASER_BLOCK_ENTITY
+    public static final BlockEntityType<LaserTransmitterBlockEntity> LASER_BLOCK_ENTITY_TYPE
             = registerBlockEntity("laser_be", FabricBlockEntityTypeBuilder.create(LaserTransmitterBlockEntity::new, LASER_TRANSMITTER));
 
-    public static final BlockEntityType<BaseBeaconBlockEntity> BASE_BEACON_BLOCK_ENTITY
+    public static final BlockEntityType<BaseBeaconBlockEntity> BASE_BEACON_BLOCK_ENTITY_TYPE
             = registerBlockEntity("base_beacon_be", FabricBlockEntityTypeBuilder.create(BaseBeaconBlockEntity::new, Blocks.BEACON));
 
-    public static final BlockEntityType<BoundaryBeaconBlockEntity> BOUNDARY_BEACON_BLOCK_ENTITY
+    public static final BlockEntityType<BoundaryBeaconBlockEntity> BOUNDARY_BEACON_BLOCK_ENTITY_TYPE
             = registerBlockEntity("boundary_beacon_be", FabricBlockEntityTypeBuilder.create(BoundaryBeaconBlockEntity::new, BOUNDARY_BEACON));
+
+    public static final BlockEntityType<DeadboltBlockEntity> BLANK_BLOCK_ENTITY_TYPE
+            = registerBlockEntity("deadbolt_be", FabricBlockEntityTypeBuilder.create(DeadboltBlockEntity::new, DEADBOLT));
+
 
     // Status Effects
     public static final LockFatigueStatusEffect LOCK_FATIGUE_EFFECT = new LockFatigueStatusEffect();
@@ -127,6 +129,7 @@ public class TerritorialRegistry {
         blocks.put("eclipse_rose_bush", ECLIPSE_ROSE_BUSH);
         blocks.put("eclipse_trap", ECLIPSE_TRAP);
         blocks.put("boundary_beacon", BOUNDARY_BEACON);
+        blocks.put("deadbolt", DEADBOLT);
         register(Registry.BLOCK, blocks);
 
         // Items
@@ -155,6 +158,7 @@ public class TerritorialRegistry {
         items.put("eclipse_rose_bush", createBlockItem(ECLIPSE_ROSE_BUSH));
         items.put("eclipse_trap", createBlockItem(ECLIPSE_TRAP));
         items.put("boundary_beacon", createBlockItem(BOUNDARY_BEACON));
+        items.put("deadbolt", createBlockItem(DEADBOLT));
         register(Registry.ITEM, items);
 
         // Status Effects

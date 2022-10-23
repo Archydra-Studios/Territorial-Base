@@ -16,6 +16,6 @@ public abstract class ThreadedAnvilChunkStorageMixin {
 
     @Inject(method = "sendChunkDataPackets", at = @At("RETURN"))
     private void sendChunkDataPackets(ServerPlayerEntity player, MutableObject<ChunkDataS2CPacket> mutableObject, WorldChunk chunk, CallbackInfo ci) {
-        ChunkClientSyncEvent.EVENT.invoker().onSync(player, chunk);
+        ChunkClientSyncEvent.SYNC_CLIENT.invoker().onSync(player, chunk);
     }
 }

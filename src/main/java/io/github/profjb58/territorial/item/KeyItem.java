@@ -82,7 +82,7 @@ public class KeyItem extends Item {
                         //WorldLockStorage.get((ServerWorld) ctx.getWorld()).removeLock(lb); // Remove from persistent storage
                         return ActionResult.PASS;
                     }
-                    else Territorial.LOGGER.error("Key failed to remove NBT lock data at: " + lb.blockPos().toShortString() + " :(. Please report this as an issue");
+                    else Territorial.LOGGER.error("Key failed to remove NBT lock data at: " + lb.blockEntitySourcePos().toShortString() + " :(. Please report this as an issue");
                 }
             }
             else player.sendMessage(new TranslatableText("message.territorial.wrong_key"), true);
@@ -117,7 +117,7 @@ public class KeyItem extends Item {
 
         if(Territorial.isDedicatedServer()) {
             TerritorialServer.actionLogger.write(ActionLogger.LogType.INFO, ActionLogger.LogModule.LOCKS,
-                    "Player " + player.getName().getString() + " used a master key at location " + lb.blockPos());
+                    "Player " + player.getName().getString() + " used a master key at location " + lb.selfPos());
         }
         return LockableBlockEvents.INTERACT.invoker().interact(lb, player, LockableBlockEvents.InteractionType.OPEN_MASTER_KEY);
     }

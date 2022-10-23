@@ -49,7 +49,7 @@ public class LaserTransmitterBlockEntity extends BlockEntity {
     private BlockPos receiverPos;
 
     public LaserTransmitterBlockEntity(BlockPos pos, BlockState state) {
-        super(TerritorialRegistry.LASER_BLOCK_ENTITY, pos, state);
+        super(TerritorialRegistry.LASER_BLOCK_ENTITY_TYPE, pos, state);
         prevPower = -1;
         maxReach = Territorial.getConfig().getLaserTransmitterMaxReach();
         LIGHT_BLOCKS_TICKER = new TickCounter(6);

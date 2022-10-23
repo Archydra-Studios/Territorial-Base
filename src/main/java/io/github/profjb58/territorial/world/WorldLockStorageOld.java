@@ -30,7 +30,7 @@ public class WorldLockStorageOld extends PersistentState {
         removeLock(lb); // Remove existing lock if one is already there
 
         UUID lockOwner = lb.lockOwnerUuid();
-        BlockPos pos = lb.blockPos();
+        //BlockPos pos = lb.blockPos();
 
         LinkedList<BlockPos> playerLocks;
         if(locksUUIDMap.get(lockOwner) == null) {
@@ -39,7 +39,7 @@ public class WorldLockStorageOld extends PersistentState {
         else {
             playerLocks = locksUUIDMap.get(lockOwner);
         }
-        playerLocks.add(pos);
+        //playerLocks.add(pos);
 
         locksUUIDMap.put(lockOwner, playerLocks);
         this.markDirty();
@@ -47,14 +47,14 @@ public class WorldLockStorageOld extends PersistentState {
 
     public void removeLock(LockableBlock lb) {
         UUID lockOwner = lb.lockOwnerUuid();
-        BlockPos pos = lb.blockPos();
+        //BlockPos pos = lb.blockPos();
 
         if(locksUUIDMap.get(lockOwner) != null) {
-            locksUUIDMap.get(lockOwner).remove(pos);
+            //locksUUIDMap.get(lockOwner).remove(pos);
         }
 
         if (locksUUIDMap.get(lb.lockOwnerUuid()) != null) {
-            locksUUIDMap.get(lockOwner).remove(pos);
+            //locksUUIDMap.get(lockOwner).remove(pos);
         }
     }
 

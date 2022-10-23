@@ -1,6 +1,7 @@
 package io.github.profjb58.territorial.event;
 
 import io.github.profjb58.territorial.Territorial;
+import io.github.profjb58.territorial.world.TerritorialWorldStorage;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.server.MinecraftServer;
@@ -16,8 +17,8 @@ public class ServerConnectionHandlers {
     }
 
     private static void onPlayerConnect(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server) {
+        modInstance.initWorldStorage(new TerritorialWorldStorage(server));
         modInstance.getTeamManager().updateLastLogin(handler.getPlayer());
         modInstance.getTeamManager().checkInactive();
-
     }
 }

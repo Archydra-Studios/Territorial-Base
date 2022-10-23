@@ -67,7 +67,7 @@ public class BaseBeaconBlockEntity extends BlockEntity implements ExtendedScreen
     private boolean useAlternateEffects;
 
     public BaseBeaconBlockEntity(BlockPos pos, BlockState state) {
-        super(TerritorialRegistry.BASE_BEACON_BLOCK_ENTITY, pos, state);
+        super(TerritorialRegistry.BASE_BEACON_BLOCK_ENTITY_TYPE, pos, state);
 
         this.lock = ContainerLock.EMPTY;
         this.useAlternateEffects = false;

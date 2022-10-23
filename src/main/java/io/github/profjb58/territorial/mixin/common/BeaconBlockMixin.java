@@ -4,13 +4,10 @@ import io.github.profjb58.territorial.block.entity.BaseBeaconBlockEntity;
 import io.github.profjb58.territorial.event.registry.TerritorialRegistry;
 import io.github.profjb58.territorial.misc.access.BlockAccess;
 import net.minecraft.block.*;
-import net.minecraft.block.entity.BeaconBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stat.Stats;
@@ -66,7 +63,7 @@ public abstract class BeaconBlockMixin extends BlockWithEntity implements BlockA
 
     @Inject(method = "getTicker", at = @At("RETURN"), cancellable = true)
     public void getTicker(World world, BlockState state, BlockEntityType<?> type, CallbackInfoReturnable<BlockEntityTicker<?>> cir) {
-        cir.setReturnValue(checkType(type, TerritorialRegistry.BASE_BEACON_BLOCK_ENTITY, BaseBeaconBlockEntity::tick));
+        cir.setReturnValue(checkType(type, TerritorialRegistry.BASE_BEACON_BLOCK_ENTITY_TYPE, BaseBeaconBlockEntity::tick));
     }
 
     @Inject(method = "onPlaced", at = @At("HEAD"), cancellable = true)

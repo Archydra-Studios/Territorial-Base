@@ -41,17 +41,17 @@ public class Team {
     public record Members(Map<Role, Set<UUID>> roleMap) {
         public record Role(String name, int rank) {}
 
-        boolean add(Role role, UUID playerUuid) {
+        public boolean add(Role role, UUID playerUuid) {
             return roleMap.get(role).add(playerUuid);
         }
 
-        boolean remove(UUID playerUuid) {
+        public boolean remove(UUID playerUuid) {
             for(Set<UUID> membersSet : roleMap.values())
                 return membersSet.remove(playerUuid);
             return false;
         }
 
-        int size() {
+        public int size() {
             int size = 0;
             for (Set<UUID> membersSet : roleMap.values())
                 size += membersSet.size();
